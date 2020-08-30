@@ -2,6 +2,10 @@
 
 This Chart deploys a Cribl LogStream worker group.
 
+# DISCLAIMER
+
+This is an experimental Helm Chart at this point and is currently unsupported.
+
 # Values to Override
 
 * config.tag - tag/group to include in the URL (included as both a group value and a tag value) - defaults to "criblmaster"

@@ -3,12 +3,12 @@ entries:
   logstream-workergroup:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2020-08-30T13:52:28.55873-07:00"
+    created: "2020-08-30T14:03:24.805447-07:00"
     description: A Helm chart for Kubernetes
     digest: ad440f4c0d24c78b7d8c943059422b66796c7bce39d6a0de61b08af94a4f2813
     name: logstream-workergroup
     type: application
     urls:
-    - https://github.com/criblio/helm-charts/logstream-workergroup-0.1.0.tgz
+    - https://criblio.github.io/helm-charts/logstream-workergroup-0.1.0.tgz
     version: 0.1.0
-generated: "2020-08-30T13:52:28.557986-07:00"
+generated: "2020-08-30T14:03:24.801649-07:00"

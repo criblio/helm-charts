@@ -4,9 +4,11 @@ This Chart deploys a Cribl LogStream worker group.
 
 # Values to Override
 
-config.tag - tag/group to include in the URL (included as both a group value and a tag value) - defaults to "criblmaster"
-config.token - the authentication token for your logstream master - defaults to "kubernetes"
-config.host - the resolveable hostname of your logstream master - defaults to "logstream-master"
+* config.tag - tag/group to include in the URL (included as both a group value and a tag value) - defaults to "criblmaster"
+
+* config.token - the authentication token for your logstream master - defaults to "kubernetes"
+
+* config.host - the resolveable hostname of your logstream master - defaults to "logstream-master"
 
 # Install
 

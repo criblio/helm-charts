@@ -25,8 +25,30 @@ podAnnotations: {}
 
 service:
   type: LoadBalancer
-  port: 9000
+  annotations: {}
 
+  svcPorts:
+  - name: tcpjson
+    containerPort: 10001
+    protocol: TCP
+  - name: s2s
+    containerPort: 9997
+    protocol: TCP
+  - name: http
+    containerPort: 10080
+    protocol: TCP
+  - name: https
+    containerPort: 10081
+    protocol: TCP    
+  - name: syslog
+    containerPort: 5140
+    protocol: TCP
+  - name: metrics
+    containerPort: 8125
+    protocol: TCP
+  - name: elastic
+    containerPort: 9200
+    protocol: TCP
 
 resources: 
   limits:
@@ -35,16 +57,7 @@ resources:
   requests:
     cpu: 1250m
     memory: 256Mi
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  # limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  # requests:
-  #   cpu: 100m
-  #   memory: 128Mi
+
 
 autoscaling:
   enabled: true

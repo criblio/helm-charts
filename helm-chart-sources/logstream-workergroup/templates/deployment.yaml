@@ -34,20 +34,10 @@ spec:
                   key: url-master
             - name: NODE_TLS_REJECT_UNAUTHORIZED
               value: "0"
-          ports:
-            - name: tcpjson
-              containerPort: 10001
-            - name: s2s
-              containerPort: 9997
-            - name: http
-              containerPort: 10080
-            - name: https
-              containerPort: 10081
-            - name: syslog
-              containerPort: 5140
-            - name: metrics
-              containerPort: 8125
-            - name: elastic
-              containerPort: 9200
+          ports: 
+            {{-  range .Values.service.svcPorts }}
+            - name: {{ .name }}
+              containerPort: {{ .containerPort }}
+            {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}

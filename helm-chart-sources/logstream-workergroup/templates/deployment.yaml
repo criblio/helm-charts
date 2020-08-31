@@ -35,9 +35,9 @@ spec:
             - name: NODE_TLS_REJECT_UNAUTHORIZED
               value: "0"
           ports: 
-            {{-  range .Values.service.svcPorts }}
+            {{-  range .Values.service.ports }}
             - name: {{ .name }}
-              containerPort: {{ .containerPort }}
+              containerPort: {{ .port }}
             {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}

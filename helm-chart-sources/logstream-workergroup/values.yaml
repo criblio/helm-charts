@@ -12,7 +12,6 @@ image:
 
 imagePullSecrets: []
 nameOverride: "workers"
-#fullnameOverride: "workers"
 
 config: 
   host: logstream-master
@@ -26,27 +25,27 @@ service:
   type: LoadBalancer
   annotations: {}
 
-  svcPorts:
+  ports:
   - name: tcpjson
-    containerPort: 10001
+    port: 10001
     protocol: TCP
   - name: s2s
-    containerPort: 9997
+    port: 9997
     protocol: TCP
   - name: http
-    containerPort: 10080
+    port: 10080
     protocol: TCP
   - name: https
-    containerPort: 10081
+    port: 10081
     protocol: TCP    
   - name: syslog
-    containerPort: 5140
+    port: 5140
     protocol: TCP
   - name: metrics
-    containerPort: 8125
+    port: 8125
     protocol: TCP
   - name: elastic
-    containerPort: 9200
+    port: 9200
     protocol: TCP
 
 resources: 

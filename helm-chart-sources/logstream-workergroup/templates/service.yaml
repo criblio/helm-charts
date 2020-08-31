@@ -10,9 +10,9 @@ metadata:
 spec:
   type: {{ .Values.service.type }}
   ports:
-      {{-  range .Values.service.svcPorts }}
-      - port: {{ .containerPort }}
-        targetPort: {{ .containerPort }}
+      {{-  range .Values.service.ports }}
+      - port: {{ .port }}
+        targetPort: {{ .port }}
         protocol: {{ .protocol }}
         name: {{ .name }}
       {{- end }}

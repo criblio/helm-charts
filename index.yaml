@@ -3,23 +3,13 @@ entries:
   logstream-workergroup:
   - apiVersion: v2
     appVersion: 2.2.3
-    created: "2020-08-31T11:32:54.643626-07:00"
+    created: "2020-08-31T15:24:20.207714-07:00"
     description: Experimental Deployment of LogStream Worker Group on K8s
-    digest: 37302b6d4e2bc834e6986ba944f432d87ade0251a4c074569f97cd521a893d30
+    digest: 431c528528dd6c93bebb5665fdc1faee5363c9cce349b65a0c564a7dff04d42a
     icon: https://cribl.io/wp-content/uploads/2019/06/logo-black.png
     name: logstream-workergroup
     type: application
     urls:
     - https://criblio.github.io/helm-charts/logstream-workergroup-0.1.1.tgz
     version: 0.1.1
-  - apiVersion: v2
-    appVersion: 1.16.0
-    created: "2020-08-31T11:32:54.642523-07:00"
-    description: A Helm chart for Kubernetes
-    digest: ad440f4c0d24c78b7d8c943059422b66796c7bce39d6a0de61b08af94a4f2813
-    name: logstream-workergroup
-    type: application
-    urls:
-    - https://criblio.github.io/helm-charts/logstream-workergroup-0.1.0.tgz
-    version: 0.1.0
-generated: "2020-08-31T11:32:54.640424-07:00"
+generated: "2020-08-31T15:24:20.206577-07:00"

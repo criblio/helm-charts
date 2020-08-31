@@ -11,9 +11,8 @@ image:
   tag: "latest"
 
 imagePullSecrets: []
-nameOverride: "logstream-workergroup"
-fullname: "logstream-workergroup"
-fullnameOverride: ""
+nameOverride: "workers"
+#fullnameOverride: "workers"
 
 config: 
   host: logstream-master

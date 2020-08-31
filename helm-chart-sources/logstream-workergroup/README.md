@@ -1,10 +1,19 @@
-# logstream-workergroup
+![Cribl Logo](https://cribl.io/wp-content/uploads/2019/06/logo-black.png)
+
+# logstream-workergroup Helm Chart
 
 This Chart deploys a Cribl LogStream worker group.
 
 # DISCLAIMER
 
 This is an experimental Helm Chart at this point and is currently unsupported.
+
+# Deployment
+
+As built, this chart will deploy a simple worker group for Cribl LogStream, consisting of a deployment, a service, and a horizontal pod autoscaler config, as well as a secret used for configuration. 
+
+![Deployment Diagram](images/k8s-logstream-worker-group.svg)
+
 
 # Values to Override
 
@@ -30,4 +39,4 @@ To install the chart using the logstream master 'logstream.lab.cribl.io'
 
 To install the chart using the logstream master 'logstream.lab.cribl.io' in the namespace "cribl-helm"
 
-`helm install logstream-wg cribl/logstream-workergroup --set config.host='logstream.lab.cribl.io` -n cribl-helm
+`helm install logstream-wg cribl/logstream-workergroup --set config.host='logstream.lab.cribl.io' -n cribl-helm`

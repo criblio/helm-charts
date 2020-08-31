@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "logstream-workergroup.fullname" . }}
+  name: {{ include "logstream-workergroup.fullname" . }}-{{ .Values.config.tag }}
   labels:
     {{- include "logstream-workergroup.labels" . | nindent 4 }}
 spec:

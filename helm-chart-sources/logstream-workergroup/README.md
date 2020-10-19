@@ -1,4 +1,4 @@
-![Cribl Logo](https://crib.ly/Cribl_Logo_Color_TM.png)
+![Cribl Logo](https://crib.ly/media_assets/Cribl_Logo_Color_TM.png)
 
 # logstream-workergroup Helm Chart
 

@@ -6,7 +6,7 @@ This Chart deploys a Cribl LogStream worker group.
 
 # DISCLAIMER
 
-This is an experimental Helm Chart at this point and is currently unsupported.
+This chart is a work in progress - it is provided as is.
 
 # Deployment
 

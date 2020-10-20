@@ -31,6 +31,7 @@ This section covers the most likely values to override. To see the full scope of
 |config.host|String|logstream-master|the resolveable hostname of your logstream master - defaults to "logstream-master"|
 |service.ports|Array of Maps|<pre>- name: tcpjson<br>  port: 10001<br>  protocol: TCP<br>- name: s2s<br>  port: 9997<br>  protocol: TCP<br>- name: http<br>  port: 10080<br>  protocol: TCP<br>- name: https<br>  port: 10081<br>  protocol: TCP<br>- name: syslog<br>  port: 5140<br>  protocol: TCP<br>- name: metrics<br>  port: 8125<br>  protocol: TCP<br>- name: elastic<br>  port: 9200<br>  protocol: TCP</pre>|The ports to make available both in the Deployment and the Service. Each "map" in the list needs the following values set: <dl><dt>containerPort</dt><dd>the port to be made available</dd><dt>name</dt><dd>a descriptive name of what the port is being used for</dd><dt>protocol</dt><dd>the protocol in use for this port (UDP/TCP)</dd></dl>|
 |service.annotations|String|None|Annotations for the the service component - this is where you'll want to put load balancer specific configuration directives|
+|image.tag|String|latest|The container image tag to pull from.|
 
 ## EKS Specific Values
 In the case of an EKS deployment, there are many annotations that can be made for the load balancer. Internally, we usually use the annotations for logging to S3, like this:

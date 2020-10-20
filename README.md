@@ -1,4 +1,4 @@
-![Cribl Logo](../../images/Cribl_Logo_Color_TM.png)
+![Cribl Logo](images/Cribl_Logo_Color_TM.png)
 # Cribl Helm Charts
 
 This is a HELM repository for charts published by Cribl, Inc. 

@@ -89,3 +89,7 @@ helm upgrade logstream-wg cribl/logstream-workergroup -f values.yaml
 ```
 
 Remember, if you installed in a namespace, you need to include the `-n <namespace>` option to any helm command.
+
+# Feedback
+
+If you use this helm chart, we'd love to hear any feedback you might have on this chart. Join us on our [Slack Community](https://cribl.io/community) in the #kubernetes channel.

@@ -1,0 +1,85 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "logstream-master.fullname" . }}
+  labels:
+    {{- include "logstream-master.labels" . | nindent 4 }}
+spec:
+{{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+{{- end }}
+  selector:
+    matchLabels:
+      {{- include "logstream-master.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+    {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      labels:
+        {{- include "logstream-master.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          volumeMounts:
+          - name: local-storage
+            mountPath: {{ .Values.config.criblHome }}/local
+          - name: data-storage
+            mountPath: {{ .Values.config.criblHome }}/data
+          - name: state-storage
+            mountPath: {{ .Values.config.criblHome }}/state
+          - name: groups-storage
+            mountPath: {{ .Values.config.criblHome }}/groups
+          ports: 
+            {{-  range .Values.service.ports }}
+            - name: {{ .name }}
+              containerPort: {{ .port }}
+            {{- end }}
+          livenessProbe:
+            httpGet:
+              path: /
+              port: {{ .Values.config.healthPort }}
+          readinessProbe:
+            httpGet:
+              path: /
+              port: {{ .Values.config.healthPort }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          env:
+            # Allow Self-Signed Certs
+            - name: NODE_TLS_REJECT_UNAUTHORIZED
+              value: "{{ .Values.config.rejectSelfSignedCerts }}"
+
+      volumes:
+        - name: local-storage
+          persistentVolumeClaim:
+            claimName: local-claim
+        - name: data-storage
+          persistentVolumeClaim:
+            claimName: data-claim
+        - name: state-storage
+          persistentVolumeClaim:
+            claimName: state-claim
+        - name: groups-storage
+          persistentVolumeClaim:
+            claimName: groups-claim
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+

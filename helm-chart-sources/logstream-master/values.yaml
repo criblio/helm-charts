@@ -18,7 +18,7 @@ autoscaling:
   enabled: false
 
 config:
-  pvType:
+  scName:
   criblHome: /opt/cribl
   rejectSelfSignedCerts: 0
   healthPort: 9000

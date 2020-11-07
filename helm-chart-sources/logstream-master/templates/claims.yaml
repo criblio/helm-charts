@@ -6,8 +6,8 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  {{ if .Values.config.pvType }}
-  storageClassName:   {{ .Values.config.pvType }}
+  {{ if .Values.config.scName }}
+  storageClassName:   {{ .Values.config.scName }}
   {{- end}}
   resources:
     requests:
@@ -20,8 +20,8 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  {{ if .Values.config.pvType }}
-  storageClassName:   {{ .Values.config.pvType }}
+  {{ if .Values.config.scName }}
+  storageClassName:   {{ .Values.config.scName }}
   {{- end}}
   resources:
     requests:
@@ -34,8 +34,8 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  {{ if .Values.config.pvType }}
-  storageClassName:   {{ .Values.config.pvType }}
+  {{ if .Values.config.scName }}
+  storageClassName:   {{ .Values.config.scName }}
   {{- end}}
   resources:
     requests:
@@ -48,8 +48,8 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  {{ if .Values.config.pvType }}
-  storageClassName:   {{ .Values.config.pvType }}
+  {{ if .Values.config.scName }}
+  storageClassName:   {{ .Values.config.scName }}
   {{- end}}
   resources:
     requests:

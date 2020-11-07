@@ -88,7 +88,7 @@ to the services section, in the ports subsection of the values.yaml file, and th
 helm upgrade logstream-wg cribl/logstream-workergroup -f values.yaml
 ```
 
-Remember, if you installed in a namespace, you need to include the `-n <namespace>` option to any helm command.
+Remember, if you installed in a namespace, you need to include the `-n <namespace>` option to any helm command. You'll still have to create the source in your logstream master, commit and deploy it to your worker group.
 
 # Feedback
 

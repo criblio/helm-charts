@@ -26,8 +26,8 @@ spec:
       {{- end }}
       containers:
         - name: {{ .Chart.Name }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          image: "{{ .Values.criblImage.repository }}:{{ .Values.criblImage.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.criblImage.pullPolicy }}
           volumeMounts:
           - name: local-storage
             mountPath: {{ .Values.config.criblHome }}/local
@@ -56,6 +56,12 @@ spec:
             # Allow Self-Signed Certs
             - name: NODE_TLS_REJECT_UNAUTHORIZED
               value: "{{ .Values.config.rejectSelfSignedCerts }}"
+            - name: CRIBL_HOME
+              value: "{{ .Values.config.criblHome }}"
+            {{- range $key, $value := .Values.env }}
+            - name: {{ $key }}
+              value: {{ $value }}
+            {{- end }}
 
       volumes:
         - name: local-storage

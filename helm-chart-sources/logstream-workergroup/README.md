@@ -36,6 +36,10 @@ This section covers the most likely values to override. To see the full scope of
 |autoscaling.maxReplicas|Number|10|The maximum number of LogStream pods to scale to run.|
 |autoscaling.targetCPUUtilizationPercentage|Number|50|The CPU utilization percentage that triggers scaling action|
 
+### A Note About Versioning
+
+We recommend that you use the same version of the Cribl LogStream code on master nodes and workergroup nodes. If you're not making the move to 2.3.3 on your master yet, make sure to override the `criblImage.tag` value in the install with the version you are running.
+
 
 ## EKS Specific Values
 In the case of an EKS deployment, there are many annotations that can be made for the load balancer. Internally, we usually use the annotations for logging to S3, like this:
@@ -90,7 +94,7 @@ helm upgrade logstream-wg cribl/logstream-workergroup -f values.yaml
 
 Remember, if you installed in a namespace, you need to include the `-n <namespace>` option to any helm command. You'll still have to create the source in your logstream master, commit and deploy it to your worker group.
 
-# Caveats/Errata/Known Issues
+# Known Issues
 
 * The chart currently supports *only* TCP ports on the worker group services. This may be addressed in future versions.
 

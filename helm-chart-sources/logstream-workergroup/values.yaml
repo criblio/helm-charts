@@ -8,10 +8,10 @@ criblImage:
   repository: cribl/cribl
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "2.3.2"
+  tag: "2.3.3"
 
 imagePullSecrets: []
-nameOverride: "workers"
+nameOverride: ""
 
 config: 
   host: logstream-master

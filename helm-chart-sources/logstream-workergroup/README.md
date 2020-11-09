@@ -31,7 +31,7 @@ This section covers the most likely values to override. To see the full scope of
 |config.host|String|logstream-master|the resolveable hostname of your logstream master - defaults to "logstream-master"|
 |service.ports|Array of Maps|<pre>- name: tcpjson<br>  port: 10001<br>  protocol: TCP<br>- name: s2s<br>  port: 9997<br>  protocol: TCP<br>- name: http<br>  port: 10080<br>  protocol: TCP<br>- name: https<br>  port: 10081<br>  protocol: TCP<br>- name: syslog<br>  port: 5140<br>  protocol: TCP<br>- name: metrics<br>  port: 8125<br>  protocol: TCP<br>- name: elastic<br>  port: 9200<br>  protocol: TCP</pre>|The ports to make available both in the Deployment and the Service. Each "map" in the list needs the following values set: <dl><dt>containerPort</dt><dd>the port to be made available</dd><dt>name</dt><dd>a descriptive name of what the port is being used for</dd><dt>protocol</dt><dd>the protocol in use for this port (UDP/TCP)</dd></dl>|
 |service.annotations|String|None|Annotations for the the service component - this is where you'll want to put load balancer specific configuration directives|
-|criblImage.tag|String|2.3.2|The container image tag to pull from. By default this will use the version equivalent to the Chart's `appVersion` value, but you can override it with "latest" to get the latest release, or to a version number to pull a specific version of LogStream|
+|criblImage.tag|String|2.3.3|The container image tag to pull from. By default this will use the version equivalent to the Chart's `appVersion` value, but you can override it with "latest" to get the latest release, or to a version number to pull a specific version of LogStream|
 |autoscaling.minReplicas|Number|2|The minimum number of LogStream pods to run.|
 |autoscaling.maxReplicas|Number|10|The maximum number of LogStream pods to scale to run.|
 |autoscaling.targetCPUUtilizationPercentage|Number|50|The CPU utilization percentage that triggers scaling action|
@@ -89,6 +89,10 @@ helm upgrade logstream-wg cribl/logstream-workergroup -f values.yaml
 ```
 
 Remember, if you installed in a namespace, you need to include the `-n <namespace>` option to any helm command. You'll still have to create the source in your logstream master, commit and deploy it to your worker group.
+
+# Caveats/Errata/Known Issues
+
+* The chart currently supports *only* TCP ports on the worker group services. This may be addressed in future versions.
 
 # Feedback
 

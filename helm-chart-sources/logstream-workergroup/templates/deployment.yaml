@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "logstream-workergroup.fullname" . }}-{{ .Values.config.tag }}
+  name: {{ include "logstream-workergroup.fullname" . }}
   labels:
     {{- include "logstream-workergroup.labels" . | nindent 4 }}
 spec:
@@ -24,13 +24,13 @@ spec:
       {{- end }}
       containers:
         - name: {{ .Chart.Name }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          image: "{{ .Values.criblImage.repository }}:{{ .Values.criblImage.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.criblImage.pullPolicy }}
           env:
             - name: CRIBL_DIST_MASTER_URL
               valueFrom:
                 secretKeyRef:
-                  name: logstream-config
+                  name: logstream-config-{{ include "logstream-workergroup.fullname" . }}
                   key: url-master
             - name: NODE_TLS_REJECT_UNAUTHORIZED
               value: "0"

@@ -12,6 +12,8 @@ This chart is a work in progress - it is provided as is.
 
 As built, this chart will deploy a simple worker group for Cribl LogStream, consisting of a deployment, a service, and a horizontal pod autoscaler config, as well as a secret used for configuration. 
 
+This chart does **not** deploy a master node - it depends on one already being present.
+
 ![Deployment Diagram](images/k8s-logstream-worker-group.svg)
 
 # Pre-Requisites
@@ -97,6 +99,10 @@ Remember, if you installed in a namespace, you need to include the `-n <namespac
 # Known Issues
 
 * The chart currently supports *only* TCP ports on the worker group services. This may be addressed in future versions.
+
+# More Info
+
+For additional documentation on this chart, see the [Cribl Docs](https://docs.cribl.io/docs/deploy-kubernetes-helm) page about it.
 
 # Feedback
 

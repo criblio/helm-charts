@@ -37,6 +37,10 @@ spec:
             mountPath: {{ .Values.config.criblHome }}/state
           - name: groups-storage
             mountPath: {{ .Values.config.criblHome }}/groups
+          {{- if  .Values.config.license }}
+          - name: license-secret
+            mountPath: /var/tmp/config_bits
+          {{- end }}
           ports: 
             {{-  range .Values.service.ports }}
             - name: {{ .name }}
@@ -62,8 +66,26 @@ spec:
             - name: {{ $key }}
               value: {{ $value }}
             {{- end }}
+            {{- if .Values.config.adminPassword }}
+            - name: CRIBL_AFTER_START_CMD_1
+              value: "sleep 60 && cp /var/tmp/config_bits/users.json {{ .Values.config.criblHome }}/local/cribl/auth/users.json"
+            {{- end }}
+          {{- if  .Values.config.license }}
+          lifecycle:
+            postStart:
+              exec:
+                command:
+                  - /bin/sh
+                  - -c
+                  - cp /var/tmp/config_bits/licenses.yml {{ .Values.config.criblHome }}/local/cribl/licenses.yml && cp /var/tmp/config_bits/instance.yml {{ .Values.config.criblHome }}/local/_system/instance.yml
+          {{- end }}
 
       volumes:
+        {{- if  .Values.config.license }}
+        - name: license-secret
+          secret: 
+            secretName: logstream-license
+        {{- end }}
         - name: local-storage
           persistentVolumeClaim:
             claimName: local-claim

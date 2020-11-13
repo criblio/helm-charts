@@ -14,6 +14,8 @@ As built, this chart will deploy a Cribl LogStream Master Server, consisting of 
 
 ![Deployment Diagram](images/k8s-logstream-master.svg)
 
+Of special note is the fact that two load balanced services are created - the main one (named after the helm release), which is intended as the primary service interface for users, and the "internal" one (named <helm-release>-internal), which is intended for the workergroup to master communication.
+
 # Pre-Requisites
 
 1. Helm (preferably v3) installed - instructions are [here](https://helm.sh/docs/intro/install/)
@@ -28,6 +30,9 @@ This section covers the most likely values to override. To see the full scope of
 
 |Key|Type|Default Value|Description|
 |---|----|-------------|-----------|
+|config.adminPassword|String|The password you want the admin user to have set.|
+|config.distributedKey|String|The auth key you want to set up for worker access. The LogStream instance is only configured as a distributed master server if this value is set. This can, of course, also be configured via the LogStream UI|
+|config.license|String|The license for your logstream instance. If you do not set this, it will default to the "free" license. You can change this in the LogStream UI as well.|
 |config.scName|String|default storage class|the StorageClass Name for all of the persistent volumes.|
 |config.rejectSelfSignedCerts|Number|0|0 - allow self-signed certs, 1 - deny self-signed certs|
 |config.healthPort|number|9000|the port to use for health checks (readiness/live)|

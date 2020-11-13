@@ -19,6 +19,9 @@ autoscaling:
 
 config:
   scName:
+  license:
+  distributedKey:
+  adminPassword:
   criblHome: /opt/cribl
   rejectSelfSignedCerts: 0
   healthPort: 9000

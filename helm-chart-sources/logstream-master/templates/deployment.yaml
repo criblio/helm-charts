@@ -1,3 +1,4 @@
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -37,22 +38,22 @@ spec:
             mountPath: {{ .Values.config.criblHome }}/state
           - name: groups-storage
             mountPath: {{ .Values.config.criblHome }}/groups
-          {{- if  .Values.config.license }}
+          {{- if  .Values.config.license  }}
           - name: initial-config
             mountPath: /var/tmp/config_bits
           {{- end }}
-          ports: 
+          ports:
             {{-  range .Values.service.ports }}
             - name: {{ .name }}
               containerPort: {{ .port }}
             {{- end }}
           livenessProbe:
             httpGet:
-              path: /
+              path: /api/v1/health
               port: {{ .Values.config.healthPort }}
           readinessProbe:
             httpGet:
-              path: /
+              path: /api/v1/health
               port: {{ .Values.config.healthPort }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
@@ -61,33 +62,44 @@ spec:
             - name: NODE_TLS_REJECT_UNAUTHORIZED
               value: "{{ .Values.config.rejectSelfSignedCerts }}"
             - name: CRIBL_HOME
-              value: "{{ .Values.config.criblHome }}"
+              value: {{ .Values.config.criblHome | quote }}
             {{- range $key, $value := .Values.env }}
             - name: {{ $key }}
               value: {{ $value }}
             {{- end }}
+
+            {{- $b_iter := 1 -}}
+
             {{- if .Values.config.distributedKey }}
-            - name: CRIBL_BEFORE_START_CMD_1
-              value: "cp /var/tmp/config_bits/instance.yml {{ .Values.config.criblHome }}/local/_system/instance.yml"
+            - name: CRIBL_BEFORE_START_CMD_{{ $b_iter }}
+              value: "if [ ! -e {{ .Values.config.criblHome }}/local/_system/instance.yml ]; then cp /var/tmp/config_bits/instance.yml {{ .Values.config.criblHome }}/local/_system/instance.yml; fi"
+              {{- $b_iter = add $b_iter 1 }}
             {{- end }}
             {{- if .Values.config.license }}
-            - name: CRIBL_BEFORE_START_CMD_2
-              value: "cp /var/tmp/config_bits/licenses.yml {{ .Values.config.criblHome }}/local/cribl/licenses.yml"
+            - name: CRIBL_BEFORE_START_CMD_{{ $b_iter }}
+              value: "if [ ! -e {{ .Values.config.criblHome }}/local/cribl/licenses.yml ]; then cp /var/tmp/config_bits/licenses.yml {{ .Values.config.criblHome }}/local/cribl/licenses.yml; fi"
+              {{- $b_iter = add $b_iter 1 }}
             {{- end }}
             {{- if .Values.config.groups }}
-            - name: CRIBL_BEFORE_START_CMD_3
+            - name: CRIBL_BEFORE_START_CMD_{{ $b_iter }}
               value: "if [ ! -e {{ .Values.config.criblHome }}/local/cribl/mappings.yml ]; then cp /var/tmp/config_bits/groups.yml {{ .Values.config.criblHome }}/local/cribl/groups.yml; cp /var/tmp/config_bits/mappings.yml {{ .Values.config.criblHome }}/local/cribl/mappings.yml; fi"
+              {{- $b_iter = add $b_iter 1 }}
             {{- end }}
+
+            {{- $a_iter := 1 -}}
+
             {{- if .Values.config.adminPassword }}
-            - name: CRIBL_AFTER_START_CMD_1
+            - name: CRIBL_AFTER_START_CMD_{{ $a_iter }}
               value: "sleep 60 && cp /var/tmp/config_bits/users.json {{ .Values.config.criblHome }}/local/cribl/auth/users.json"
+              {{- $a_iter = add $a_iter 1 }}
+
             {{- end }}
 
 
       volumes:
-        {{- if  .Values.config.license }}
+        {{- if  or .Values.config.license ( or .Values.config.distributedKey .Values.config.groups ) }}
         - name: initial-config
-          secret: 
+          secret:
             secretName: logstream-master-config-{{ include "logstream-master.fullname" . }}
         {{- end }}
         - name: local-storage
@@ -114,4 +126,3 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-

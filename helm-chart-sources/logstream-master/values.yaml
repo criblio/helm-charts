@@ -13,6 +13,10 @@ criblImage:
 imagePullSecrets: []
 nameOverride: "master"
 fullnameOverride: ""
+iter: 1
+
+env: 
+  - foo: "bar"
 
 autoscaling:
   enabled: false
@@ -25,6 +29,7 @@ config:
   criblHome: /opt/cribl
   rejectSelfSignedCerts: 0
   healthPort: 9000
+  groups: {}
   
 env: {}
 

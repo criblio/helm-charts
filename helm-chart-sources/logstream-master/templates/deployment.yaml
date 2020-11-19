@@ -51,10 +51,14 @@ spec:
             httpGet:
               path: /api/v1/health
               port: {{ .Values.config.healthPort }}
+            failureThreshold: 3
+            initialDelaySeconds: 60
           readinessProbe:
             httpGet:
               path: /api/v1/health
               port: {{ .Values.config.healthPort }}
+            failureThreshold: 3
+            initialDelaySeconds: 60
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           env:
@@ -63,6 +67,12 @@ spec:
               value: "{{ .Values.config.rejectSelfSignedCerts }}"
             - name: CRIBL_HOME
               value: {{ .Values.config.criblHome | quote }}
+            {{- if .Values.config.distributedKey }}
+            - name: CRIBL_DIST_MODE
+              value: master
+            - name: CRIBL_DIST_MASTER_URL
+              value: "tcp://{{ .Values.config.distributedKey }}@0.0.0.0:4200"
+            {{- end }}
             {{- range $key, $value := .Values.env }}
             - name: {{ $key }}
               value: {{ $value }}
@@ -70,11 +80,6 @@ spec:
 
             {{- $b_iter := 1 -}}
 
-            {{- if .Values.config.distributedKey }}
-            - name: CRIBL_BEFORE_START_CMD_{{ $b_iter }}
-              value: "if [ ! -e {{ .Values.config.criblHome }}/local/_system/instance.yml ]; then cp /var/tmp/config_bits/instance.yml {{ .Values.config.criblHome }}/local/_system/instance.yml; fi"
-              {{- $b_iter = add $b_iter 1 }}
-            {{- end }}
             {{- if .Values.config.license }}
             - name: CRIBL_BEFORE_START_CMD_{{ $b_iter }}
               value: "if [ ! -e {{ .Values.config.criblHome }}/local/cribl/licenses.yml ]; then cp /var/tmp/config_bits/licenses.yml {{ .Values.config.criblHome }}/local/cribl/licenses.yml; fi"

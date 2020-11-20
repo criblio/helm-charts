@@ -18,9 +18,20 @@ Of special note is the fact that two load balanced services are created - the ma
 
 # Pre-Requisites
 
+## Helm Setup
+
 1. Helm (preferably v3) installed - instructions are [here](https://helm.sh/docs/intro/install/)
 1. Cribl helm repo configured. To do this:
 	`helm repo add cribl https://criblio.github.io/helm-charts/`
+
+## Persistent Storage
+
+The chart requires persistent storage; it will use your default storage class, or you can override (`config.scName`) with the name of a storage class to use. This has primarily been tested using AWS EBS storage via the CSI EBS driver. The volumes are created as ReadWriteOnce claims. For more info on Storage Classes, see the [Kubernetes.IO Storage Classes page](https://kubernetes.io/docs/concepts/storage/storage-classes/).
+
+## AWS Specific Notes
+
+If you're running on EKS, it's highly recommended that you use AZ specific node groups (see the [eksctl.io Autoscaling Doc](https://eksctl.io/usage/autoscaling/) for details on doing this). IF you are doing autoscaling in your cluster nodes in a single node group that spans AZ's, you *may* run into trouble mounting volumes (as EBS volumes are AZ specific).
+
 
 # Values to Override
 
@@ -54,8 +65,7 @@ In the case of an EKS deployment, there are many annotations that can be made fo
 
 for a fairly exhaustive lists of annotations you can use with AWS's Elastic Load Balancers, see the [Kubernetes Service](https://kubernetes.io/docs/concepts/services-networking/service/) page.
 
-# Install
-
+# Basic Installation
 
 * To  install the chart with the release name "logstream-master":
 
@@ -63,11 +73,12 @@ for a fairly exhaustive lists of annotations you can use with AWS's Elastic Load
 
   (if you're doing it from a local git clone, do: `helm install logstream-master <path to git clone/helm-chart-sources/logstream-master>`)
 
+
 * To install the chart using the storage class "ebs-sc"
 
  `helm install logstream-master cribl/logstream-master --set config.scName='lebs-sc`
 
-# Installation Overrides
+# LogStream Configuration Overrides
 
 The helm chart, without any values overrides, creates effectively a standalone instance of Cribl LogStream, using the standard container image. One can, if they so choose, configure distributed mode, licensing, admin user passwords, etc., all from the logstream UI. However, you can install with value overrides to change that.
 

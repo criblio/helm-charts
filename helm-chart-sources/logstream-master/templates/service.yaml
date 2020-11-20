@@ -8,7 +8,7 @@ metadata:
     {{- toYaml .Values.service.annotations  | nindent 4 }}
 
 spec:
-  type: {{ .Values.service.type }}
+  type: {{ .Values.service.internalType }}
   ports:
       {{-  range .Values.service.ports }}
       - port: {{ .port }}
@@ -30,7 +30,7 @@ metadata:
     {{- toYaml .Values.service.annotations  | nindent 4 }}
 
 spec:
-  type: {{ .Values.service.type }}
+  type: {{ .Values.service.externalType }}
   ports:
       {{-  range .Values.service.ports }}
       {{ if .external  }}

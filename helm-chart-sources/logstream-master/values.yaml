@@ -34,7 +34,8 @@ config:
 env: {}
 
 service:
-  type: LoadBalancer
+  internalType: LoadBalancer
+  externalType: LoadBalancer
   annotations: {}
 
   ports:

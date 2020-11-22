@@ -1,8 +1,8 @@
 ![Cribl Logo](../../images/Cribl_Logo_Color_TM.png)
 
-# logstream-workergroup Helm Chart
+# logstream-master Helm Chart
 
-This Chart deploys a Cribl LogStream worker group.
+This Chart deploys a Cribl LogStream master server.
 
 # DISCLAIMER
 

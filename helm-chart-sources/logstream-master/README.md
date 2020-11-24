@@ -69,12 +69,12 @@ for a fairly exhaustive lists of annotations you can use with AWS's Elastic Load
 
 * To  install the chart with the release name "logstream-master":
 
- `helm install logstream-master cribl/logstream-master`
+  `helm install logstream-master cribl/logstream-master`
 
 
 * To install the chart using the storage class "ebs-sc"
 
- `helm install logstream-master cribl/logstream-master --set config.scName='lebs-sc`
+  `helm install logstream-master cribl/logstream-master --set config.scName='lebs-sc`
 
 # LogStream Configuration Overrides
 
@@ -82,23 +82,23 @@ The helm chart, without any values overrides, creates effectively a standalone i
 
 * Applying a License
 
-If you have a standard or enterprise license, you can add it as an override to your install using the config.license parameter:
+  If you have a standard or enterprise license, you can add it as an override to your install using the config.license parameter:
 
-`helm install logstream-master cribl/logstream-master --set config.license="<long encoded license string redacted>"`
+  `helm install logstream-master cribl/logstream-master --set config.license="<long encoded license string redacted>"`
 
 * Setting the admin password
 
-Normally, when you first install logstream and log into the UI, it forces you to change your password. You can skip that by setting your admin password via the config.adminPassword parameter:
+  Normally, when you first install logstream and log into the UI, it forces you to change your password. You can skip that by setting your admin password via the config.adminPassword parameter:
 
-`helm install logstream-master cribl/logstream-master --set config.adminPassword="<new password>"`
+  `helm install logstream-master cribl/logstream-master --set config.adminPassword="<new password>"`
 
 * Setting up Worker Groups/Mappings
 
-As mentioned above, the default is to install a vanilla deployment of LogStream. If you are deploying as a master, you can use the `config.groups` parameter to define the worker groups you want created and mapped. each group in the list you provide will be created as a worker group, with a mapping rule to look for a tag with the worker group name in it. 
+  As mentioned above, the default is to install a vanilla deployment of LogStream. If you are deploying as a master, you can use the `config.groups` parameter to define the worker groups you want created and mapped. each group in the list you provide will be created as a worker group, with a mapping rule to look for a tag with the worker group name in it. 
 
-`helm install logstream-master cribl/logstream-master --set config.groups={group1,group2,group3}`
+  `helm install logstream-master cribl/logstream-master --set config.groups={group1,group2,group3}`
 
-The example above will create three worker groups: `group1`, `group2`, and `group3`, and a mapping rule for each.
+  The example above will create three worker groups: `group1`, `group2`, and `group3`, and a mapping rule for each.
 
 
 # Feedback/Support

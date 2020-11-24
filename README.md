@@ -16,7 +16,7 @@ Every chart contained herein has, at least, the same basic pre-requisites:
 With the advent of the workergroup *and* master helm charts, we now have a really fast way to deploy an entire distributed Cribl LogStream environment in a kubernetes cluster. For example, if we want to create a distributed which has two autoscaled worker groups, "pcilogs" and "system-metrics", using an auth token of `aabc1602-2d11-11eb-8a09-ab47d5170b65`, and also setting an admin password and installing our license all into the "logstream" kubernetes namespace, we'd use these 3 commands.
 
 ```
-helm install ls-master cribl/logstream-master --set config.groups=\{pcilogs,system-metrics\} --set config.distributedKey="aabc1602-2d11-11eb-8a09-ab47d5170b65" --set config.adminPassword='<admin password>' --set config.license='<license key>'  -n logstream
+helm install ls-master cribl/logstream-master --set config.groups=\{pcilogs,system-metrics\} --set config.token="aabc1602-2d11-11eb-8a09-ab47d5170b65" --set config.adminPassword='<admin password>' --set config.license='<license key>'  -n logstream
 
 helm install ls-wg-pci cribl/logstream-workergroup --set config.host="ls-master-internal" --set config.tag="pcilogs" --set config.token='aabc1602-2d11-11eb-8a09-ab47d5170b65' -n logstream
 

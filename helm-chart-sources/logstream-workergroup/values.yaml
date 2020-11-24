@@ -17,6 +17,8 @@ config:
   host: logstream-master
   tag: kubernetes
   token: criblmaster
+  rejectSelfSignedCerts: 0
+
 
 
 podAnnotations: {}

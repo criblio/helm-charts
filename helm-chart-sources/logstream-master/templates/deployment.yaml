@@ -62,7 +62,7 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           env:
-            # Allow Self-Signed Certs
+            # Self-Signed Certs
             - name: NODE_TLS_REJECT_UNAUTHORIZED
               value: "{{ .Values.config.rejectSelfSignedCerts }}"
             - name: CRIBL_HOME

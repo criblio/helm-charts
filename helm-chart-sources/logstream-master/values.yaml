@@ -15,9 +15,6 @@ nameOverride: "master"
 fullnameOverride: ""
 iter: 1
 
-env: 
-  - foo: "bar"
-
 autoscaling:
   enabled: false
 

@@ -32,8 +32,9 @@ spec:
                 secretKeyRef:
                   name: logstream-config-{{ include "logstream-workergroup.fullname" . }}
                   key: url-master
+            # Self-Signed Certs
             - name: NODE_TLS_REJECT_UNAUTHORIZED
-              value: "0"
+              value: "{{ .Values.config.rejectSelfSignedCerts }}"
           ports: 
             {{-  range .Values.service.ports }}
             - name: {{ .name }}

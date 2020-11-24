@@ -67,11 +67,11 @@ spec:
               value: "{{ .Values.config.rejectSelfSignedCerts }}"
             - name: CRIBL_HOME
               value: {{ .Values.config.criblHome | quote }}
-            {{- if .Values.config.distributedKey }}
+            {{- if .Values.config.token }}
             - name: CRIBL_DIST_MODE
               value: master
             - name: CRIBL_DIST_MASTER_URL
-              value: "tcp://{{ .Values.config.distributedKey }}@0.0.0.0:4200"
+              value: "tcp://{{ .Values.config.token }}@0.0.0.0:4200"
             {{- end }}
             {{- range $key, $value := .Values.env }}
             - name: {{ $key }}
@@ -102,7 +102,7 @@ spec:
 
 
       volumes:
-        {{- if  or .Values.config.license ( or .Values.config.distributedKey .Values.config.groups ) }}
+        {{- if  or .Values.config.license ( or .Values.config.token .Values.config.groups ) }}
         - name: initial-config
           secret:
             secretName: logstream-master-config-{{ include "logstream-master.fullname" . }}

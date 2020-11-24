@@ -24,7 +24,7 @@ autoscaling:
 config:
   scName:
   license:
-  distributedKey:
+  token:
   adminPassword:
   criblHome: /opt/cribl
   rejectSelfSignedCerts: 0

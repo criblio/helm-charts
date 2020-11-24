@@ -12,6 +12,8 @@ This chart is a work in progress - it is provided as is.
 
 As built, this chart will deploy a simple worker group for Cribl LogStream, consisting of a deployment, a service, and a horizontal pod autoscaler config, as well as a secret used for configuration. 
 
+This chart does **not** deploy a master node - it depends on one already being present.
+
 ![Deployment Diagram](images/k8s-logstream-worker-group.svg)
 
 # Pre-Requisites
@@ -31,10 +33,14 @@ This section covers the most likely values to override. To see the full scope of
 |config.host|String|logstream-master|the resolveable hostname of your logstream master - defaults to "logstream-master"|
 |service.ports|Array of Maps|<pre>- name: tcpjson<br>  port: 10001<br>  protocol: TCP<br>- name: s2s<br>  port: 9997<br>  protocol: TCP<br>- name: http<br>  port: 10080<br>  protocol: TCP<br>- name: https<br>  port: 10081<br>  protocol: TCP<br>- name: syslog<br>  port: 5140<br>  protocol: TCP<br>- name: metrics<br>  port: 8125<br>  protocol: TCP<br>- name: elastic<br>  port: 9200<br>  protocol: TCP</pre>|The ports to make available both in the Deployment and the Service. Each "map" in the list needs the following values set: <dl><dt>containerPort</dt><dd>the port to be made available</dd><dt>name</dt><dd>a descriptive name of what the port is being used for</dd><dt>protocol</dt><dd>the protocol in use for this port (UDP/TCP)</dd></dl>|
 |service.annotations|String|None|Annotations for the the service component - this is where you'll want to put load balancer specific configuration directives|
-|image.tag|String|latest|The container image tag to pull from. By default this will use the latest release, but you can also use version tags (like "2.3.2") to pull specific versions of LogStream|
+|criblImage.tag|String|2.3.3|The container image tag to pull from. By default this will use the version equivalent to the Chart's `appVersion` value, but you can override it with "latest" to get the latest release, or to a version number to pull a specific version of LogStream|
 |autoscaling.minReplicas|Number|2|The minimum number of LogStream pods to run.|
 |autoscaling.maxReplicas|Number|10|The maximum number of LogStream pods to scale to run.|
 |autoscaling.targetCPUUtilizationPercentage|Number|50|The CPU utilization percentage that triggers scaling action|
+
+### A Note About Versioning
+
+We recommend that you use the same version of the Cribl LogStream code on master nodes and workergroup nodes. If you're not making the move to 2.3.3 on your master yet, make sure to override the `criblImage.tag` value in the install with the version you are running.
 
 
 ## EKS Specific Values
@@ -89,6 +95,14 @@ helm upgrade logstream-wg cribl/logstream-workergroup -f values.yaml
 ```
 
 Remember, if you installed in a namespace, you need to include the `-n <namespace>` option to any helm command. You'll still have to create the source in your logstream master, commit and deploy it to your worker group.
+
+# Known Issues
+
+* The chart currently supports *only* TCP ports on the worker group services. This may be addressed in future versions.
+
+# More Info
+
+For additional documentation on this chart, see the [Cribl Docs](https://docs.cribl.io/docs/deploy-kubernetes-helm) page about it.
 
 # Feedback
 

@@ -2,14 +2,14 @@ apiVersion: v1
 entries:
   logstream-workergroup:
   - apiVersion: v2
-    appVersion: 2.3.2
-    created: "2020-11-06T21:39:44.800023-08:00"
+    appVersion: 2.3.3
+    created: "2020-11-09T17:34:58.475441-08:00"
     description: Deployment of LogStream Worker Group on K8s
-    digest: 269359c823cf1316d11c232d72c586326694913f6b0a28eb1baa9a9948883c39
+    digest: 02b1e5deba75583234d7c796ab0a2d56ad74928b51416c9512a12e79f5c2f384
     icon: https://criblio.github.io/helm-charts/images/Cribl_Logo_Color_TM.png
     name: logstream-workergroup
     type: application
     urls:
-    - https://criblio.github.io/helm-charts/logstream-workergroup-1.0.1.tgz
-    version: 1.0.1
-generated: "2020-11-06T21:39:44.793311-08:00"
+    - https://criblio.github.io/helm-charts/logstream-workergroup-2.3.3.tgz
+    version: 2.3.3
+generated: "2020-11-09T17:34:58.469974-08:00"

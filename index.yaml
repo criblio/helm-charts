@@ -3,9 +3,9 @@ entries:
   logstream-master:
   - apiVersion: v2
     appVersion: 2.3.3
-    created: "2020-11-24T15:19:36.736534-08:00"
+    created: "2020-11-24T15:24:58.201702-08:00"
     description: Deploys a Cribl LogStream Master in K8s.
-    digest: 706ffa6df7c2b1b50f890da441df2f4e76982528d6118133207e8127bddeeacc
+    digest: c0d8214fc7d95083b8614f6581c03c9c6a5573819ac8fe85107664726d5435b7
     icon: https://criblio.github.io/helm-charts/images/Cribl_Logo_Color_TM.png
     name: logstream-master
     type: application
@@ -15,7 +15,7 @@ entries:
   logstream-workergroup:
   - apiVersion: v2
     appVersion: 2.3.3
-    created: "2020-11-24T15:19:36.739169-08:00"
+    created: "2020-11-24T15:24:58.203143-08:00"
     description: Deployment of LogStream Worker Group on K8s
     digest: 91f761bd91b1c5573eaa4153718c0767f0faf69b7b0922e4d605273d05b6208f
     icon: https://criblio.github.io/helm-charts/images/Cribl_Logo_Color_TM.png
@@ -26,13 +26,13 @@ entries:
     version: 2.3.3
   - apiVersion: v2
     appVersion: 2.3.3
-    created: "2020-11-24T15:19:36.740071-08:00"
+    created: "2020-11-24T15:24:58.203951-08:00"
     description: Deployment of LogStream Worker Group on K8s
-    digest: 29d2648705f90f10392ec7c83c13dc548291cb17f34a11eb5dbab25b3351d00b
+    digest: b236d487f02b88ba6873a77b1f6d58b8fe6c33bb8fdf2e1d469160c70295e34f
     icon: https://criblio.github.io/helm-charts/images/Cribl_Logo_Color_TM.png
     name: logstream-workergroup
     type: application
     urls:
     - https://criblio.github.io/helm-charts/logstream-workergroup-2.3.3a.tgz
     version: 2.3.3a
-generated: "2020-11-24T15:19:36.734425-08:00"
+generated: "2020-11-24T15:24:58.195197-08:00"

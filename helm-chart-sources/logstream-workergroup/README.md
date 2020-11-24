@@ -105,6 +105,6 @@ Remember, if you installed in a namespace, you need to include the `-n <namespac
 
 For additional documentation on this chart, see the [Cribl Docs](https://docs.cribl.io/docs/deploy-kubernetes-helm) page about it.
 
-# Feedback
+# Support/Feedback
 
 If you use this helm chart, we'd love to hear any feedback you might have on this chart. Join us on our [Slack Community](https://cribl.io/community) in the #kubernetes channel.

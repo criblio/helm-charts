@@ -6,7 +6,7 @@ This Chart deploys a Cribl LogStream master server.
 
 # DISCLAIMER
 
-This chart is **EXPERIMENTAL** at this point. Use it at your own risk!
+This chart is a work in progress - it is provided as is.
 
 # Deployment
 
@@ -103,6 +103,6 @@ As mentioned above, the default is to install a vanilla deployment of LogStream.
 The example above will create three worker groups: `group1`, `group2`, and `group3`, and a mapping rule for each.
 
 
-# Feedback
+# Feedback/Support
 
 If you use this helm chart, we'd love to hear any feedback you might have on this chart. Join us on our [Slack Community](https://cribl.io/community) in the #kubernetes channel.

@@ -1,50 +1,15 @@
 apiVersion: v1
 entries:
-  logstream-daemonset:
-  - apiVersion: v2
-    appVersion: 2.2.3
-    created: "2020-11-17T09:07:21.041418-08:00"
-    description: Experimental Deployment of LogStream Worker Group on K8s
-    digest: b7e4d1ebe19142beb4adad89662ffd29446b2f987def57874d5c3f9ea3162663
-    icon: https://cribl.io/wp-content/uploads/2019/06/logo-black.png
-    name: logstream-daemonset
-    type: application
-    urls:
-    - https://criblio.github.io/helm-charts/logstream-daemonset-0.1.0.tgz
-    version: 0.1.0
-  logstream-master:
-  - apiVersion: v2
-    appVersion: 1.16.0
-    created: "2020-11-17T09:07:21.0427-08:00"
-    description: Deploys a Cribl LogStream Master in K8s.
-    digest: 282bf0b0d4578b11a2689485c057873ecb274d5828efe31d54fd9dfc940e7b5f
-    icon: https://criblio.github.io/helm-charts/images/Cribl_Logo_Color_TM.png
-    name: logstream-master
-    type: application
-    urls:
-    - https://criblio.github.io/helm-charts/logstream-master-0.1.0.tgz
-    version: 0.1.0
   logstream-workergroup:
   - apiVersion: v2
     appVersion: 2.3.2
-    created: "2020-11-17T09:07:21.043456-08:00"
+    created: "2020-11-06T21:39:44.800023-08:00"
     description: Deployment of LogStream Worker Group on K8s
-    digest: eaf8defb3909fa7e558ffda595b9432b88683a1eefd79e9509e4d27125eff1bb
+    digest: 269359c823cf1316d11c232d72c586326694913f6b0a28eb1baa9a9948883c39
     icon: https://criblio.github.io/helm-charts/images/Cribl_Logo_Color_TM.png
     name: logstream-workergroup
     type: application
     urls:
     - https://criblio.github.io/helm-charts/logstream-workergroup-1.0.1.tgz
     version: 1.0.1
-  - apiVersion: v2
-    appVersion: 2.3.2
-    created: "2020-11-17T09:07:21.044814-08:00"
-    description: Deployment of LogStream Worker Group on K8s
-    digest: 6fb6416f817179e390d62b1685116f05d48e2c5c08cc41cae4b14826133e673c
-    icon: https://criblio.github.io/helm-charts/images/Cribl_Logo_Color_TM.png
-    name: logstream-workergroup
-    type: application
-    urls:
-    - https://criblio.github.io/helm-charts/logstream-workergroup-1.tgz
-    version: "1"
-generated: "2020-11-17T09:07:21.039764-08:00"
+generated: "2020-11-06T21:39:44.793311-08:00"

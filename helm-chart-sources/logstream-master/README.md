@@ -71,8 +71,6 @@ for a fairly exhaustive lists of annotations you can use with AWS's Elastic Load
 
  `helm install logstream-master cribl/logstream-master`
 
-  (if you're doing it from a local git clone, do: `helm install logstream-master <path to git clone/helm-chart-sources/logstream-master>`)
-
 
 * To install the chart using the storage class "ebs-sc"
 

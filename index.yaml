@@ -3,9 +3,9 @@ entries:
   logstream-master:
   - apiVersion: v2
     appVersion: 2.3.3
-    created: "2020-11-24T15:24:58.201702-08:00"
+    created: "2020-11-24T15:29:49.793867-08:00"
     description: Deploys a Cribl LogStream Master in K8s.
-    digest: c0d8214fc7d95083b8614f6581c03c9c6a5573819ac8fe85107664726d5435b7
+    digest: f564b642bb65be4e37aa2275e5a090d77c133eff53ad6df0b9532e43510c9a3f
     icon: https://criblio.github.io/helm-charts/images/Cribl_Logo_Color_TM.png
     name: logstream-master
     type: application
@@ -15,7 +15,18 @@ entries:
   logstream-workergroup:
   - apiVersion: v2
     appVersion: 2.3.3
-    created: "2020-11-24T15:24:58.203143-08:00"
+    created: "2020-11-24T15:29:49.795513-08:00"
+    description: Deployment of LogStream Worker Group on K8s
+    digest: 7a15ca706a49748384e9843732e03835c72dbe4540c55c7522429345f60e0fb0
+    icon: https://criblio.github.io/helm-charts/images/Cribl_Logo_Color_TM.png
+    name: logstream-workergroup
+    type: application
+    urls:
+    - https://criblio.github.io/helm-charts/logstream-workergroup-2.3.31.tgz
+    version: 2.3.31
+  - apiVersion: v2
+    appVersion: 2.3.3
+    created: "2020-11-24T15:29:49.794698-08:00"
     description: Deployment of LogStream Worker Group on K8s
     digest: 91f761bd91b1c5573eaa4153718c0767f0faf69b7b0922e4d605273d05b6208f
     icon: https://criblio.github.io/helm-charts/images/Cribl_Logo_Color_TM.png
@@ -24,15 +35,4 @@ entries:
     urls:
     - https://criblio.github.io/helm-charts/logstream-workergroup-2.3.3.tgz
     version: 2.3.3
-  - apiVersion: v2
-    appVersion: 2.3.3
-    created: "2020-11-24T15:24:58.203951-08:00"
-    description: Deployment of LogStream Worker Group on K8s
-    digest: b236d487f02b88ba6873a77b1f6d58b8fe6c33bb8fdf2e1d469160c70295e34f
-    icon: https://criblio.github.io/helm-charts/images/Cribl_Logo_Color_TM.png
-    name: logstream-workergroup
-    type: application
-    urls:
-    - https://criblio.github.io/helm-charts/logstream-workergroup-2.3.3a.tgz
-    version: 2.3.3a
-generated: "2020-11-24T15:24:58.195197-08:00"
+generated: "2020-11-24T15:29:49.789238-08:00"

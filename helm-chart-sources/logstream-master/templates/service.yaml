@@ -1,0 +1,44 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "logstream-master.fullname" . }}-internal
+  labels:
+    {{- include "logstream-master.labels" . | nindent 4 }}
+  annotations:
+    {{- toYaml .Values.service.annotations  | nindent 4 }}
+
+spec:
+  type: {{ .Values.service.internalType }}
+  ports:
+      {{-  range .Values.service.ports }}
+      - port: {{ .port }}
+        targetPort: {{ .port }}
+        protocol: {{ .protocol }}
+        name: {{ .name }}
+      {{- end }}
+  selector:
+    {{- include "logstream-master.selectorLabels" . | nindent 4 }}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "logstream-master.fullname" . }}
+  labels:
+    {{- include "logstream-master.labels" . | nindent 4 }}
+  annotations:
+    {{- toYaml .Values.service.annotations  | nindent 4 }}
+
+spec:
+  type: {{ .Values.service.externalType }}
+  ports:
+      {{-  range .Values.service.ports }}
+      {{ if .external  }}
+      - port: {{ .port }}
+        targetPort: {{ .port }}
+        protocol: {{ .protocol }}
+        name: {{ .name }}
+      {{- end }}
+      {{- end }}
+  selector:
+    {{- include "logstream-master.selectorLabels" . | nindent 4 }}

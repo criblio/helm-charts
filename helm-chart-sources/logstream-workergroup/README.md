@@ -31,6 +31,7 @@ This section covers the most likely values to override. To see the full scope of
 |config.tag|String|kubernetes|tag/group to include in the URL (included as both a group value and a tag value) - defaults to "criblmaster"|
 |config.token|String|criblmaster|the authentication token for your logstream master - defaults to "kubernetes"|
 |config.host|String|logstream-master|the resolveable hostname of your logstream master - defaults to "logstream-master"|
+|config.rejectSelfSignedCerts|Number|0|0 - allow self-signed certs, 1 - deny self-signed certs|
 |service.ports|Array of Maps|<pre>- name: tcpjson<br>  port: 10001<br>  protocol: TCP<br>- name: s2s<br>  port: 9997<br>  protocol: TCP<br>- name: http<br>  port: 10080<br>  protocol: TCP<br>- name: https<br>  port: 10081<br>  protocol: TCP<br>- name: syslog<br>  port: 5140<br>  protocol: TCP<br>- name: metrics<br>  port: 8125<br>  protocol: TCP<br>- name: elastic<br>  port: 9200<br>  protocol: TCP</pre>|The ports to make available both in the Deployment and the Service. Each "map" in the list needs the following values set: <dl><dt>containerPort</dt><dd>the port to be made available</dd><dt>name</dt><dd>a descriptive name of what the port is being used for</dd><dt>protocol</dt><dd>the protocol in use for this port (UDP/TCP)</dd></dl>|
 |service.annotations|String|None|Annotations for the the service component - this is where you'll want to put load balancer specific configuration directives|
 |criblImage.tag|String|2.3.3|The container image tag to pull from. By default this will use the version equivalent to the Chart's `appVersion` value, but you can override it with "latest" to get the latest release, or to a version number to pull a specific version of LogStream|
@@ -104,6 +105,6 @@ Remember, if you installed in a namespace, you need to include the `-n <namespac
 
 For additional documentation on this chart, see the [Cribl Docs](https://docs.cribl.io/docs/deploy-kubernetes-helm) page about it.
 
-# Feedback
+# Support/Feedback
 
 If you use this helm chart, we'd love to hear any feedback you might have on this chart. Join us on our [Slack Community](https://cribl.io/community) in the #kubernetes channel.

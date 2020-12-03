@@ -1,0 +1,133 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "logstream-master.fullname" . }}
+  labels:
+    {{- include "logstream-master.labels" . | nindent 4 }}
+spec:
+{{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+{{- end }}
+  selector:
+    matchLabels:
+      {{- include "logstream-master.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+    {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      labels:
+        {{- include "logstream-master.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.criblImage.repository }}:{{ .Values.criblImage.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.criblImage.pullPolicy }}
+          volumeMounts:
+          - name: local-storage
+            mountPath: {{ .Values.config.criblHome }}/local
+          - name: data-storage
+            mountPath: {{ .Values.config.criblHome }}/data
+          - name: state-storage
+            mountPath: {{ .Values.config.criblHome }}/state
+          - name: groups-storage
+            mountPath: {{ .Values.config.criblHome }}/groups
+          {{- if  .Values.config.license  }}
+          - name: initial-config
+            mountPath: /var/tmp/config_bits
+          {{- end }}
+          ports:
+            {{-  range .Values.service.ports }}
+            - name: {{ .name }}
+              containerPort: {{ .port }}
+            {{- end }}
+          livenessProbe:
+            httpGet:
+              path: /api/v1/health
+              port: {{ .Values.config.healthPort }}
+            failureThreshold: 3
+            initialDelaySeconds: 60
+          readinessProbe:
+            httpGet:
+              path: /api/v1/health
+              port: {{ .Values.config.healthPort }}
+            failureThreshold: 3
+            initialDelaySeconds: 60
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          env:
+            # Self-Signed Certs
+            - name: NODE_TLS_REJECT_UNAUTHORIZED
+              value: "{{ .Values.config.rejectSelfSignedCerts }}"
+            - name: CRIBL_HOME
+              value: {{ .Values.config.criblHome | quote }}
+            {{- if .Values.config.token }}
+            - name: CRIBL_DIST_MODE
+              value: master
+            - name: CRIBL_DIST_MASTER_URL
+              value: "tcp://{{ .Values.config.token }}@0.0.0.0:4200"
+            {{- end }}
+            {{- range $key, $value := .Values.env }}
+            - name: {{ $key }}
+              value: {{ $value }}
+            {{- end }}
+
+            {{- $b_iter := 1 -}}
+
+            {{- if .Values.config.license }}
+            - name: CRIBL_BEFORE_START_CMD_{{ $b_iter }}
+              value: "if [ ! -e {{ .Values.config.criblHome }}/local/cribl/licenses.yml ]; then cp /var/tmp/config_bits/licenses.yml {{ .Values.config.criblHome }}/local/cribl/licenses.yml; fi"
+              {{- $b_iter = add $b_iter 1 }}
+            {{- end }}
+            {{- if .Values.config.groups }}
+            - name: CRIBL_BEFORE_START_CMD_{{ $b_iter }}
+              value: "if [ ! -e {{ .Values.config.criblHome }}/local/cribl/mappings.yml ]; then cp /var/tmp/config_bits/groups.yml {{ .Values.config.criblHome }}/local/cribl/groups.yml; cp /var/tmp/config_bits/mappings.yml {{ .Values.config.criblHome }}/local/cribl/mappings.yml; fi"
+              {{- $b_iter = add $b_iter 1 }}
+            {{- end }}
+
+            {{- $a_iter := 1 -}}
+
+            {{- if .Values.config.adminPassword }}
+            - name: CRIBL_AFTER_START_CMD_{{ $a_iter }}
+              value: "sleep 60 && cp /var/tmp/config_bits/users.json {{ .Values.config.criblHome }}/local/cribl/auth/users.json"
+              {{- $a_iter = add $a_iter 1 }}
+
+            {{- end }}
+
+
+      volumes:
+        {{- if  or .Values.config.license ( or .Values.config.token .Values.config.groups ) }}
+        - name: initial-config
+          secret:
+            secretName: logstream-master-config-{{ include "logstream-master.fullname" . }}
+        {{- end }}
+        - name: local-storage
+          persistentVolumeClaim:
+            claimName: local-claim
+        - name: data-storage
+          persistentVolumeClaim:
+            claimName: data-claim
+        - name: state-storage
+          persistentVolumeClaim:
+            claimName: state-claim
+        - name: groups-storage
+          persistentVolumeClaim:
+            claimName: groups-claim
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

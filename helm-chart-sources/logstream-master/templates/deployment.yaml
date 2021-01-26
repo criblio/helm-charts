@@ -92,8 +92,8 @@ spec:
             {{- $a_iter := 1 -}}
 
             {{- if .Values.config.adminPassword }}
-            - name: CRIBL_BEFORE_START_CMD_{{ $b_iter }}
-              value: "[ -e $CRIBL_VOLUME_DIR/local/cribl/auth/users.json ] && mkdir -p $CRIBL_VOLUME_DIR/local/cribl/auth && cp /var/tmp/config_bits/users.json $CRIBL_VOLUME_DIR/local/cribl/auth/users.json"
+            - name: CRIBL_AFTER_START_CMD_{{ $a_iter }}
+              value: "[ ! -f $CRIBL_VOLUME_DIR/users_imported ] && sleep 20 && cp /var/tmp/config_bits/users.json $CRIBL_VOLUME_DIR/local/cribl/auth/users.json && touch $CRIBL_VOLUME_DIR/users_imported"
               {{- $a_iter = add $a_iter 1 }}
 
             {{- end }}

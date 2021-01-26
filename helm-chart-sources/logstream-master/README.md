@@ -75,6 +75,8 @@ for a fairly exhaustive lists of annotations you can use with AWS's Elastic Load
 * To install the chart using the storage class "ebs-sc"
 
   `helm install logstream-master cribl/logstream-master --set config.scName='lebs-sc`
+  
+
 
 # LogStream Configuration Overrides
 
@@ -100,6 +102,52 @@ The helm chart, without any values overrides, creates effectively a standalone i
 
   The example above will create three worker groups: `group1`, `group2`, and `group3`, and a mapping rule for each.
 
+
+# Upgrading from a pre-2.4.0 version
+In LogStream 2.4.0, the introduction of the `$CRIBL_VOLUME_DIR` environment variable simplifies the persistent storage requirement for logstream-master. Instead of maintaining 4 separate persistent volumes (one each for $CRIBL_HOME/{data,state,local,groups}), they can all be consolidated into a single volume. 
+
+In the helm chart, we handle this via the helm upgrade command. The upgrade option for the 2.4.0 version of the chart creates a new, larger, volume and consolidates the data from the original volumes to it. This is done via an initContainer that handles the logistics. When it finishes, and the logstream-master pod comes back up, it is with a single consolidated volume. 
+
+## WARNING: BACK UP YOUR DATA FIRST
+
+While we've tested this upgrade multiple times, there are always differences in environments that can cause problems. As a result, we recommend that you back up the data before running the upgrade command. This is best done with a combination of kubectl and tar:
+
+```
+kubectl exec <pod name> -n <namespace> -- bash -c "cd /opt/cribl; tar cf - {state,data,local,groups}" > cribl_backup.tar
+```
+
+This command executes the tar based back up of all four volumes, and outputs it to a local tar file (cribl_backup.tar)
+
+## Running the Upgrade
+Helm makes upgrades easy, as you just need to run `helm repo update` to ensure you have the latest repo updates available, followed by `helm upgrade` to actually upgrade the containers.
+
+For example, if you've installed the helm charts in the `logstream` namespace, named your release "ls-master", and set up your helm repo per the pre-reqs section (i.e. named it "cribl"), run the following:
+
+```
+helm repo update
+helm upgrade ls-master -n logstream cribl/logstream-master
+```
+
+## Upgrade Order of Operations
+
+While there should be no major problems running a 2.4.0 master and 2.3.4 workers, it's not recommended. Cribl recommends that you upgrade the master helm chart first, and then upgrade the workers (see [logstream-workergroup/README.md](/criblio/helm-charts/logstream-worker/README.md) for details). 
+
+### IMPORTANT - Upgrade from pre 2.4.0 to 2.4.0 Helm Charts can be done ONCE
+Since there is a destructive action (merging the four volumes down to one), this upgrade process can only be run one time per master release. 
+
+
+## Recovering from a failed upgrade
+If the upgrade fails, the suggested recovery path is removing the helm chart and reinstalling, and then running this command to restore the data from the backup:
+
+```
+cat cribl_backup.tar| kubectl -n <namespace> exec --stdin <pod name> -- bash -c "cd /opt/cribl/config-volume/; tar xf -"
+```
+
+This will restore the data into the "new" volume (which is mounted as /opt/cribl/config-volume). If you want to doublecheck that:
+
+```
+kubectl -n <namespace> exec <pod name> -- bash -c "ls -alR /opt/cribl/config-volume"
+```
 
 # Feedback/Support
 

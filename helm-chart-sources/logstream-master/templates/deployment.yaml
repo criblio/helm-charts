@@ -30,14 +30,8 @@ spec:
           image: "{{ .Values.criblImage.repository }}:{{ .Values.criblImage.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.criblImage.pullPolicy }}
           volumeMounts:
-          - name: local-storage
-            mountPath: {{ .Values.config.criblHome }}/local
-          - name: data-storage
-            mountPath: {{ .Values.config.criblHome }}/data
-          - name: state-storage
-            mountPath: {{ .Values.config.criblHome }}/state
-          - name: groups-storage
-            mountPath: {{ .Values.config.criblHome }}/groups
+          - name: config-storage
+            mountPath: {{ .Values.config.criblHome }}/config-volume
           {{- if  .Values.config.license  }}
           - name: initial-config
             mountPath: /var/tmp/config_bits
@@ -72,7 +66,11 @@ spec:
               value: master
             - name: CRIBL_DIST_MASTER_URL
               value: "tcp://{{ .Values.config.token }}@0.0.0.0:4200"
+            # Single Volume for persistents (CRIBL-3848)
+            - name: CRIBL_VOLUME_DIR
+              value: {{ .Values.config.criblHome }}/config-volume
             {{- end }}
+            
             {{- range $key, $value := .Values.env }}
             - name: {{ $key }}
               value: {{ $value }}
@@ -82,24 +80,49 @@ spec:
 
             {{- if .Values.config.license }}
             - name: CRIBL_BEFORE_START_CMD_{{ $b_iter }}
-              value: "if [ ! -e {{ .Values.config.criblHome }}/local/cribl/licenses.yml ]; then cp /var/tmp/config_bits/licenses.yml {{ .Values.config.criblHome }}/local/cribl/licenses.yml; fi"
+              value: "if [ ! -e $CRIBL_VOLUME_DIR/local/cribl/licenses.yml ]; then mkdir -p $CRIBL_VOLUME_DIR/local/cribl ; cp /var/tmp/config_bits/licenses.yml $CRIBL_VOLUME_DIR/local/cribl/licenses.yml; fi"
               {{- $b_iter = add $b_iter 1 }}
             {{- end }}
             {{- if .Values.config.groups }}
             - name: CRIBL_BEFORE_START_CMD_{{ $b_iter }}
-              value: "if [ ! -e {{ .Values.config.criblHome }}/local/cribl/mappings.yml ]; then cp /var/tmp/config_bits/groups.yml {{ .Values.config.criblHome }}/local/cribl/groups.yml; cp /var/tmp/config_bits/mappings.yml {{ .Values.config.criblHome }}/local/cribl/mappings.yml; fi"
+              value: "if [ ! -e $CRIBL_VOLUME_DIR/local/cribl/mappings.yml ]; then mkdir -p $CRIBL_VOLUME_DIR/local/cribl;  cp /var/tmp/config_bits/groups.yml $CRIBL_VOLUME_DIR/local/cribl/groups.yml; cp /var/tmp/config_bits/mappings.yml $CRIBL_VOLUME_DIR/local/cribl/mappings.yml; fi"
               {{- $b_iter = add $b_iter 1 }}
             {{- end }}
 
             {{- $a_iter := 1 -}}
 
             {{- if .Values.config.adminPassword }}
-            - name: CRIBL_AFTER_START_CMD_{{ $a_iter }}
-              value: "sleep 60 && cp /var/tmp/config_bits/users.json {{ .Values.config.criblHome }}/local/cribl/auth/users.json"
+            - name: CRIBL_BEFORE_START_CMD_{{ $b_iter }}
+              value: "[ -e $CRIBL_VOLUME_DIR/local/cribl/auth/users.json ] && mkdir -p $CRIBL_VOLUME_DIR/local/cribl/auth && cp /var/tmp/config_bits/users.json $CRIBL_VOLUME_DIR/local/cribl/auth/users.json"
               {{- $a_iter = add $a_iter 1 }}
 
             {{- end }}
+      {{- if  .Release.IsUpgrade }}
+      initContainers:
+        - name: pre-upgrade-volume-coalescence
+          image: "alpine:3.3"
+          command: ["/bin/ash","-c"]
+          args:
+            - for dir in local data state groups; do
+                if [ ! -d {{ .Values.config.criblHome }}/config-volume/$dir ]; then 
+                  (cd {{ .Values.config.criblHome }}; tar cf - --exclude lost+found .) | (cd {{ .Values.config.criblHome }}/config-volume; tar xf -); 
+                fi
+              done
+  
+          volumeMounts:
+            - name: config-storage
+              mountPath: {{ .Values.config.criblHome }}/config-volume        
+            - name: local-storage
+              mountPath: {{ .Values.config.criblHome }}/local
+            - name: data-storage
+              mountPath: {{ .Values.config.criblHome }}/data
+            - name: state-storage
+              mountPath: {{ .Values.config.criblHome }}/state
+            - name: groups-storage
+              mountPath: {{ .Values.config.criblHome }}/groups
 
+
+      {{- end }}
 
       volumes:
         {{- if  or .Values.config.license ( or .Values.config.token .Values.config.groups ) }}
@@ -107,6 +130,10 @@ spec:
           secret:
             secretName: logstream-master-config-{{ include "logstream-master.fullname" . }}
         {{- end }}
+        - name: config-storage
+          persistentVolumeClaim:
+            claimName: config-claim
+        {{- if  .Release.IsUpgrade }}
         - name: local-storage
           persistentVolumeClaim:
             claimName: local-claim
@@ -119,6 +146,8 @@ spec:
         - name: groups-storage
           persistentVolumeClaim:
             claimName: groups-claim
+      {{- end }}
+
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

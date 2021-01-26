@@ -4,11 +4,19 @@
 
 replicaCount: 1
 
+serviceAccount:
+  create: true
+
+rbac:
+  create: true
+  resources:
+  - pods
+
 criblImage:
   repository: cribl/cribl
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "2.3.4"
+  tag: "2.4.0"
 
 imagePullSecrets: []
 nameOverride: ""

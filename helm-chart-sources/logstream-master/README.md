@@ -50,7 +50,7 @@ This section covers the most likely values to override. To see the full scope of
 |config.healthPort|number|9000|the port to use for health checks (readiness/live)|
 |service.ports|Array of Maps|<pre>- name: api<br>  port: 9000<br>  protocol: TCP<br>  external: true<br>- name: mastercomm<br>  port: 4200<br>  protocol: TCP<br>  external: false</pre>|The ports to make available both in the Deployment and the Service. Each "map" in the list needs the following values set: <dl><dt>containerPort</dt><dd>the port to be made available</dd><dt>name</dt><dd>a descriptive name of what the port is being used for</dd><dt>protocol</dt><dd>the protocol in use for this port (UDP/TCP)</dd><dt>external</dt><dd>Set to true to be exposed on the external service, or false not to</dd></dl>|
 |service.annotations|String|None|Annotations for the the service component - this is where you'll want to put load balancer specific configuration directives|
-|image.tag|String|latest|The container image tag to pull from. By default this will use the latest release, but you can also use version tags (like "2.3.2") to pull specific versions of LogStream|
+|criblImage.tag|String|latest|The container image tag to pull from. By default this will use the latest release, but you can also use version tags (like "2.3.2") to pull specific versions of LogStream|
 
 
 ## EKS Specific Values
@@ -76,6 +76,9 @@ for a fairly exhaustive lists of annotations you can use with AWS's Elastic Load
 
   `helm install logstream-master cribl/logstream-master --set config.scName='lebs-sc`
   
+# Post-Install/Post-Upgrade
+
+LogStream will not automatically deploy changes to the worker nodes, so you'll need to go into the LogStream UI, and [commit and deploy changes](https://docs.cribl.io/docs/deploy-distributed) for all of your worker groups 
 
 
 # LogStream Configuration Overrides

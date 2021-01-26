@@ -135,8 +135,8 @@ helm upgrade ls-master -n logstream cribl/logstream-master
 
 While there should be no major problems running a 2.4.0 master and 2.3.4 workers, it's not recommended. Cribl recommends that you upgrade the master helm chart first, and then upgrade the workers (see [logstream-workergroup/README.md](/criblio/helm-charts/logstream-worker/README.md) for details). 
 
-### IMPORTANT - Upgrade from pre 2.4.0 to 2.4.0 Helm Charts can be done ONCE
-Since there is a destructive action (merging the four volumes down to one), this upgrade process can only be run one time per master release. 
+### Idempotency of Upgrade
+The upgrade operation does do a potentially destructive action in coalescing the 4 volumes to a single volume, but that operation is only happens if the single volume does not have data on it. Once the upgrade is performed the first time, any further upgrade operations will effectively skip that coalescence operation without causing any additional issues. 
 
 
 ## Recovering from a failed upgrade
@@ -151,6 +151,10 @@ This will restore the data into the "new" volume (which is mounted as /opt/cribl
 ```
 kubectl -n <namespace> exec <pod name> -- bash -c "ls -alR /opt/cribl/config-volume"
 ```
+
+# Caveats/Known Issues
+* The upgrade process creates an initContainer, which will run prior to any instance of the logstream pod. Since the coalescence operation will not overwrite existing data, this is not a functional problem, but depending on your persistent volume setup, may cause pod restarts to take additional time waiting for the release of the volume claims. The only upgrade path that will have this issue is 2.3* -> 2.4.0 - in the next iteration, we'll remove the initContainer from the upgrade path. 
+* The upgrade process does leave the old PersistentVolumes and PersistentVolumeClaims around. This, unfortunately, is necessary for this upgrade path. In follow on versions, these volumes will be removed from the chart.
 
 # Feedback/Support
 

@@ -9,5 +9,5 @@ metadata:
 rules:
   - apiGroups: [""]
     resources: {{ .Values.rbac.resources }}
-    verbs: ["get", "list"]
+    verbs: {{ .Values.rbac.verbs }}
 {{- end }}

@@ -18,7 +18,7 @@ spec:
       labels:
         {{- include "logstream-workergroup.selectorLabels" . | nindent 8 }}
     spec:
-      {{- if .Values.serviceAccount.create }}
+      {{- if .Values.rbac.create }}
       serviceAccountName: {{ template "logstream-workergroup.serviceAccountName" . }}
       {{- end }}
       {{- with .Values.imagePullSecrets }}

@@ -66,10 +66,10 @@ spec:
               value: master
             - name: CRIBL_DIST_MASTER_URL
               value: "tcp://{{ .Values.config.token }}@0.0.0.0:4200"
+            {{- end }}
             # Single Volume for persistents (CRIBL-3848)
             - name: CRIBL_VOLUME_DIR
               value: {{ .Values.config.criblHome }}/config-volume
-            {{- end }}
             
             {{- range $key, $value := .Values.env }}
             - name: {{ $key }}

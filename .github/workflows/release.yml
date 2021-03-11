@@ -1,0 +1,55 @@
+name: Build Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: GitHub slug
+        uses: rlespinasse/github-slug-action@3.1.0
+
+      - name: Make releases directory structure
+        run: mkdir -p $GITHUB_WORKSPACE/${{ env.GITHUB_REF_SLUG }}
+
+      - name: Install Helm
+        run: |
+          mkdir -p $GITHUB_WORKSPACE/bin/
+          echo "$GITHUB_WORKSPACE/bin/" >> $GITHUB_PATH
+          curl -Ls https://get.helm.sh/helm-v3.5.3-linux-amd64.tar.gz | tar xzvf - --strip-components=1 -C $GITHUB_WORKSPACE/bin/
+
+      - name: helm lint
+        run: helm lint helm-chart-sources/*
+
+      - name: helm package
+        run: helm package helm-chart-sources/* -d ${{ env.GITHUB_REF_SLUG }}/
+
+      - name: helm repo
+        run: helm repo index --url https://github.com/bdalpe/helm-charts/releases/download/ --merge index.yaml .
+
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ${{ env.GITHUB_REF_SLUG }}/logstream-*.tgz
+          file_glob: true
+          tag: ${{ env.GITHUB_REF_SLUG }}
+
+      - name: Setup git config
+        run: |
+          git config user.name "Github Release Bot"
+          git config user.email "<>"
+
+      - name: Push commit
+        run: |
+          git fetch
+          git checkout master
+          git add index.yaml
+          git commit -m "Release ${{ env.GITHUB_REF_SLUG }}"
+          git push origin master

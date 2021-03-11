@@ -31,7 +31,7 @@ Add the Cribl Helm repo.
 helm repo add cribl https://criblio.github.io/helm-charts/
 ```
 
-The following example creates a distributed with two autoscaled worker groups, "pcilogs" and "system-metrics", using an auth token of `aabc1602-2d11-11eb-8a09-ab47d5170b65`, and also setting an admin password and installing our license.
+The following example creates a distributed with two autoscaled worker groups, "pcilogs" and "system-metrics", using an auth token of `ABCDEF01-1234-5678-ABCD-ABCDEF012345`, and also setting an admin password and installing our license.
 
 ```shell
 helm install ls-master cribl/logstream-master \

@@ -15,6 +15,9 @@ spec:
         targetPort: {{ .port }}
         protocol: {{ .protocol }}
         name: {{ .name }}
+        {{ if (and (eq $.Values.service.internalType "NodePort") (not (empty .nodePort))) }}
+        nodePort: {{.nodePort}}
+        {{ end }}
       {{- end }}
   selector:
     {{- include "logstream-master.selectorLabels" . | nindent 4 }}
@@ -38,6 +41,9 @@ spec:
         targetPort: {{ .port }}
         protocol: {{ .protocol }}
         name: {{ .name }}
+        {{ if (and (eq $.Values.service.externalType "NodePort") (not (empty .nodePort))) }}
+        nodePort: {{.nodePort}}
+        {{ end }}
       {{- end }}
       {{- end }}
   selector:

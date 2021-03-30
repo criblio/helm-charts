@@ -8,6 +8,8 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+    env:
+      HELM_VERSION: 3.5.3
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
@@ -22,7 +24,7 @@ jobs:
         run: |
           mkdir -p $GITHUB_WORKSPACE/bin/
           echo "$GITHUB_WORKSPACE/bin/" >> $GITHUB_PATH
-          curl -Ls https://get.helm.sh/helm-v3.5.3-linux-amd64.tar.gz | tar xzvf - --strip-components=1 -C $GITHUB_WORKSPACE/bin/
+          curl -Ls https://get.helm.sh/helm-v${HELM_VERSION}-linux-amd64.tar.gz | tar xzvf - --strip-components=1 -C $GITHUB_WORKSPACE/bin/
 
       - name: helm lint
         run: helm lint helm-chart-sources/*

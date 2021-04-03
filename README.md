@@ -1,29 +1,69 @@
 ![Cribl Logo](images/Cribl_Logo_Color_TM.png)
 # Cribl Helm Charts
 
-This is a HELM repository for charts published by Cribl, Inc. 
+This is a Helm repository for charts published by Cribl, Inc.
+
+With the advent of the worker group and master Helm charts, we now have a really fast way to deploy an entire distributed Cribl LogStream environment to a Kubernetes cluster.
 
 # Pre-Requisites
 
-Every chart contained herein has, at least, the same basic pre-requisites:
+Helm version 3 is required to use these charts.
 
-1. Helm (preferably v3) installed - instructions are [here](https://helm.sh/docs/intro/install/)
-1. Cribl helm repo configured. To do this:
-	`helm repo add cribl https://criblio.github.io/helm-charts/`
-
-# Deploying a complete distributed system
-
-With the advent of the workergroup *and* master helm charts, we now have a really fast way to deploy an entire distributed Cribl LogStream environment in a kubernetes cluster. For example, if we want to create a distributed which has two autoscaled worker groups, "pcilogs" and "system-metrics", using an auth token of `aabc1602-2d11-11eb-8a09-ab47d5170b65`, and also setting an admin password and installing our license all into the "logstream" kubernetes namespace, we'd use these 3 commands.
+On a Mac with Homebrew:
 
 ```
-helm install ls-master cribl/logstream-master --set config.groups=\{pcilogs,system-metrics\} --set config.token="aabc1602-2d11-11eb-8a09-ab47d5170b65" --set config.adminPassword='<admin password>' --set config.license='<license key>'  -n logstream
-
-helm install ls-wg-pci cribl/logstream-workergroup --set config.host="ls-master-internal" --set config.tag="pcilogs" --set config.token='aabc1602-2d11-11eb-8a09-ab47d5170b65' -n logstream
-
-helm install ls-wg-system-metrics cribl/logstream-workergroup --set config.host="ls-master-internal" --set config.tag="system-metrics" --set config.token='aabc1602-2d11-11eb-8a09-ab47d5170b65' -n logstream
-
+brew install helm
 ```
 
+Instructions for other operation systems can be found here: https://helm.sh/docs/intro/install/
+
+# Deploying
+
+If you haven't done so already, create a namespace. Our documentation example uses `logstream`.
+
+```
+kubectl create namespace logstream
+```
+
+Add the Cribl Helm repo.
+
+```
+helm repo add cribl https://criblio.github.io/helm-charts/
+```
+
+The following example creates a distributed with two autoscaled worker groups, "pcilogs" and "system-metrics", using an auth token of `ABCDEF01-1234-5678-ABCD-ABCDEF012345`, and also setting an admin password and installing our license.
+
+```shell
+helm install ls-master cribl/logstream-master \
+  --set "config.groups={pcilogs,system-metrics}" \
+  --set config.token="ABCDEF01-1234-5678-ABCD-ABCDEF012345" \
+  --set config.adminPassword="<admin password>" \
+  --set config.license="<license key>" \
+  -n logstream
+
+helm install ls-wg-pci cribl/logstream-workergroup \
+  --set config.host="ls-master-internal" \
+  --set config.tag="pcilogs" \
+  --set config.token="ABCDEF01-1234-5678-ABCD-ABCDEF012345" \
+  -n logstream
+
+helm install ls-wg-system-metrics cribl/logstream-workergroup \
+  --set config.host="ls-master-internal" \
+  --set config.tag="system-metrics" \
+  --set config.token="ABCDEF01-1234-5678-ABCD-ABCDEF012345" \
+  -n logstream
+```
+
+# Upgrading
+
+Upgrading LogStream to new bits is easy. Update the repo and then upgrade each chart version. Add `--version X.Y.Z` if you want to [specify a specific version](https://helm.sh/docs/helm/helm_upgrade/).
+
+```
+helm repo update
+helm upgrade ls-master cribl/logstream-master -n logstream
+helm upgrade ls-wg-pci cribl/logstream-workergroup -n logstream
+helm upgrade ls-wg-system-metrics cribl/logstream-workergroup -n logstream
+```
 
 # Support
 

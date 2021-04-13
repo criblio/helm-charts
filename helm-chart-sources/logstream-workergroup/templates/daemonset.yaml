@@ -1,12 +1,11 @@
-{{- if (eq .Values.deployment "deployment") -}}
+{{- if (eq .Values.deployment "daemonset") -}}
 apiVersion: apps/v1
-kind: Deployment
+kind: DaemonSet
 metadata:
   name: {{ include "logstream-workergroup.fullname" . }}
   labels:
     {{- include "logstream-workergroup.labels" . | nindent 4 }}
 spec:
-  replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
       {{- include "logstream-workergroup.selectorLabels" . | nindent 6 }}

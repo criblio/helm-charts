@@ -5,28 +5,45 @@
 replicaCount: 1
 
 rbac:
-  create: false
+  create: true
+  apiGroups: 
+  - core
   resources:
   - pods
   verbs:
   - get
   - list
 
+  extraRules:
+  - apiGroups:
+    - storage.k8s.io
+    resources:
+    - volumes
+    verbs:
+    - get
+    - list
+
 criblImage:
   repository: cribl/cribl
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "2.4.3"
+  tag: "2.4.4"
 
 imagePullSecrets: []
 nameOverride: ""
 
+
 config: 
   host: logstream-master
-  tag: kubernetes
+  group: kubernetes
+  group: kubernetes
   token: criblmaster
   rejectSelfSignedCerts: 0
 
+deployment: deployment
+securityContext:
+  runAsUser: 1020
+  runAsGroup: 30
 
 
 podAnnotations: {}

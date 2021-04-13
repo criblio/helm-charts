@@ -7,7 +7,10 @@ metadata:
   labels:
     {{- include "logstream-workergroup.labels" . | nindent 4 }}
 rules:
-  - apiGroups: [""]
+  - apiGroups: {{ .Values.rbac.apiGroups }}
     resources: {{ .Values.rbac.resources }}
     verbs: {{ .Values.rbac.verbs }}
+  {{- with .Values.rbac.extraRules }}
+    {{- toYaml . | nindent 2 }}
+  {{- end }}
 {{- end }}

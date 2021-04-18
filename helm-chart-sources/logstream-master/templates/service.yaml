@@ -33,7 +33,7 @@ metadata:
     {{- toYaml .Values.service.annotations  | nindent 4 }}
 
 spec:
-  type: {{ .Values.service.externalType }}
+  type: {{- if (eq $.Values.ingress.enable true) }} NodePort {{- else }}ClusterIP{{- end }}
   ports:
       {{-  range .Values.service.ports }}
       {{ if .external  }}
@@ -41,7 +41,7 @@ spec:
         targetPort: {{ .port }}
         protocol: {{ .protocol }}
         name: {{ .name }}
-        {{ if (and (eq $.Values.service.externalType "NodePort") (not (empty .nodePort))) }}
+        {{ if (and (or (eq $.Values.service.externalType "NodePort") (eq $.Values.ingress.enable true)) (not (empty .nodePort))) }}
         nodePort: {{.nodePort}}
         {{ end }}
       {{- end }}

@@ -2,15 +2,12 @@
 {{- if .Values.rbac.create }}
 serviceAccountName: {{ include "logstream-workergroup.fullname" . }}
 {{- end }}
-{{- if .Values.securityContextXX }}
-securityContext:
-{{ toYaml .Values.securityContext | indent 2 }}
-{{- end }}
+
 {{- with .Values.imagePullSecrets }}
 imagePullSecrets:
   {{- toYaml . | nindent 8 }}
 {{- end }}
-{{- with .Values.initContainers }}
+{{- with .Values.extraInitContainers }}
 initContainers:
   {{- toYaml . | nindent 8 }}
 {{- end }}

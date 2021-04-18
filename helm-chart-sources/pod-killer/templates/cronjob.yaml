@@ -1,0 +1,59 @@
+---
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: {{ include "pod-killer.fullname" . }}
+spec:
+  schedule: {{ .Values.schedule | quote }}
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          name: {{ include "pod-killer.fullname" . }}
+          labels:
+            {{- include "pod-killer.labels" . | nindent 12 }}
+          annotations:
+            {{- toYaml .Values.annotations  | nindent 12 }}
+        spec:
+          serviceAccountName: {{ include "pod-killer.fullname" . }}
+          restartPolicy: Never
+          containers:
+          - image: bitnami/kubectl:latest
+            env:
+            - name: MY_POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            command:
+            - bash
+            - -c
+            - |
+              set -ex
+              # Grab the Target-Pods from the annotations
+              export TARGET=$(grep target-pods /etc/podinfo/annotations | perl -pe 's/"//g;' | awk -F= '{print $2}') 
+              # Break them into individual targets
+              IFS=','  read -r -a targets <<<$TARGET
+    
+              # Go through each one.
+              for i in "${targets[@]}"; do
+                # Grab every pod matching the name spec, and delete it.
+                for POD in $(kubectl get pods -n $MY_POD_NAMESPACE | egrep "^${i}" | awk '{print $1}'); do
+                  echo "Deleting: $POD"
+                  kubectl delete pod $POD -n $MY_POD_NAMESPACE
+                done
+              done
+            imagePullPolicy: Always
+            name: {{ include "pod-killer.fullname" . }}
+            volumeMounts:
+            - name: podinfo
+              mountPath: /etc/podinfo
+          volumes:
+          - name: podinfo
+            downwardAPI:
+              items:
+              - path: "labels"
+                fieldRef:
+                  fieldPath: metadata.labels
+              - path: "annotations"
+                fieldRef:
+                  fieldPath: metadata.annotations

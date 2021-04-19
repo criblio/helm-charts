@@ -43,6 +43,7 @@ containers:
       subPath: {{ .subPath | default "" }}
       readOnly: {{ .readOnly }}
     {{- end }}
+    
     ports:
       {{-  range .Values.service.ports }}
       - name: {{ .name }}
@@ -161,6 +162,25 @@ volumes:
   - name: groups-storage
     persistentVolumeClaim:
       claimName: groups-claim
+{{- end }}
+{{- range .Values.extraConfigmapMounts }}
+  - name: {{ .name }}
+    configMap:
+      name: {{ .configMap }}
+{{- end }}
+{{- range .Values.extraSecretMounts }}
+{{- if .secretName }}
+  - name: {{ .name }}
+    secret:
+      secretName: {{ .secretName }}
+      defaultMode: {{ .defaultMode }}
+{{- else if .projected }}
+  - name: {{ .name }}
+    projected: {{- toYaml .projected | nindent 6 }}
+{{- else if .csi }}
+  - name: {{ .name }}
+    csi: {{- toYaml .csi | nindent 6 }}
+{{- end }}
 {{- end }}
 
 {{- with .Values.nodeSelector }}

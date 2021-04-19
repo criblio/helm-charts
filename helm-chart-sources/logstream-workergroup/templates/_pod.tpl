@@ -64,6 +64,38 @@ containers:
   {{- with .Values.extraContainers }}
   {{ tpl . $ | indent 2 }}
   {{- end }}
+volumes:
+  {{- range .Values.extraVolumeMounts }}
+  - name: {{ .name }}
+    {{- if .existingClaim }}
+    persistentVolumeClaim:
+      claimName: {{ .existingClaim }}
+    {{- else if .hostPath }}
+    hostPath:
+      path: {{ .hostPath }}
+    {{- else }}
+    emptyDir: {}
+    {{- end }}
+  {{- end }}
+  {{- range .Values.extraConfigmapMounts }}
+  - name: {{ .name }}
+    configMap:
+      name: {{ .configMap }}
+  {{- end }}
+  {{- range .Values.extraSecretMounts }}
+  {{- if .secretName }}
+  - name: {{ .name }}
+    secret:
+      secretName: {{ .secretName }}
+      defaultMode: {{ .defaultMode }}
+  {{- else if .projected }}
+  - name: {{ .name }}
+    projected: {{- toYaml .projected | nindent 6 }}
+  {{- else if .csi }}
+  - name: {{ .name }}
+    csi: {{- toYaml .csi | nindent 6 }}
+  {{- end }}
+  {{- end }}
 
 {{- end }}
 

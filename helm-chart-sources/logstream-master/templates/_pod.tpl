@@ -21,7 +21,7 @@ containers:
     volumeMounts:
     - name: config-storage
       mountPath: {{ .Values.config.criblHome }}/config-volume
-    {{- if  .Values.config.license  }}
+    {{- if  or .Values.config.license ( or .Values.config.adminPassword .Values.config.groups ) }}
     - name: initial-config
       mountPath: /var/tmp/config_bits
     {{- end }}
@@ -104,7 +104,7 @@ initContainers:
 {{- with .Values.extraInitContainers }}
   {{- toYaml . | nindent 8 }}
 {{- end }}
-{{- if  .Release.IsUpgrade }}
+{{- if  (and .Release.IsUpgrade .Values.consolidate_volumes)  }}
   - name: pre-upgrade-volume-coalescence
     image: "alpine:3.3"
     command: ["/bin/ash","-c"]
@@ -128,7 +128,7 @@ initContainers:
 {{- end }}
 
 volumes:
-  {{- if  or .Values.config.license ( or .Values.config.token .Values.config.groups ) }}
+  {{- if  or .Values.config.license ( or .Values.config.adminPassword .Values.config.groups ) }}
   - name: initial-config
     secret:
       secretName: logstream-master-config-{{ include "logstream-master.fullname" . }}

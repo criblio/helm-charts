@@ -10,4 +10,4 @@ subjects:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: {{ include "pod-killer.fullname" . }}
+  name: {{ include "pod-killer.fullname" . }}-{{ .Release.Namespace }}

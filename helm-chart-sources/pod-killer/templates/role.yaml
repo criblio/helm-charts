@@ -3,7 +3,7 @@
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: {{ include "pod-killer.fullname" . }}
+  name: {{ include "pod-killer.fullname" . }}-{{ .Release.Namespace }}
 rules:
   - apiGroups: [""]
     resources: ["pods", "pod"]

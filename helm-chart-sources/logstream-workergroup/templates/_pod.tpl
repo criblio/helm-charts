@@ -34,6 +34,9 @@ containers:
       # Self-Signed Certs
       - name: NODE_TLS_REJECT_UNAUTHORIZED
         value: "{{ .Values.config.rejectSelfSignedCerts }}"
+      {{ if .Values.envValueFrom }}
+      {{ toYaml .Values.envValueFrom | nindent 6  }}
+      {{- end }}
     volumeMounts:
       {{- range .Values.extraConfigmapMounts }}
       - name: {{ .name }}
@@ -51,6 +54,7 @@ containers:
       - name: {{ .name }}
         mountPath: {{ .mountPath }}
         subPath: {{ .subPath | default "" }}
+        subPathExpr: {{ .subPathExpr | default "" }}
         readOnly: {{ .readOnly }}
       {{- end }}
 

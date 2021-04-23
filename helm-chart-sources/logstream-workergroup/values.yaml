@@ -41,10 +41,6 @@ config:
   rejectSelfSignedCerts: 0
 
 deployment: deployment
-securityContext:
-  runAsUser: 1020
-  runAsGroup: 30
-
 
 podAnnotations: {}
 

@@ -37,6 +37,11 @@ containers:
       {{ if .Values.envValueFrom }}
       {{ toYaml .Values.envValueFrom | nindent 6  }}
       {{- end }}
+      {{- range $key, $value := .Values.env }}
+      - name: "{{ tpl $key $ }}"
+        value: "{{ tpl (print $value) $ }}"
+      {{- end }}
+
     volumeMounts:
       {{- range .Values.extraConfigmapMounts }}
       - name: {{ .name }}
@@ -47,8 +52,8 @@ containers:
       {{- range .Values.extraSecretMounts }}
       - name: {{ .name }}
         mountPath: {{ .mountPath }}
-        readOnly: {{ .readOnly }}
         subPath: {{ .subPath | default "" }}
+        readOnly: {{ .readOnly }}
       {{- end }}
       {{- range .Values.extraVolumeMounts }}
       - name: {{ .name }}
@@ -65,9 +70,7 @@ containers:
       {{- end }}
     resources:
       {{- toYaml .Values.resources | nindent 12 }}
-  {{- with .Values.extraContainers }}
-  {{ tpl . $ | indent 2 }}
-  {{- end }}
+
 volumes:
   {{- range .Values.extraVolumeMounts }}
   - name: {{ .name }}

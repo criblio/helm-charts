@@ -78,13 +78,15 @@ containers:
       # Single Volume for persistents (CRIBL-3848)
       - name: CRIBL_VOLUME_DIR
         value: {{ .Values.config.criblHome }}/config-volume
-      
+      {{ if .Values.envValueFrom }}
+      {{ toYaml .Values.envValueFrom | nindent 6  }}
+      {{- end }}
       {{- range $key, $value := .Values.env }}
       - name: {{ $key }}
-        value: {{ $value }}
+        value: {{ $value | quote }}
       {{- end }}   
-     {{- $b_iter := 1 -}} 
-     {{- if .Values.config.license }}
+      {{- $b_iter := 1 -}} 
+      {{- if .Values.config.license }}
       - name: CRIBL_BEFORE_START_CMD_{{ $b_iter }}
         value: "if [ ! -e $CRIBL_VOLUME_DIR/local/cribl/licenses.yml ]; then mkdir -p $CRIBL_VOLUME_DIR/local/cribl ; cp /var/tmp/config_bits/licenses.yml $CRIBL_VOLUME_DIR/local/cribl/licenses.yml; fi"
         {{- $b_iter = add $b_iter 1 }}

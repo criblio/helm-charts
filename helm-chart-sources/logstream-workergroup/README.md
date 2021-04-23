@@ -26,21 +26,31 @@ This chart does **not** deploy a master node - it depends on one already being p
 
 This section covers the most likely values to override. To see the full scope of values available, run `helm show values cribl/logstream-workergroup`. 
 
-|Key|Type|Default Value|Description|
-|---|----|-------------|-----------|
-|config.tag|String|kubernetes|tag/group to include in the URL (included as both a group value and a tag value) - defaults to "criblmaster"|
-|config.token|String|criblmaster|the authentication token for your logstream master - defaults to "kubernetes"|
-|config.host|String|logstream-master|the resolveable hostname of your logstream master - defaults to "logstream-master"|
-|config.rejectSelfSignedCerts|Number|0|0 - allow self-signed certs, 1 - deny self-signed certs|
-|service.ports|Array of Maps|<pre>- name: tcpjson<br>  port: 10001<br>  protocol: TCP<br>- name: s2s<br>  port: 9997<br>  protocol: TCP<br>- name: http<br>  port: 10080<br>  protocol: TCP<br>- name: https<br>  port: 10081<br>  protocol: TCP<br>- name: syslog<br>  port: 5140<br>  protocol: TCP<br>- name: metrics<br>  port: 8125<br>  protocol: TCP<br>- name: elastic<br>  port: 9200<br>  protocol: TCP</pre>|The ports to make available both in the Deployment and the Service. Each "map" in the list needs the following values set: <dl><dt>containerPort</dt><dd>the port to be made available</dd><dt>name</dt><dd>a descriptive name of what the port is being used for</dd><dt>protocol</dt><dd>the protocol in use for this port (UDP/TCP)</dd></dl>|
-|service.annotations|String|None|Annotations for the the service component - this is where you'll want to put load balancer specific configuration directives|
-|criblImage.tag|String|2.4.0|The container image tag to pull from. By default this will use the version equivalent to the Chart's `appVersion` value, but you can override it with "latest" to get the latest release, or to a version number to pull a specific version of LogStream|
-|autoscaling.minReplicas|Number|2|The minimum number of LogStream pods to run.|
-|autoscaling.maxReplicas|Number|10|The maximum number of LogStream pods to scale to run.|
-|autoscaling.targetCPUUtilizationPercentage|Number|50|The CPU utilization percentage that triggers scaling action|
-|rbac.create|Boolean|false|Enable Service Account Role & Binding Creation|
-|rbac.resources|List|["pods"]|Set the resource boundary for the role being created (K8s resources)|
-|rbac.verbs|List|["get", "list"]|Set the API verbs allowed the role (default is read ops)|
+|Key|Default Value|Description|
+|---|-------------|-----------|
+|config.group|"kubernetes"|tag/group to include in the URL (included as both a group value and a tag value) - defaults to "criblmaster"|
+|config.token|"criblmaster"|the authentication token for your logstream master - defaults to "kubernetes"|
+|config.host|"logstream-master"|the resolveable hostname of your logstream master - defaults to "logstream-master"|
+|config.rejectSelfSignedCerts|0|0 - allow self-signed certs, 1 - deny self-signed certs|
+|service.ports|<pre>- name: tcpjson<br>  port: 10001<br>  protocol: TCP<br>- name: s2s<br>  port: 9997<br>  protocol: TCP<br>- name: http<br>  port: 10080<br>  protocol: TCP<br>- name: https<br>  port: 10081<br>  protocol: TCP<br>- name: syslog<br>  port: 5140<br>  protocol: TCP<br>- name: metrics<br>  port: 8125<br>  protocol: TCP<br>- name: elastic<br>  port: 9200<br>  protocol: TCP</pre>|The ports to make available both in the Deployment and the Service. Each "map" in the list needs the following values set: <dl><dt>containerPort</dt><dd>the port to be made available</dd><dt>name</dt><dd>a descriptive name of what the port is being used for</dd><dt>protocol</dt><dd>the protocol in use for this port (UDP/TCP)</dd></dl>|
+|service.annotations|{}|Annotations for the the service component - this is where you'll want to put load balancer specific configuration directives|
+|criblImage.tag|"2.4.5"|The container image tag to pull from. By default this will use the version equivalent to the Chart's `appVersion` value, but you can override it with "latest" to get the latest release, or to a version number to pull a specific version of LogStream|
+|autoscaling.minReplicas|2|The minimum number of LogStream pods to run.|
+|autoscaling.maxReplicas|10|The maximum number of LogStream pods to scale to run.|
+|autoscaling.targetCPUUtilizationPercentage|50|The CPU utilization percentage that triggers scaling action|
+|rbac.create|false|Enable Service Account Role & Binding Creation|
+|rbac.resources|["pods"]|Set the resource boundary for the role being created (K8s resources)|
+|rbac.verbs|["get", "list"]|Set the API verbs allowed the role (default is read ops)|
+|__Extra Configuration Options__|
+|[extraVolumeMounts](../../common_docs/EXTRA_EXAMPLES.md#extraVolumeMounts)|{}|Additional Volumes to Mount in the container.|
+|extraSecretMounts|[]|Pre-existing secrets to mount within the container. |
+|extraConfigmapMounts|{}|Pre-existing configmaps to mount within the container. |
+|extraInitContainers|{}|Additional containers to run ahead of the primary container in the pod.|
+|securityContext.runAsUser|0|User ID to run the container processes under.|
+|securityContext.runAsGroup|0|Group ID to run the container processes under.|
+|envValueFrom|{}|Environment Variables to be exposed from the Downward API.|
+|env|[]|Additional Static Environment Variables.|
+|deployment|deployment|"deployment" to deploy as a Deployment Set, "daemonset" to deploy as a DaemonSet.|
 
 ### A Note About Versioning
 

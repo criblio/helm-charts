@@ -49,7 +49,7 @@ This section covers the most likely values to override. To see the full scope of
 |[securityContext.runAsUser](../../common_docs/EXTRA_EXAMPLES.md#securityContext)|0|User ID to run the container processes under.|
 |[securityContext.runAsGroup](../../common_docs/EXTRA_EXAMPLES.md#securityContext)|0|Group ID to run the container processes under.|
 |[envValueFrom](../../common_docs/EXTRA_EXAMPLES.md#extraEnvFrom)|{}|Environment Variables to be exposed from the Downward API.|
-|env|[]|Additional Static Environment Variables.|
+|[env](../../common_docs/EXTRA_EXAMPLES.md#env)|[]|Additional Static Environment Variables.|
 |deployment|deployment|"deployment" to deploy as a Deployment Set, "daemonset" to deploy as a DaemonSet.|
 
 ### A Note About Versioning

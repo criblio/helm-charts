@@ -119,3 +119,48 @@ extraVolumeMounts:
   existingClaim: test-volume
   readOnly: false
 ```
+
+## Using extraInitContainers <a name="extraInitContainers"></a>
+_Availability: logstream-workergroup and logstream-master_
+
+The extraInitContainers option allows you to run one or more initContainers prior to the main logstream worker container starting up. This can be useful for making OS level changes to a persistent volume (like chown or chmod of files or directories), among other things. This takes one or more container definitions.
+
+### Example
+This example is an extremely simple container definition that uses the base alpine container image that changes the permissions on the directory `/opt/mypath` to 755.
+
+```
+extraInitContainers:
+- name: testing
+  image: "alpine:latest"
+  command: ["/bin/ash", "-c"]
+  args:
+    - chmod 755 /opt/mypath
+```
+
+## Using securityContext <a name="securityContext"></a>
+_Availability: logstream-workergroup and logstream-master_
+
+The securityContext option allows you to define a user id and a group id to run the container processes under. When you do this, the first step the container goes through, prior to starting logstream, is to chown the /opt/cribl directory recursively to that user/group id. On the logstream-master chart, it also chowns the /opt/cribl/config-volume directory tree. It then starts the entrypoint.sh script as the specified user.
+
+### Example
+This example runs the processes under the userid of 1020 and the group id of 30. 
+
+```
+securityContext:
+  runAsUser: 1020
+  runAsGroup: 30
+```
+
+## env <a name="env"></a>
+_Availability: logstream-workergroup and logstream-master_
+
+The env option allows you to specify additional static environment variables for the container. This takes a set of key value pairs.
+
+### Example
+This example creates two environment variables, `DATA_DIR` and `JOB_ID`
+
+```
+env: 
+  DATA_DIR: "/var/tmp/data"
+  JOB_ID: "reconciliation"
+```

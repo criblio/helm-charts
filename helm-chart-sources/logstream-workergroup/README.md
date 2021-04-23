@@ -58,17 +58,7 @@ This section covers the most likely values to override. To see the full scope of
 We recommend that you use the same version of the Cribl LogStream code on master nodes and workergroup nodes. If you're not making the move to 2.4.0 on your master yet, make sure to override the `criblImage.tag` value in the install with the version you are running.
 
 
-## EKS Specific Values
-In the case of an EKS deployment, there are many annotations that can be made for the load balancer. Internally, we usually use the annotations for logging to S3, like this:
 
-```
-    service.beta.kubernetes.io/aws-load-balancer-access-log-enabled: "true"
-    service.beta.kubernetes.io/aws-load-balancer-access-log-emit-interval: "5"
-    service.beta.kubernetes.io/aws-load-balancer-access-log-s3-bucket-name: "<bucket name>"
-    service.beta.kubernetes.io/aws-load-balancer-access-log-s3-bucket-prefix: "ELB"
-```
-
-for a fairly exhaustive lists of annotations you can use with AWS's Elastic Load Balancers, see the [Kubernetes Service](https://kubernetes.io/docs/concepts/services-networking/service/) page.
 
 # Install
 

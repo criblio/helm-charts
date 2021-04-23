@@ -39,31 +39,30 @@ This section covers the most likely values to override. To see the full scope of
 
 
 
-|Key|Type|Default Value|Description|
-|---|----|-------------|-----------|
-|config.adminPassword|String|_none_|The password you want the admin user to have set.|
-|config.token|String|_none_|The auth key you want to set up for worker access. The LogStream instance is only configured as a distributed master server if this value is set. This can, of course, also be configured via the LogStream UI|
-|config.license|String|_none_|The license for your logstream instance. If you do not set this, it will default to the "free" license. You can change this in the LogStream UI as well.|
-|config.groups|List|_none_|The group names to configure for the master instance - this will create a mapping for each group which looks for the tag `<groupname>`, and will create the basic structure of each groups configuration.|
-|config.scName|String|default storage class|the StorageClass Name for all of the persistent volumes.|
-|config.rejectSelfSignedCerts|Number|0|0 - allow self-signed certs, 1 - deny self-signed certs|
-|config.healthPort|number|9000|the port to use for health checks (readiness/live)|
-|service.ports|Array of Maps|<pre>- name: api<br>  port: 9000<br>  protocol: TCP<br>  external: true<br>- name: mastercomm<br>  port: 4200<br>  protocol: TCP<br>  external: false</pre>|The ports to make available both in the Deployment and the Service. Each "map" in the list needs the following values set: <dl><dt>containerPort</dt><dd>the port to be made available</dd><dt>name</dt><dd>a descriptive name of what the port is being used for</dd><dt>protocol</dt><dd>the protocol in use for this port (UDP/TCP)</dd><dt>external</dt><dd>Set to true to be exposed on the external service, or false not to</dd></dl>|
-|service.annotations|String|None|Annotations for the the service component - this is where you'll want to put load balancer specific configuration directives|
-|criblImage.tag|String|latest|The container image tag to pull from. By default this will use the latest release, but you can also use version tags (like "2.3.2") to pull specific versions of LogStream|
+|Key|Default Value (or type)|Description|
+|---|----|-------------|
+|config.adminPassword|String|The password you want the admin user to have set.|
+|config.token|String|The auth key you want to set up for worker access. The LogStream instance is only configured as a distributed master server if this value is set. This can, of course, also be configured via the LogStream UI|
+|config.license|String|The license for your logstream instance. If you do not set this, it will default to the "free" license. You can change this in the LogStream UI as well.|
+|config.groups|[]|The group names to configure for the master instance - this will create a mapping for each group which looks for the tag `<groupname>`, and will create the basic structure of each groups configuration.|
+|config.scName|default storage class|the StorageClass Name for all of the persistent volumes.|
+|config.rejectSelfSignedCerts|0|0 - allow self-signed certs, 1 - deny self-signed certs|
+|config.healthPort|9000|the port to use for health checks (readiness/live)|
+|service.ports|[]|<pre>- name: api<br>  port: 9000<br>  protocol: TCP<br>  external: true<br>- name: mastercomm<br>  port: 4200<br>  protocol: TCP<br>  external: false</pre>|The ports to make available both in the Deployment and the Service. Each "map" in the list needs the following values set: <dl><dt>containerPort</dt><dd>the port to be made available</dd><dt>name</dt><dd>a descriptive name of what the port is being used for</dd><dt>protocol</dt><dd>the protocol in use for this port (UDP/TCP)</dd><dt>external</dt><dd>Set to true to be exposed on the external service, or false not to</dd></dl>|
+|service.annotations|{}|Annotations for the the service component - this is where you'll want to put load balancer specific configuration directives|
+|criblImage.tag|2.4.5|The container image tag to pull from. By default this will use the latest release, but you can also use version tags (like "2.3.2") to pull specific versions of LogStream|
+|__Extra Configuration Options__|
+|[extraVolumeMounts](../../common_docs/EXTRA_EXAMPLES.md#extraVolumeMounts)|{}|Additional Volumes to Mount in the container.|
+|[extraSecretMounts](../../common_docs/EXTRA_EXAMPLES.md#extraSecretMounts)|[]|Pre-existing secrets to mount within the container. |
+|[extraConfigmapMounts](../../common_docs/EXTRA_EXAMPLES.md#extraConfigmapMounts)|{}|Pre-existing configmaps to mount within the container. |
+|[extraInitContainers](../../common_docs/EXTRA_EXAMPLES.md#extraInitContainers)|{}|Additional containers to run ahead of the primary container in the pod.|
+|[securityContext.runAsUser](../../common_docs/EXTRA_EXAMPLES.md#securityContext)|0|User ID to run the container processes under.|
+|[securityContext.runAsGroup](../../common_docs/EXTRA_EXAMPLES.md#securityContext)|0|Group ID to run the container processes under.|
+|[envValueFrom](../../common_docs/EXTRA_EXAMPLES.md#extraEnvFrom)|{}|Environment Variables to be exposed from the Downward API.|
+|[env](../../common_docs/EXTRA_EXAMPLES.md#env)|[]|Additional Static Environment Variables.|
+|ingress.enable|false|Enable Ingress in front of the external service. Setting this to true changes the external service to type NodePort, and creates an ingress that connects to it.|
+|ingress.annotations|{}|If ingress.enable is set to true, this is where annotations to configure the specific ingress controller. _*NOTE: Ingress is only supported on Kubernetes 1.19 and later clusters*_|
 
-
-## EKS Specific Values
-In the case of an EKS deployment, there are many annotations that can be made for the load balancer. Internally, we usually use the annotations for logging to S3, like this:
-
-```
-    service.beta.kubernetes.io/aws-load-balancer-access-log-enabled: "true"
-    service.beta.kubernetes.io/aws-load-balancer-access-log-emit-interval: "5"
-    service.beta.kubernetes.io/aws-load-balancer-access-log-s3-bucket-name: "<bucket name>"
-    service.beta.kubernetes.io/aws-load-balancer-access-log-s3-bucket-prefix: "ELB"
-```
-
-for a fairly exhaustive lists of annotations you can use with AWS's Elastic Load Balancers, see the [Kubernetes Service](https://kubernetes.io/docs/concepts/services-networking/service/) page.
 
 # Basic Installation
 
@@ -152,9 +151,11 @@ This will restore the data into the "new" volume (which is mounted as /opt/cribl
 kubectl -n <namespace> exec <pod name> -- bash -c "ls -alR /opt/cribl/config-volume"
 ```
 
+
 # Caveats/Known Issues
 * The upgrade process creates an initContainer, which will run prior to any instance of the logstream pod. Since the coalescence operation will not overwrite existing data, this is not a functional problem, but depending on your persistent volume setup, may cause pod restarts to take additional time waiting for the release of the volume claims. The only upgrade path that will have this issue is 2.3* -> 2.4.0 - in the next iteration, we'll remove the initContainer from the upgrade path. 
 * The upgrade process does leave the old PersistentVolumes and PersistentVolumeClaims around. This, unfortunately, is necessary for this upgrade path. In follow on versions, these volumes will be removed from the chart.
+* [EKS Specific Issues](../../common_docs/EKS_SPECIFICS.md)
 
 # Feedback/Support
 

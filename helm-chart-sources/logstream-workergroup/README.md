@@ -43,12 +43,12 @@ This section covers the most likely values to override. To see the full scope of
 |rbac.verbs|["get", "list"]|Set the API verbs allowed the role (default is read ops)|
 |__Extra Configuration Options__|
 |[extraVolumeMounts](../../common_docs/EXTRA_EXAMPLES.md#extraVolumeMounts)|{}|Additional Volumes to Mount in the container.|
-|extraSecretMounts|[]|Pre-existing secrets to mount within the container. |
-|extraConfigmapMounts|{}|Pre-existing configmaps to mount within the container. |
-|extraInitContainers|{}|Additional containers to run ahead of the primary container in the pod.|
+|[extraSecretMounts](../../common_docs/EXTRA_EXAMPLES.md#extraSecretMounts)|[]|Pre-existing secrets to mount within the container. |
+|[extraConfigmapMounts](../../common_docs/EXTRA_EXAMPLES.md#extraConfigmapMounts)|{}|Pre-existing configmaps to mount within the container. |
+|[extraInitContainers](../../common_docs/EXTRA_EXAMPLES.md#extraInitContainers)|{}|Additional containers to run ahead of the primary container in the pod.|
 |securityContext.runAsUser|0|User ID to run the container processes under.|
 |securityContext.runAsGroup|0|Group ID to run the container processes under.|
-|envValueFrom|{}|Environment Variables to be exposed from the Downward API.|
+|[envValueFrom](../../common_docs/EXTRA_EXAMPLES.md#extraEnvFrom)|{}|Environment Variables to be exposed from the Downward API.|
 |env|[]|Additional Static Environment Variables.|
 |deployment|deployment|"deployment" to deploy as a Deployment Set, "daemonset" to deploy as a DaemonSet.|
 

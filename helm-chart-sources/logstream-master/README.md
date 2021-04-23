@@ -51,6 +51,7 @@ This section covers the most likely values to override. To see the full scope of
 |service.ports|[]|<pre>- name: api<br>  port: 9000<br>  protocol: TCP<br>  external: true<br>- name: mastercomm<br>  port: 4200<br>  protocol: TCP<br>  external: false</pre>|The ports to make available both in the Deployment and the Service. Each "map" in the list needs the following values set: <dl><dt>containerPort</dt><dd>the port to be made available</dd><dt>name</dt><dd>a descriptive name of what the port is being used for</dd><dt>protocol</dt><dd>the protocol in use for this port (UDP/TCP)</dd><dt>external</dt><dd>Set to true to be exposed on the external service, or false not to</dd></dl>|
 |service.annotations|{}|Annotations for the the service component - this is where you'll want to put load balancer specific configuration directives|
 |criblImage.tag|2.4.5|The container image tag to pull from. By default this will use the latest release, but you can also use version tags (like "2.3.2") to pull specific versions of LogStream|
+|consolidate_volumes|boolean|If this value exists and the helm command is "upgrade", this will use the split volumes that we created in charts before 2.4 and consolidate them down to one config volume. This is a ONE TIME event.|
 |__Extra Configuration Options__|
 |[extraVolumeMounts](../../common_docs/EXTRA_EXAMPLES.md#extraVolumeMounts)|{}|Additional Volumes to Mount in the container.|
 |[extraSecretMounts](../../common_docs/EXTRA_EXAMPLES.md#extraSecretMounts)|[]|Pre-existing secrets to mount within the container. |
@@ -106,9 +107,11 @@ The helm chart, without any values overrides, creates effectively a standalone i
 
 
 # Upgrading from a pre-2.4.0 version
+**NOTE**: This has changed in the 2.4.5 version.
+
 In LogStream 2.4.0, the introduction of the `$CRIBL_VOLUME_DIR` environment variable simplifies the persistent storage requirement for logstream-master. Instead of maintaining 4 separate persistent volumes (one each for $CRIBL_HOME/{data,state,local,groups}), they can all be consolidated into a single volume. 
 
-In the helm chart, we handle this via the helm upgrade command. The upgrade option for the 2.4.0 version of the chart creates a new, larger, volume and consolidates the data from the original volumes to it. This is done via an initContainer that handles the logistics. When it finishes, and the logstream-master pod comes back up, it is with a single consolidated volume. 
+In the helm chart, we handle this via the helm upgrade command. If you are upgrading from a pre-2.4 version of the chart, you'll want to set the 'consolidate_volumes' value, which will create a new, larger, volume and consolidates the data from the original volumes to it. This is done via an initContainer that handles the logistics. When it finishes, and the logstream-master pod comes back up, it is with a single consolidated volume. 
 
 ## WARNING: BACK UP YOUR DATA FIRST
 

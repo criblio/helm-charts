@@ -51,6 +51,7 @@ This section covers the most likely values to override. To see the full scope of
 |[envValueFrom](../../common_docs/EXTRA_EXAMPLES.md#extraEnvFrom)|{}|Environment Variables to be exposed from the Downward API.|
 |[env](../../common_docs/EXTRA_EXAMPLES.md#env)|[]|Additional Static Environment Variables.|
 |deployment|deployment|"deployment" to deploy as a Deployment Set, "daemonset" to deploy as a DaemonSet.|
+|[rbac.extraRules](../../common_docs/EXTRA_EXAMPLES.md#rbac.extraRules)|{}|Additional RBAC rules to put in place.|
 
 ### A Note About Versioning
 

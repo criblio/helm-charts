@@ -164,3 +164,17 @@ env:
   DATA_DIR: "/var/tmp/data"
   JOB_ID: "reconciliation"
 ```
+
+## rbac.extraRules <a name="rbac.extraRules"></a>
+_Availability: logstream-workergroup_
+
+The rbac.extraRules option allows you to specify additional RBAC rules into the RBAC setup for logstream-workergroup. It does require rbac.create to be set to `true`. it takes a list of maps, just like the rules in a Kubernetes role. 
+
+### Example
+This example provides access to "deployments", allowing verbs `get`, `list`, `watch`, `create`, `update`, `patch`, and `delete`, for the API groups `extensions` and `apps`.
+
+```
+- apiGroups: ["extensions", "apps"]
+  resources: ["deployments"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+```

@@ -97,6 +97,7 @@ In version 2.4.0 (and beyond), an option has been added to create the access mec
 * rbac.create - enables the creation of a Service Account, Cluster Role and Role Binding (which binds the first two together) for the release
 * rbac.resources - specifies the Kubernetes API resources that will be available to the release
 * rbac.verbs - specifies the API verbs that will be available to the release
+* rbac.extraRules - additional rulesets for the cluster role.
 
 For more info on the verbs and resources available, see the [Kubernetes documentation](https://kubernetes.io/docs/reference/access-authn-authz/rbac/). 
 
@@ -126,9 +127,19 @@ helm upgrade logstream-wg cribl/logstream-workergroup -f values.yaml
 
 Remember, if you installed in a namespace, you need to include the `-n <namespace>` option to any helm command. You'll still have to create the source in your logstream master, commit and deploy it to your worker group.
 
+# Using Persistent Storage for Persistent Queueing
+
+With the addition of the extraVolumeMounts capability, it is now feasible to use persistent volumes for LogStream persistent queueing. However, Cribl does not recommend this - there is variability in persistent storage implementations, and this variability can lead to problems in scaling workergroups. However, if you choose to implement persistent volumes for queueing, please consider these suggestions:
+
+1. Use a shared storage volume mechanism. We've worked with the EFS CSI driver for AWS, and it works fairly well (though it can be a little tedious to configure).
+2. Understand your kubernetes networking topology and how it interacts with your persistent storage driver (for example, if you're in AWS, ensure that your volumes are available in all availability zones that your nodes might run in). 
+3. Monitor the workergroup pods for volume issues; the faster you can see them and react, the more likely that you'll be able to resolve issues that may arise.
+
 # Known Issues
 
 * The chart currently supports *only* TCP ports on the worker group services. This may be addressed in future versions.
+* [EKS Specific Issues](../../common_docs/EKS_SPECIFICS.md)
+
 
 # More Info
 

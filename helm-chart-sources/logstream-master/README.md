@@ -78,7 +78,7 @@ This section covers the most likely values to override. To see the full scope of
   
 # Post-Install/Post-Upgrade
 
-LogStream will not automatically deploy changes to the worker nodes, so you'll need to go into the LogStream UI, and [commit and deploy changes](https://docs.cribl.io/docs/deploy-distributed) for all of your worker groups 
+LogStream will not automatically deploy changes to the worker nodes, so you'll need to go into the LogStream UI, and [commit and deploy changes](https://docs.cribl.io/docs/deploy-distributed) for all of your worker groups. 
 
 
 # LogStream Configuration Overrides
@@ -90,6 +90,10 @@ The helm chart, without any values overrides, creates effectively a standalone i
   If you have a standard or enterprise license, you can add it as an override to your install using the config.license parameter:
 
   `helm install logstream-master cribl/logstream-master --set config.license="<long encoded license string redacted>"`
+  
+* Running Distributed on a Free License
+
+If you are not specifying a license, you'll need to go into the user interface for logstream and accept the free license. If you specify the groups option, the master will be configured as a distributed master. If you don't, it will be configured as a standalone instance. 
 
 * Setting the admin password
 
@@ -130,7 +134,7 @@ For example, if you've installed the helm charts in the `logstream` namespace, n
 
 ```
 helm repo update
-helm upgrade ls-master -n logstream cribl/logstream-master
+helm upgrade ls-master --set consolidate_volumes=true -n logstream cribl/logstream-master
 ```
 
 ## Upgrade Order of Operations
@@ -156,8 +160,8 @@ kubectl -n <namespace> exec <pod name> -- bash -c "ls -alR /opt/cribl/config-vol
 
 
 # Caveats/Known Issues
-* The upgrade process creates an initContainer, which will run prior to any instance of the logstream pod. Since the coalescence operation will not overwrite existing data, this is not a functional problem, but depending on your persistent volume setup, may cause pod restarts to take additional time waiting for the release of the volume claims. The only upgrade path that will have this issue is 2.3* -> 2.4.0 - in the next iteration, we'll remove the initContainer from the upgrade path. 
-* The upgrade process does leave the old PersistentVolumes and PersistentVolumeClaims around. This, unfortunately, is necessary for this upgrade path. In follow on versions, these volumes will be removed from the chart.
+* The pre-2.4 upgrade process creates an initContainer, which will run prior to any instance of the logstream pod. Since the coalescence operation will not overwrite existing data, this is not a functional problem, but depending on your persistent volume setup, may cause pod restarts to take additional time waiting for the release of the volume claims. The only upgrade path that will have this issue is 2.3* -> 2.4.0 - in the next iteration, we'll remove the initContainer from the upgrade path. 
+* The pre-2.4 upgrade process does leave the old PersistentVolumes and PersistentVolumeClaims around. This, unfortunately, is necessary for this upgrade path. In follow on versions, these volumes will be removed from the chart.
 * [EKS Specific Issues](../../common_docs/EKS_SPECIFICS.md)
 
 # Feedback/Support

@@ -54,6 +54,10 @@ helm install ls-wg-system-metrics cribl/logstream-workergroup \
   -n logstream
 ```
 
+* Running Distributed on a Free License
+
+If you are not specifying a license in your install, and you're looking to run distributed (free license allows one workergroup), you'll need to go into the user interface for logstream and accept the free license. If you specify the groups option, the master will be configured as a distributed master. If you don't, it will be configured as a standalone instance, and you'll need to manually configure it via the UI..
+
 # Upgrading
 
 Upgrading LogStream to new bits is easy. Update the repo and then upgrade each chart version. Add `--version X.Y.Z` if you want to [specify a specific version](https://helm.sh/docs/helm/helm_upgrade/).

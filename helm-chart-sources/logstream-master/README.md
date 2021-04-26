@@ -30,7 +30,7 @@ The chart requires persistent storage; it will use your default storage class, o
 
 ## AWS Specific Notes
 
-If you're running on EKS, it's highly recommended that you use AZ specific node groups (see the [eksctl.io Autoscaling Doc](https://eksctl.io/usage/autoscaling/) for details on doing this). IF you are doing autoscaling in your cluster nodes in a single node group that spans AZ's, you *may* run into trouble mounting volumes (as EBS volumes are AZ specific).
+If you're running on EKS, see the [EKS Specific Issues](../../common_docs/EKS_SPECIFICS.md) doc for details.
 
 
 # Values to Override

@@ -29,6 +29,7 @@ This section covers the most likely values to override. To see the full scope of
 |Key|Default Value|Description|
 |---|-------------|-----------|
 |config.group|"kubernetes"|tag/group to include in the URL (included as both a group value and a tag value) - defaults to "criblmaster"|
+|config.tag|deprecated|This option is deprecated, but still supported for backwards compatibility|
 |config.token|"criblmaster"|the authentication token for your logstream master - defaults to "kubernetes"|
 |config.host|"logstream-master"|the resolveable hostname of your logstream master - defaults to "logstream-master"|
 |config.rejectSelfSignedCerts|0|0 - allow self-signed certs, 1 - deny self-signed certs|

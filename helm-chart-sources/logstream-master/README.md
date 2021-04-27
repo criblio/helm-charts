@@ -93,7 +93,7 @@ The helm chart, without any values overrides, creates effectively a standalone i
   
 * Running Distributed on a Free License
 
-If you are not specifying a license, you'll need to go into the user interface for logstream and accept the free license. If you specify the groups option, the master will be configured as a distributed master. If you don't, it will be configured as a standalone instance. 
+  If you are not specifying a license, you'll need to go into the user interface for logstream and accept the free license. If you specify the groups option, the master will be configured as a distributed master. If you don't, it will be configured as a standalone instance. 
 
 * Setting the admin password
 

@@ -164,7 +164,7 @@ The advent of the extraConfigmapMounts and extraSecretMounts options provide the
 
 ## Configuration Locations
 
-The chart creates a single configuration volume claim, "config-storage", which gets mounted as `/opt/cribl/config-volume`. All Worker Group configuration lives under the `groups` subdirectory. If you have a worker group named "datacenter_a", it's configuration will live in `/opt/cribl/config-volume/groups/datacenter_a`.
+The chart creates a single configuration volume claim, "config-storage", which gets mounted as `/opt/cribl/config-volume`. All Worker Group configuration lives under the `groups` subdirectory. If you have a worker group named "datacenter_a", it's configuration will live in `/opt/cribl/config-volume/groups/datacenter_a`. See the official LogStream docs [Configuration Files](https://docs.cribl.io/docs/configuration-files) section for details on file locations.
 
 ## Using Environment Variables to Copy Files
 

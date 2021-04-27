@@ -158,6 +158,117 @@ This will restore the data into the "new" volume (which is mounted as /opt/cribl
 kubectl -n <namespace> exec <pod name> -- bash -c "ls -alR /opt/cribl/config-volume"
 ```
 
+# Pre-Loading Configuration
+
+The advent of the extraConfigmapMounts and extraSecretMounts options provide the ability to "preload" configuration files into the master chart. However, with Configmap and Secret Mounts being read only (both *can* be made writeable, but the k8s docs recommend against it), you can't simply mount them into the configuration tree. They need to be mounted to a location outside of the /opt/cribl tree, and then the files be copied into the tree at startup. 
+
+## Configuration Locations
+
+The chart creates a single configuration volume claim, "config-storage", which gets mounted as `/opt/cribl/config-volume`. All Worker Group configuration lives under the `groups` subdirectory. If you have a worker group named "datacenter_a", it's configuration will live in `/opt/cribl/config-volume/groups/datacenter_a`.
+
+## Using Environment Variables to Copy Files
+
+The cribl container's entrypoint.sh file looks for up to 30 environment variables that are assumed to be shell script snippets to be executed before LogStream startup (CRIBL\_BEFORE\_START\_CMD\_[1-30]), and up to 30 environment variables that are to be executed after LogStream startup (CRIBL\_AFTER\_START\_CMD\_[1-30]. The variables do need to be in order, and can not skip a number (the entrypoint.sh script breaks the loop the first time it doesn't find an env var, so if you have CRIBL\_BEFORE\_START\_CMD\_1 and CRIBL\_BEFORE\_START\_CMD\_3, CRIBL\_BEFORE\_START\_CMD\_3 will not be executed.
+
+The chart uses this capability for injecting the license and setting up groups. We'll use this same capability to copy our config files into place. If you've provided the config.license and config.groups, you'll need to start with CRIBL\_BEFORE\_START\_CMD\_3. 
+
+## Scenario
+
+### The ConfigMap
+Let's say we want to pre-configure a collector job in the `group1` worker group called "InfrastructureLogs" that reads ELB logs from an S3 bucket. First, we'll need a jobs.yml file, like this:
+
+```
+InfrastructureLogs:
+  type: collection
+  ttl: 4h
+  removeFields: []
+  resumeOnBoot: false
+  schedule: {}
+  collector:
+    conf:
+      signatureVersion: v4
+      enableAssumeRole: true
+      recurse: true
+      maxBatchSize: 10
+      bucket: <my infrastructure logs bucket>
+      path: /ELB/AWSLogs/${aws_acct_id}/elasticloadbalancing/${aws_region}/${_time:%Y}/${_time:%m}/${_time:%d}/
+      region: us-west-2
+      assumeRoleArn: arn:aws:iam::<accountid>:role/LogReadAssume
+    destructive: false
+    type: s3
+  input:
+    type: collection
+    staleChannelFlushMs: 10000
+    sendToRoutes: false
+    preprocess:
+      disabled: true
+    throttleRatePerSec: "0"
+    breakerRulesets:
+      - AWS Ruleset
+    pipeline: devnull
+    output: devnull
+```
+
+We'll need this loaded into a configmap object, so we'd run kubectl to create a configmap from the directory our jobs.yml file is in:
+
+`kubectl create configmap job-config --from-file <containing directory> -n <deployment namespace>`
+
+so if that file is in a directory called ./config-dir, and we're deploying the master chart into the `logstream` namespace, we'd create it like this:
+
+`kubectl create configmap job-config --from-file ./config-dir -n logstream`
+
+### extraConfigmapMounts Config
+
+in our values.yaml file, we need to specify the ConfigMap and where to mount it:
+
+```
+extraConfigmapMounts:
+  - name: job-config
+    configMap: job-config
+    mountPath: /var/tmp/job-config
+```	
+
+This example will mount the files in the ConfigMap in the /var/tmp/job-config directory in the pod. 
+
+### Copying the Config Files
+
+While you could simply define, in the values file (or via --set):
+
+```
+env:
+  CRIBL_BEFORE_START_CMD_3: "cp /var/tmp/job-config /opt/cribl/config-volume/groups/group1/local/cribl/jobs.yml"
+```
+
+However, there are two potential problems with that:
+1. There is no guarantee that the destination directory tree will be there (the first time a pod spins up, it won't be).
+2. Just blindly copying will overwrite any changes that have been made if the pod crashes and is spun up anew. This is rarely desirable behavior. 
+
+#### File Copying Pattern
+
+Since we may want to copy multiple configuration files in one shot, it makes sense to use some sort of "flag file" to ensure that we only copy the files once. The script snippet to copy the jobs.yaml file, formatted for readability, looks like this:
+
+```
+FLAG_FILE=/opt/cribl/config-volume/job-flag
+if [ ! -e $FLAG_FILE ]; then
+  mkdir -p /opt/cribl/config-volume/groups/group1/local/cribl # ensure the directory tree exists
+  cp /var/tmp/job-config/jobs.yml /opt/cribl/config-volume/groups/group1/local/cribl # copy the file
+  touch $FLAG_FILE
+fi
+```
+
+This looks to see if the file `/opt/cribl/config-volume/job-flag` exists, and if it doesn't, creates the directory tree, copies the config file(s), and then creates the job flag file. However, we need to format it a little differently to encompass it in the env variable easily:
+
+```
+env: 
+  CRIBL_BEFORE_START_CMD_3: "FLAG_FILE=/opt/cribl/config-volume/job-flag; if [ ! -e $FLAG_FILE ]; then mkdir -p /opt/cribl/config-volume/groups/group1/local/cribl; cp /var/tmp/job-config/jobs.yml /opt/cribl/config-volume/groups/group1/local/cribl; touch $FLAG_FILE; fi"
+```
+
+Once run helm install with this in the values file, you can do `kubectl exec` on the pod to execute a shell:
+
+`kubectl exec -it <pod name> -- bash`
+
+and then look at /opt/cribl/config-volume/groups/group1/local/cribl/jobs.yml to verify that it's in place. 
+
 
 # Caveats/Known Issues
 * The pre-2.4 upgrade process creates an initContainer, which will run prior to any instance of the logstream pod. Since the coalescence operation will not overwrite existing data, this is not a functional problem, but depending on your persistent volume setup, may cause pod restarts to take additional time waiting for the release of the volume claims. The only upgrade path that will have this issue is 2.3* -> 2.4.0 - in the next iteration, we'll remove the initContainer from the upgrade path. 

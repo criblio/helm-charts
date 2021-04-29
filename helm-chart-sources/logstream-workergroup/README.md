@@ -131,7 +131,7 @@ Remember, if you installed in a namespace, you need to include the `-n <namespac
 
 # Using Persistent Storage for Persistent Queueing
 
-With the addition of the `extraVolumeMounts` capability, it is now feasible to use persistent volumes for LogStream persistent queueing. However, Cribl does not recommend this – there is variability in persistent storage implementations, and this variability can lead to problems in scaling workergroups. However, if you choose to implement persistent volumes for queueing, please consider these suggestions:
+With the addition of the `extraVolumeMounts` capability, it is now feasible to use persistent volumes for LogStream persistent queueing. However, Cribl does not recommend this combination – there is variability in persistent-storage implementations, and this variability can lead to problems in scaling workergroups. However, if you choose to implement persistent volumes for queueing, please consider these suggestions:
 
 1. Use a shared-storage-volume mechanism. We've worked with the EFS CSI driver for AWS, and it works fairly well (though it can be a little tedious to configure).
 2. Understand your Kubernetes networking topology, and how it interacts with your persistent storage driver. (For example, if you're in AWS, ensure that your volumes are available in all availability zones that your nodes might run in.) 

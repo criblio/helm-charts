@@ -139,7 +139,7 @@ helm upgrade ls-master --set consolidate_volumes=true -n logstream cribl/logstre
 
 ## Upgrade Order of Operations
 
-While there should be no major problems running a 2.4.0 master and 2.3.4 workers, it's not recommended. Cribl recommends that you upgrade the master helm chart first, and then upgrade the workers (see [logstream-workergroup/README.md](/criblio/helm-charts/logstream-worker/README.md) for details). 
+While there should be no major problems running a 2.4.0 master and 2.3.4 workers, it is not recommended. Cribl recommends that you upgrade the master helm chart first, and then upgrade the workers (see [logstream-workergroup/README.md](/criblio/helm-charts/logstream-worker/README.md) for details). 
 
 ### Idempotency of Upgrade
 The upgrade operation does do a potentially destructive action in coalescing the 4 volumes to a single volume, but that operation is only happens if the single volume does not have data on it. Once the upgrade is performed the first time, any further upgrade operations will effectively skip that coalescence operation without causing any additional issues. 
@@ -160,17 +160,44 @@ kubectl -n <namespace> exec <pod name> -- bash -c "ls -alR /opt/cribl/config-vol
 
 # Pre-Loading Configuration
 
-The advent of the extraConfigmapMounts and extraSecretMounts options provide the ability to "preload" configuration files into the master chart. However, with Configmap and Secret Mounts being read only (both *can* be made writeable, but the k8s docs recommend against it), you can't simply mount them into the configuration tree. They need to be mounted to a location outside of the /opt/cribl tree, and then the files be copied into the tree at startup. 
+The advent of the `extraConfigmapMounts` and `extraSecretMounts` options provides the ability to "preload" configuration files into the master chart via ConfigMaps and Secrets that you've created in your Kubernetes environment. However, with Configmap and Secret Mounts being read only (both *can* be made writeable, but the k8s docs recommend against it), you can't simply mount them into the configuration tree. They need to be mounted to a location outside of the /opt/cribl tree, and then the files be copied into the tree at startup. This copying can be accomplished using environment variables, as we'll see below. 
 
 ## Configuration Locations
 
-The chart creates a single configuration volume claim, "config-storage", which gets mounted as `/opt/cribl/config-volume`. All Worker Group configuration lives under the `groups` subdirectory. If you have a worker group named "datacenter_a", it's configuration will live in `/opt/cribl/config-volume/groups/datacenter_a`. See the official LogStream docs [Configuration Files](https://docs.cribl.io/docs/configuration-files) section for details on file locations.
+The chart creates a single configuration volume claim, "config-storage", which gets mounted as `/opt/cribl/config-volume`. All Worker Group configuration lives under the `groups` subdirectory. If you have a worker group named "datacenter_a", its configuration will live in `/opt/cribl/config-volume/groups/datacenter_a`. See the official LogStream docs [Configuration Files](https://docs.cribl.io/docs/configuration-files) section for details on file locations.
 
 ## Using Environment Variables to Copy Files
 
 The cribl container's entrypoint.sh file looks for up to 30 environment variables that are assumed to be shell script snippets to be executed before LogStream startup (CRIBL\_BEFORE\_START\_CMD\_[1-30]), and up to 30 environment variables that are to be executed after LogStream startup (CRIBL\_AFTER\_START\_CMD\_[1-30]. The variables do need to be in order, and can not skip a number (the entrypoint.sh script breaks the loop the first time it doesn't find an env var, so if you have CRIBL\_BEFORE\_START\_CMD\_1 and CRIBL\_BEFORE\_START\_CMD\_3, CRIBL\_BEFORE\_START\_CMD\_3 will not be executed.
 
-The chart uses this capability for injecting the license and setting up groups. We'll use this same capability to copy our config files into place. If you've provided the config.license and config.groups, you'll need to start with CRIBL\_BEFORE\_START\_CMD\_3. 
+The chart uses this capability for injecting the license and setting up groups. We'll use this same capability to copy our config files into place. If you've provided the config.license and config.groups, you'll need to start with CRIBL\_BEFORE\_START\_CMD\_3. In the examples below, we'll start with CRIBL\_BEFORE\_START\_CMD\_3, assuming that a config.license and config.groups has been set. 
+
+### Figuring out which variable to use
+
+The easiest way to figure out which environment variable you need to use is to deploy the chart with all the options you plan to (i.e. use the helm install command and options that you plan to for your deployment), and then check the pod definition for CRIBL_* environment variables. For example, if you used the following install command:
+
+```
+% helm install lsms -f ../master-values.yaml -n logstream-ht cribl/logstream-master
+```
+
+You can now get the pods name: 
+
+```
+% kubectl get pods -n logstream-ht
+NAME                                           READY   STATUS    RESTARTS   AGE
+lsms-master-659bfccdd6-xsz67                   1/1     Running   0          52m
+```
+
+and then you can use `kubectl describe` to get the relevant environment variables:
+
+```
+% kubectl describe  pod/lsms-master-659bfccdd6-xsz67 -n logstream-ht  | egrep "CRIBL_.*START"
+CRIBL_BEFORE_START_CMD_1:      if [ ! -e $CRIBL_VOLUME_DIR/local/cribl/licenses.yml ]; then mkdir -p $CRIBL_VOLUME_DIR/local/cribl ; cp /var/tmp/config_bits/licenses.yml $CRIBL_VOLUME_DIR/local/cribl/licenses.yml; fi
+CRIBL_BEFORE_START_CMD_2:      if [ ! -e $CRIBL_VOLUME_DIR/local/cribl/mappings.yml ]; then mkdir -p $CRIBL_VOLUME_DIR/local/cribl;  cp /var/tmp/config_bits/groups.yml $CRIBL_VOLUME_DIR/local/cribl/groups.yml; cp /var/tmp/config_bits/mappings.yml $CRIBL_VOLUME_DIR/local/cribl/mappings.yml; fi
+CRIBL_AFTER_START_CMD_1:       [ ! -f $CRIBL_VOLUME_DIR/users_imported ] && sleep 20 && cp /var/tmp/config_bits/users.json $CRIBL_VOLUME_DIR/local/cribl/auth/users.json && touch $CRIBL_VOLUME_DIR/users_imported
+```
+
+From that, you can tell that we already have a `CRIBL_BEFORE_START_CMD_1` and `CRIBL_BEFORE_START_CMD_2`, so our next logical variable should be `CRIBL_BEFORE_START_CMD_3`. 
 
 ## Scenario
 
@@ -232,7 +259,7 @@ This example will mount the files in the ConfigMap in the /var/tmp/job-config di
 
 ### Copying the Config Files
 
-While you could simply define, in the values file (or via --set):
+You could simply define, in the values file (or via --set):
 
 ```
 env:
@@ -241,7 +268,7 @@ env:
 
 However, there are two potential problems with that:
 1. There is no guarantee that the destination directory tree will be there (the first time a pod spins up, it won't be).
-2. Just blindly copying will overwrite any changes that have been made if the pod crashes and is spun up anew. This is rarely desirable behavior. 
+2. If the pod has crashed and spun up anew, blindly copying will overwrite any changes previously made. This is rarely desirable behavior.
 
 #### File Copying Pattern
 
@@ -263,11 +290,11 @@ env:
   CRIBL_BEFORE_START_CMD_3: "FLAG_FILE=/opt/cribl/config-volume/job-flag; if [ ! -e $FLAG_FILE ]; then mkdir -p /opt/cribl/config-volume/groups/group1/local/cribl; cp /var/tmp/job-config/jobs.yml /opt/cribl/config-volume/groups/group1/local/cribl; touch $FLAG_FILE; fi"
 ```
 
-Once run helm install with this in the values file, you can do `kubectl exec` on the pod to execute a shell:
+Once you run helm install with this in the values file, you can do `kubectl exec` on the pod to execute a shell:
 
 `kubectl exec -it <pod name> -- bash`
 
-and then look at /opt/cribl/config-volume/groups/group1/local/cribl/jobs.yml to verify that it's in place. 
+and then look at /opt/cribl/config-volume/groups/group1/local/cribl/jobs.yml to verify that it is in place. 
 
 
 # Caveats/Known Issues

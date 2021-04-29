@@ -13,10 +13,11 @@ containers:
     - bash
     - -c 
     - |
-      set -ex 
+      set -x 
+      apt update; apt-get install -y gosu
       useradd -d /opt/cribl -g "{{- .Values.securityContext.runAsGroup }}" -u "{{- .Values.securityContext.runAsUser }}" cribl
       chown  -R   "{{- .Values.securityContext.runAsUser }}:{{- .Values.securityContext.runAsGroup }}" /opt/cribl
-      su cribl -c "/sbin/entrypoint.sh cribl"
+      gosu "{{- .Values.securityContext.runAsUser }}:{{- .Values.securityContext.runAsGroup }}" /sbin/entrypoint.sh cribl
     {{- end }}
     volumeMounts:
     - name: config-storage

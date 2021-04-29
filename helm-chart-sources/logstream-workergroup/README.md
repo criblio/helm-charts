@@ -38,7 +38,7 @@ This section covers the most likely values to override. To see the full scope of
 |criblImage.tag|"2.4.5"|The container image tag to pull from. By default, this will use the version equivalent to the chart's `appVersion` value. But you can override this with "latest" to get the latest release, or with a version number to pull a specific version of LogStream. |
 |autoscaling.minReplicas|2|The minimum number of LogStream pods to run.|
 |autoscaling.maxReplicas|10|The maximum number of LogStream pods to scale to run.|
-|autoscaling.targetCPUUtilizationPercentage|50|The CPU utilization percentage that triggers scaling . |
+|autoscaling.targetCPUUtilizationPercentage|50|The CPU utilization percentage that triggers scaling. |
 |rbac.create|false|Enable Service Account Role & Binding Creation. |
 |rbac.resources|["pods"]|Set the resource boundary for the role being created (K8s resources). |
 |rbac.verbs|["get", "list"]|Set the API verbs allowed the role (defaults to read ops). |

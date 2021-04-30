@@ -1,7 +1,6 @@
 apiVersion: v2
-name: logstream-master
-description: Deploys a Cribl LogStream Master in K8s.
-icon: https://criblio.github.io/helm-charts/images/Cribl_Logo_Color_TM.png
+name: pod-killer
+description: A Simple Cron Job that deletes pods based on pod name on a schedule defined in annotations.
 
 # A chart can be either an 'application' or a 'library' chart.
 #
@@ -16,9 +15,9 @@ type: application
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
-version: 2.4.5
+version: 1.0.0
 
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application. Versions are not expected to
 # follow Semantic Versioning. They should reflect the version the application is using.
-appVersion: 2.4.5
+appVersion: 1.0.0

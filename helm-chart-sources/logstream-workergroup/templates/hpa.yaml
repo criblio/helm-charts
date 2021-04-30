@@ -2,7 +2,12 @@
 apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
+  {{- if .Values.config.group }}
+  name: {{ include "logstream-workergroup.fullname" . }}-{{ .Values.config.group }}
+  {{- else if .Values.config.tag }}
   name: {{ include "logstream-workergroup.fullname" . }}-{{ .Values.config.tag }}
+  {{- end }}
+
   labels:
     {{- include "logstream-workergroup.labels" . | nindent 4 }}
 spec:

@@ -3,13 +3,13 @@
 
 This is a Helm repository for charts published by Cribl, Inc.
 
-With the advent of the worker group and master Helm charts, we now have a really fast way to deploy an entire distributed Cribl LogStream environment to a Kubernetes cluster.
+With the advent of the workergroup and master Helm charts, we now have a really fast way to deploy an entire distributed Cribl LogStream environment to a Kubernetes cluster.
 
 # Pre-Requisites
 
 Helm version 3 is required to use these charts.
 
-On a Mac with Homebrew:
+To install Helm on (e.g.) a Mac, using Homebrew:
 
 ```
 brew install helm
@@ -31,7 +31,7 @@ Add the Cribl Helm repo.
 helm repo add cribl https://criblio.github.io/helm-charts/
 ```
 
-The following example creates a distributed with two autoscaled worker groups, "pcilogs" and "system-metrics", using an auth token of `ABCDEF01-1234-5678-ABCD-ABCDEF012345`, and also setting an admin password and installing our license.
+The following example creates a distributed deployment with two autoscaled worker groups, `pcilogs` and `system-metrics`. It uses an auth token of `ABCDEF01-1234-5678-ABCD-ABCDEF012345`, sets an admin password, and installs our license:
 
 ```shell
 helm install ls-master cribl/logstream-master \
@@ -54,9 +54,13 @@ helm install ls-wg-system-metrics cribl/logstream-workergroup \
   -n logstream
 ```
 
+## Running Distributed on a Free License
+
+If you are not specifying a license in your install, and you're looking to run distributed, you'll need to go into LogStream's user interface and accept the Free license. (The Free license allows one worker group.) If you specify the `config.groups` option, the master will be configured as a distributed master. If you don't, it will be configured as a single instance. (You can later manually reconfigure it as distributed via LogStream's UI.)
+
 # Upgrading
 
-Upgrading LogStream to new bits is easy. Update the repo and then upgrade each chart version. Add `--version X.Y.Z` if you want to [specify a specific version](https://helm.sh/docs/helm/helm_upgrade/).
+Upgrading LogStream to new bits is easy. Update the repo, and then upgrade each chart version. The example below updates to the current version, but you can append `--version X.Y.Z` if you want to [specify a particular version](https://helm.sh/docs/helm/helm_upgrade/).
 
 ```
 helm repo update
@@ -67,4 +71,4 @@ helm upgrade ls-wg-system-metrics cribl/logstream-workergroup -n logstream
 
 # Support
 
-All items in the Cribl Helm Repository are provided via community support - please join our [slack community](https://cribl.io/community/)!
+All items in the Cribl Helm repository are provided via community support – please join our [Slack Community](https://cribl.io/community/)!

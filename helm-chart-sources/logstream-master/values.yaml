@@ -8,7 +8,7 @@ criblImage:
   repository: cribl/cribl
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "2.4.3"
+  tag: "2.4.5"
 
 imagePullSecrets: []
 nameOverride: "master"
@@ -31,7 +31,7 @@ config:
 env: {}
 
 service:
-  internalType: LoadBalancer
+  internalType: ClusterIP
   externalType: LoadBalancer
   annotations: {}
 

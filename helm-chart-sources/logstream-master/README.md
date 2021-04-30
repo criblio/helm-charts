@@ -160,7 +160,7 @@ kubectl -n <namespace> exec <pod name> -- bash -c "ls -alR /opt/cribl/config-vol
 
 # Pre-Loading Configuration
 
-The advent of the `extraConfigmapMounts` and `extraSecretMounts` options provides the ability to "preload" configuration files into the master chart, via ConfigMaps and Secrets that you've created in your Kubernetes environment. However, with Configmaps and Secret Mounts being read-only – both *can* be made writeable, but the K8s docs recommend against it – you can't simply mount them into the configuration tree. They need to be mounted to a location outside of the `/opt/cribl` tree, and then the files must be copied into the tree at startup. This copying can be accomplished using environment variables, as we'll see below. 
+The advent of the `extraConfigmapMounts` [<img src="images/documentation.svg" width=20>](../../common_docs/EXTRA_EXAMPLES.md#extraConfigmapMounts) and `extraSecretMounts` [<img src="images/documentation.svg" width=20>](../../common_docs/EXTRA_EXAMPLES.md#extraSecretMounts) options provides the ability to "preload" configuration files into the master chart, via ConfigMaps and Secrets that you've created in your Kubernetes environment. However, with Configmaps and Secret Mounts being read-only – both *can* be made writeable, but the K8s docs recommend against it – you can't simply mount them into the configuration tree. They need to be mounted to a location outside of the `/opt/cribl` tree, and then the files must be copied into the tree at startup. This copying can be accomplished using environment variables, as we'll see below. 
 
 ## Configuration Locations
 

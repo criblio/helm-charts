@@ -60,7 +60,7 @@ If you are not specifying a license in your install, and you're looking to run d
 
 # Upgrading
 
-Upgrading LogStream to new bits is easy. Update the repo, and then upgrade each chart version. Add `--version X.Y.Z` if you want to [specify a particular version](https://helm.sh/docs/helm/helm_upgrade/).
+Upgrading LogStream to new bits is easy. Update the repo, and then upgrade each chart version. The example below updates to the current version, but you can append `--version X.Y.Z` if you want to [specify a particular version](https://helm.sh/docs/helm/helm_upgrade/).
 
 ```
 helm repo update

@@ -16,7 +16,7 @@ This chart does **not** deploy a master node – it depends on one already being
 
 ![Deployment Diagram](images/k8s-logstream-worker-group.svg)
 
-# Pre-Requisites
+# Prerequisites
 
 1. Helm (preferably v3) installed – instructions are [here](https://helm.sh/docs/intro/install/).
 1. Cribl helm repo configured. To do this:

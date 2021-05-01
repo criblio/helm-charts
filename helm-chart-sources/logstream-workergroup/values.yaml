@@ -24,7 +24,7 @@ imagePullSecrets: []
 nameOverride: ""
 
 config: 
-  host: logstream-master
+  host: logstream-master-internal
   group: kubernetes
   token: criblmaster
   rejectSelfSignedCerts: 0

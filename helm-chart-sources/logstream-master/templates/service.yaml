@@ -10,7 +10,7 @@ metadata:
 spec:
   type: {{ .Values.service.internalType }}
   ports:
-      {{-  range .Values.service.ports }}
+      {{- range .Values.service.ports }}
       - port: {{ .port }}
         targetPort: {{ .port }}
         protocol: {{ .protocol }}
@@ -33,10 +33,10 @@ metadata:
     {{- toYaml .Values.service.annotations  | nindent 4 }}
 
 spec:
-  type: {{- if (eq $.Values.ingress.enable true) }} NodePort {{- else }}ClusterIP{{- end }}
+  type: {{- if (eq $.Values.ingress.enable true) }} NodePort {{- else }} {{ .Values.service.externalType }} {{- end }}
   ports:
       {{-  range .Values.service.ports }}
-      {{ if .external  }}
+      {{- if .external  }}
       - port: {{ .port }}
         targetPort: {{ .port }}
         protocol: {{ .protocol }}

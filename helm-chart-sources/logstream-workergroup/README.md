@@ -28,11 +28,11 @@ This section covers the most likely values to override. To see the full scope of
 
 |Key|Default Value|Description|
 |---|-------------|-----------|
-|config.group|"kubernetes"|tag/group to include in the URL (included as both a group value and a tag value) – defaults to "criblmaster". |
+|config.group|"kubernetes"|Tag/group to include in the URL (included as both a group value and a tag value) – defaults to "criblmaster". |
 |config.tag|deprecated|This option is deprecated, but still supported for backward compatibility. |
-|config.token|"criblmaster"|the authentication token for your LogStream master – defaults to "kubernetes". |
-|config.host|"logstream-master"|the resolvable hostname of your LogStream master – defaults to "logstream-master". |
-|config.rejectSelfSignedCerts|0|0 – allow self-signed certs; or 1 – deny self-signed certs. |
+|config.token|"criblmaster"|The authentication token for your LogStream master – defaults to "kubernetes". |
+|config.host|"logstream-master"|The resolvable hostname of your LogStream master – defaults to "logstream-master". |
+|config.rejectSelfSignedCerts|0|`0` – allow self-signed certs; or `1` – deny self-signed certs. |
 |service.ports|<pre>- name: tcpjson<br>  port: 10001<br>  protocol: TCP<br>- name: s2s<br>  port: 9997<br>  protocol: TCP<br>- name: http<br>  port: 10080<br>  protocol: TCP<br>- name: https<br>  port: 10081<br>  protocol: TCP<br>- name: syslog<br>  port: 5140<br>  protocol: TCP<br>- name: metrics<br>  port: 8125<br>  protocol: TCP<br>- name: elastic<br>  port: 9200<br>  protocol: TCP</pre>|The ports to make available both in the Deployment and the Service. Each "map" in the list needs the following values set: <dl><dt>containerPort</dt><dd>the port to be made available.</dd><dt>name</dt><dd>a descriptive name of what the port is being used for.</dd><dt>protocol</dt><dd>the protocol in use for this port (UDP/TCP).</dd></dl>|
 |service.annotations|{}|Annotations for the service component – this is where you'll want to put load-balancer-specific configuration directives.|
 |criblImage.tag|"2.4.5"|The container image tag to pull from. By default, this will use the version equivalent to the chart's `appVersion` value. But you can override this with "latest" to get the latest release, or with a version number to pull a specific version of LogStream. |

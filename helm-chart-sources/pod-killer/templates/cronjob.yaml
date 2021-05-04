@@ -40,6 +40,7 @@ spec:
                 for POD in $(kubectl get pods -n $MY_POD_NAMESPACE | egrep "^${i}" | awk '{print $1}'); do
                   echo "Deleting: $POD"
                   kubectl delete pod $POD -n $MY_POD_NAMESPACE
+                  sleep 30
                 done
               done
             imagePullPolicy: Always

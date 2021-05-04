@@ -16,7 +16,7 @@ As built, this chart will deploy a Cribl LogStream master server, consisting of 
 
 Of special note is the fact that two load balanced services are created – the main one (named after the Helm release), which is intended as the primary service interface for users; and the "internal" one (named `<helm-release>-internal`), which is intended for the workergroup-to-master communication.
 
-# <span id="pre-reqs"> Pre-Requisites </span>
+# <span id="pre-reqs"> Prerequisites </span>
 
 ## Helm Setup
 
@@ -62,7 +62,7 @@ This section covers the most likely values to override. To see the full scope of
 |[envValueFrom](../../common_docs/EXTRA_EXAMPLES.md#extraEnvFrom)|{}|Environment variables to be exposed from the Downward API.|
 |[env](../../common_docs/EXTRA_EXAMPLES.md#env)|[]|Additional static environment variables.|
 |ingress.enable|false|Enable Ingress in front of the external service. Setting this to `true` changes the external service to type `NodePort`, and creates an ingress that connects to it.|
-|ingress.annotations|{}|If `ingress.enable` is set to `true`, this is where annotations to configure the specific ingress controller. _*NOTE: Ingress is supported only on Kubernetes 1.19 and later clusters*_. |
+|ingress.annotations|{}|If `ingress.enable` is set to `true`, this is where you'll want to put annotations to configure the specific ingress controller. _*NOTE: Ingress is supported only on Kubernetes 1.19 and later clusters*_. |
 
 
 # Basic Installation
@@ -160,7 +160,7 @@ This will restore the data into the "new" volume (which is mounted as `/opt/crib
 kubectl -n <namespace> exec <pod name> -- bash -c "ls -alR /opt/cribl/config-volume"
 ```
 
-# Pre-Loading Configuration
+# Preloading Configuration
 
 The advent of the `extraConfigmapMounts` [<img src="images/documentation.svg" width=20>](../../common_docs/EXTRA_EXAMPLES.md#extraConfigmapMounts) and `extraSecretMounts` [<img src="images/documentation.svg" width=20>](../../common_docs/EXTRA_EXAMPLES.md#extraSecretMounts) options provides the ability to "preload" configuration files into the master chart, via ConfigMaps and Secrets that you've created in your Kubernetes environment. However, with Configmaps and Secret Mounts being read-only – both *can* be made writeable, but the K8s docs recommend against it – you can't simply mount them into the configuration tree. They need to be mounted to a location outside of the `/opt/cribl` tree, and then the files must be copied into the tree at startup. This copying can be accomplished using environment variables, as we'll see below. 
 
@@ -168,15 +168,17 @@ The advent of the `extraConfigmapMounts` [<img src="images/documentation.svg" wi
 
 The chart creates a single configuration volume claim, `config-storage`, which gets mounted as `/opt/cribl/config-volume`. All Worker Group configuration lives under the `groups` subdirectory. If you have a worker group named `datacenter_a`, its configuration will live in `/opt/cribl/config-volume/groups/datacenter_a`. See the LogStream docs' [Configuration Files](https://docs.cribl.io/docs/configuration-files) section for details on file locations.
 
-## Using Environment Variables to Copy Files
+## <span id="env-vars"> Using Environment Variables to Copy Files </span>
 
-The cribl container's entrypoint.sh file looks for up to 30 environment variables that are assumed to be shell script snippets to be executed before LogStream startup (`CRIBL_BEFORE_START_CMD_[1-30]`). It also looks for up to 30 environment variables that are to be executed after LogStream startup (`CRIBL_AFTER_START_CMD_[1-30]`). The variables do need to be in order, and can not skip a number. (The `entrypoint.sh` script breaks the loop the first time it doesn't find an env var, so if you have `CRIBL_BEFORE_START_CMD_1` skipping to `CRIBL_BEFORE_START_CMD_3`, `CRIBL_BEFORE_START_CMD_3` will not be executed.)
+The cribl container's `entrypoint.sh` file looks for up to 30 environment variables assumed to be shell-script snippets to execute before LogStream startup (`CRIBL_BEFORE_START_CMD_[1-30]`). It also looks for up to 30 environment variables to execute after LogStream startup (`CRIBL_AFTER_START_CMD_[1-30]`). 
 
-The chart uses this capability for injecting the license and setting up groups. We'll use this same capability to copy our config files into place. If you've provided the `config.license` and `config.groups` (occupying the first two slots), you'll need to start with `CRIBL_BEFORE_START_CMD_3`. In the examples below, we'll start with `CRIBL_BEFORE_START_CMD_3`, assuming that a `config.license` and `config.groups` have been set. 
+The variables in each set need to be in order, and cannot skip a number. (The `entrypoint.sh` script breaks the loop the first time it doesn't find an env var, so if you have `CRIBL_BEFORE_START_CMD_1` skipping to `CRIBL_BEFORE_START_CMD_3`, then `CRIBL_BEFORE_START_CMD_3` will not be executed.)
+
+The chart uses this capability to inject the license and to set up groups. We'll use this same capability to copy our config files into place. So if you've provided the `config.license` and `config.groups` variables (occupying the first two slots), you'll need to start with `CRIBL_BEFORE_START_CMD_3`. In the examples below, we'll start with `CRIBL_BEFORE_START_CMD_3`, assuming that a `config.license` and `config.groups` have been set. 
 
 ### Figuring Out Which Variable to Use
 
-The easiest way to figure out which environment variable you need to use is to deploy the chart with all the options you plan to use (i.e., use the `helm install` command with options that you plan to for your deployment). Then check the pod definition for `CRIBL_*` environment variables. For example, if you used the following install command:
+The easiest way to figure out which environment variable you need to use is to deploy the chart with all the options you plan to use (i.e., to use the `helm install` command with options that you plan to use for your deployment). Then check the pod definition for `CRIBL_*` environment variables. For example, if you used the following install command:
 
 ```
 % helm install lsms -f ../master-values.yaml -n logstream-ht cribl/logstream-master
@@ -201,7 +203,9 @@ CRIBL_AFTER_START_CMD_1:       [ ! -f $CRIBL_VOLUME_DIR/users_imported ] && slee
 
 From that, you can tell that we already have a `CRIBL_BEFORE_START_CMD_1` and `CRIBL_BEFORE_START_CMD_2`, so our next logical variable should be `CRIBL_BEFORE_START_CMD_3`. 
 
-## Scenario
+## Preloading Scenario
+
+Here's a preload scenario that includes a sample ConfigMap, `extraConfigmapMounts`, copy command, and copy-once flag.
 
 ### The ConfigMap
 Let's say we want to preconfigure a collector job in the `group1` worker group. The job will be called `InfrastructureLogs`, and it will read ELB logs from an S3 bucket. First, we'll need a `jobs.yml` file, like this:
@@ -238,7 +242,7 @@ InfrastructureLogs:
     output: devnull
 ```
 
-We'll need this loaded into a `ConfigMap` object, so we'd run kubectl to create a `ConfigMap` from the directory where our `jobs.yml` file resides:
+We'll need this loaded into a ConfigMap object, so we'd run kubectl to create a ConfigMap from the directory where our `jobs.yml` file resides:
 
 `kubectl create configmap job-config --from-file <containing directory> -n <deployment namespace>`
 
@@ -257,7 +261,7 @@ extraConfigmapMounts:
     mountPath: /var/tmp/job-config
 ```	
 
-This example will mount the files in the ConfigMap in the /var/tmp/job-config directory in the pod. 
+This example will mount the files in the ConfigMap into the pod's `/var/tmp/job-config` directory. 
 
 ### Copying the Config Files
 
@@ -274,7 +278,7 @@ However, there are two potential problems with that:
 
 #### File Copying Pattern
 
-Since we may want to copy multiple configuration files in one shot, it makes sense to use some sort of "flag file" to ensure that we copy the files only once. The script snippet to copy the `jobs.yaml` file looks like this, formatted for readability:
+Since we might want to copy multiple configuration files in one shot, it makes sense to use some sort of "flag file" to ensure that we copy the files only once. The script snippet to copy the `jobs.yaml` file looks like this, formatted for readability:
 
 ```
 FLAG_FILE=/opt/cribl/config-volume/job-flag
@@ -297,7 +301,6 @@ Once you run `helm install` with this in the `values.yaml` file, you can do `kub
 `kubectl exec -it <pod name> -- bash`
 
 ...and then look at `/opt/cribl/config-volume/groups/group1/local/cribl/jobs.yml` to verify that it is in place. 
-
 
 # Caveats/Known Issues
 

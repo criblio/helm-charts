@@ -1,4 +1,4 @@
-# EKS Specific Info and Errata
+# EKS-Specific Info and Errata
 
 At Cribl, we develop our charts on our AWS EKS environments, but try to make sure that any implementation-specific configuration is done in annotations, etc. This document is intended to share our experience with our charts on the EKS platform. 
 

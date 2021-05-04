@@ -5,7 +5,7 @@ This is a Helm repository for charts published by Cribl, Inc.
 
 With the advent of the workergroup and master Helm charts, we now have a really fast way to deploy an entire distributed Cribl LogStream environment to a Kubernetes cluster.
 
-# Pre-Requisites
+# Prerequisites
 
 Helm version 3 is required to use these charts.
 

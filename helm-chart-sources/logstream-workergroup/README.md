@@ -16,7 +16,7 @@ This chart does **not** deploy a master node – it depends on one already being
 
 ![Deployment Diagram](images/k8s-logstream-worker-group.svg)
 
-# Pre-Requisites
+# Prerequisites
 
 1. Helm (preferably v3) installed – instructions are [here](https://helm.sh/docs/intro/install/).
 1. Cribl helm repo configured. To do this:
@@ -28,12 +28,12 @@ This section covers the most likely values to override. To see the full scope of
 
 |Key|Default Value|Description|
 |---|-------------|-----------|
-|config.group|"kubernetes"|tag/group to include in the URL (included as both a group value and a tag value) – defaults to "criblmaster". |
+|config.group|"criblmaster"|Tag/group to include in the URL (included as both a group value and a tag value). |
 |config.tag|deprecated|This option is deprecated, but still supported for backward compatibility. |
-|config.token|"criblmaster"|the authentication token for your LogStream master – defaults to "kubernetes". |
-|config.host|"logstream-master"|the resolvable hostname of your LogStream master – defaults to "logstream-master". |
-|config.rejectSelfSignedCerts|0|0 – allow self-signed certs; or 1 – deny self-signed certs. |
-|service.ports|<pre>- name: tcpjson<br>  port: 10001<br>  protocol: TCP<br>- name: s2s<br>  port: 9997<br>  protocol: TCP<br>- name: http<br>  port: 10080<br>  protocol: TCP<br>- name: https<br>  port: 10081<br>  protocol: TCP<br>- name: syslog<br>  port: 5140<br>  protocol: TCP<br>- name: metrics<br>  port: 8125<br>  protocol: TCP<br>- name: elastic<br>  port: 9200<br>  protocol: TCP</pre>|The ports to make available both in the Deployment and the Service. Each "map" in the list needs the following values set: <dl><dt>containerPort</dt><dd>the port to be made available.</dd><dt>name</dt><dd>a descriptive name of what the port is being used for.</dd><dt>protocol</dt><dd>the protocol in use for this port (UDP/TCP).</dd></dl>|
+|config.token|"criblmaster"|The authentication token for your LogStream master. |
+|config.host|"logstream-master"|The resolvable hostname of your LogStream master. |
+|config.rejectSelfSignedCerts|0| One of: `0` – allow self-signed certs; or `1` – deny self-signed certs. |
+|service.ports|<pre>- name: tcpjson<br>  port: 10001<br>  protocol: TCP<br>- name: s2s<br>  port: 9997<br>  protocol: TCP<br>- name: http<br>  port: 10080<br>  protocol: TCP<br>- name: https<br>  port: 10081<br>  protocol: TCP<br>- name: syslog<br>  port: 5140<br>  protocol: TCP<br>- name: metrics<br>  port: 8125<br>  protocol: TCP<br>- name: elastic<br>  port: 9200<br>  protocol: TCP</pre>|The ports to make available both in the Deployment and the Service. Each "map" in the list needs the following values set: <dl><dt>name</dt><dd>A descriptive name of what the port is being used for.</dd><dt>port</dt><dd>The port to make available.</dd><dt>protocol</dt><dd>The protocol in use for this port (UDP/TCP).</dd></dl>|
 |service.annotations|{}|Annotations for the service component – this is where you'll want to put load-balancer-specific configuration directives.|
 |criblImage.tag|"2.4.5"|The container image tag to pull from. By default, this will use the version equivalent to the chart's `appVersion` value. But you can override this with "latest" to get the latest release, or with a version number to pull a specific version of LogStream. |
 |autoscaling.minReplicas|2|The minimum number of LogStream pods to run.|
@@ -51,7 +51,7 @@ This section covers the most likely values to override. To see the full scope of
 |[securityContext.runAsGroup](../../common_docs/EXTRA_EXAMPLES.md#securityContext)|0|Group ID to run the container processes under.|
 |[envValueFrom](../../common_docs/EXTRA_EXAMPLES.md#extraEnvFrom)|{}|Environment variables to be exposed from the Downward API.|
 |[env](../../common_docs/EXTRA_EXAMPLES.md#env)|[]|Additional Static Environment Variables.|
-|deployment|deployment|"deployment" to deploy as a Deployment Set; or "daemonset" to deploy as a DaemonSet.|
+|deployment|deployment|One of: "deployment" to deploy as a Deployment Set; or "daemonset" to deploy as a DaemonSet.|
 |[rbac.extraRules](../../common_docs/EXTRA_EXAMPLES.md#rbac.extraRules)|{}|Additional RBAC rules to put in place.|
 
 ### A Note About Versioning
@@ -134,8 +134,8 @@ Remember, if you installed in a namespace, you need to include the `-n <namespac
 With the addition of the `extraVolumeMounts` capability, it is now feasible to use persistent volumes for LogStream persistent queueing. However, Cribl does not recommend this combination – there is variability in persistent-storage implementations, and this variability can lead to problems in scaling workergroups. However, if you choose to implement persistent volumes for queueing, please consider these suggestions:
 
 1. Use a shared-storage-volume mechanism. We've worked with the EFS CSI driver for AWS, and it works fairly well (though it can be a little tedious to configure).
-2. Understand your Kubernetes networking topology, and how it interacts with your persistent storage driver. (For example, if you're in AWS, ensure that your volumes are available in all availability zones that your nodes might run in.) 
-3. Monitor the workergroup pods for volume issues; the faster you can see them and react, the more likely that you'll be able to resolve issues that may arise.
+2. Understand your Kubernetes networking topology, and how it interacts with your persistent storage driver. (For example, if you're in AWS, ensure that your volumes are available in all Availability Zones that your nodes might run in.) 
+3. Monitor the workergroup pods for volume issues. The faster you can see such issues and react, the more likely that you'll be able to resolve them.
 
 # Known Issues
 

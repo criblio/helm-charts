@@ -1,3 +1,4 @@
+---
 # Default values for logstream-master.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
@@ -27,38 +28,34 @@ config:
   rejectSelfSignedCerts: 0
   healthPort: 9000
   groups: []
-  
+
 env: {}
 
 service:
   internalType: ClusterIP
   externalType: LoadBalancer
   annotations: {}
-
   ports:
-  - name: api
-    port: 9000
-    protocol: TCP
-    external: true
-  - name: mastercomm
-    port: 4200
-    protocol: TCP
-    external: false
+    - name: api
+      port: 9000
+      protocol: TCP
+      external: true
+    - name: mastercomm
+      port: 4200
+      protocol: TCP
+      external: false
 
 podAnnotations: {}
 
 podSecurityContext: {}
-  # fsGroup: 2000
 
 securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
 
-resources: 
+ingress:
+  enable: false
+  annotations: {}
+
+resources:
   limits:
     cpu: 2000m
     memory: 4096Mi
@@ -71,3 +68,4 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+

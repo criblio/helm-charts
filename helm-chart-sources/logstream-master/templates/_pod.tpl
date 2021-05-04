@@ -54,12 +54,18 @@ containers:
       httpGet:
         path: /api/v1/health
         port: {{ .Values.config.healthPort }}
+        {{- if .Values.config.healthScheme }}
+        scheme: {{ .Values.config.healthScheme }}
+        {{- end }}
       failureThreshold: 3
       initialDelaySeconds: 60
     readinessProbe:
       httpGet:
         path: /api/v1/health
         port: {{ .Values.config.healthPort }}
+        {{- if .Values.config.healthScheme }}
+        scheme: {{ .Values.config.healthScheme }}
+        {{- end }}
       failureThreshold: 3
       initialDelaySeconds: 60
     resources:
@@ -152,7 +158,7 @@ volumes:
   - name: config-storage
     persistentVolumeClaim:
       claimName: config-claim
-  {{- if  .Release.IsUpgrade }}
+  {{- if (and .Release.IsUpgrade .Values.consolidate_volumes) }}
   - name: local-storage
     persistentVolumeClaim:
       claimName: local-claim

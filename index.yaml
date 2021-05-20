@@ -2,92 +2,126 @@ apiVersion: v1
 entries:
   logstream-master:
   - apiVersion: v2
+    appVersion: 2.4.5
+    created: "2021-05-04T18:24:50.674012887Z"
+    description: Deploys a Cribl LogStream Master in K8s.
+    digest: 9b9da0c9e7c5728f3d6ea5ed4d05bc2ea7393da73ab9f9c4e37976a99d5753f6
+    icon: https://criblio.github.io/helm-charts/images/Cribl_Logo_Color_TM.png
+    name: logstream-master
+    type: application
+    urls:
+    - https://github.com/criblio/helm-charts/releases/download/v2.4.5/logstream-master-2.4.5.tgz
+    version: 2.4.5
+  - apiVersion: v2
     appVersion: 2.4.3
-    created: "2021-03-16T14:22:40.370066-07:00"
+    created: "2021-05-04T18:24:50.662385406Z"
     description: Deploys a Cribl LogStream Master in K8s.
     digest: 7e7e0102879b8deea8038a9b7f8e8477a9c86d61c6b920728f7811e81a717c07
     icon: https://criblio.github.io/helm-charts/images/Cribl_Logo_Color_TM.png
     name: logstream-master
     type: application
     urls:
-    - https://criblio.github.io/helm-charts/logstream-master-2.4.3.tgz
+    - https://github.com/criblio/helm-charts/releases/download/logstream-master-2.4.3.tgz
     version: 2.4.3
   - apiVersion: v2
     appVersion: 2.4.2
-    created: "2021-03-16T14:22:40.368292-07:00"
+    created: "2021-05-04T18:24:50.661439799Z"
     description: Deploys a Cribl LogStream Master in K8s.
     digest: 9c2cbd97990093cd2105701ed2533cbf318d1d3bb7bf922542364989cebe8310
     icon: https://criblio.github.io/helm-charts/images/Cribl_Logo_Color_TM.png
     name: logstream-master
     type: application
     urls:
-    - https://criblio.github.io/helm-charts/logstream-master-2.4.2.tgz
+    - https://github.com/criblio/helm-charts/releases/download/logstream-master-2.4.2.tgz
     version: 2.4.2
   - apiVersion: v2
     appVersion: 2.4.1
-    created: "2021-03-16T14:22:40.367214-07:00"
+    created: "2021-05-04T18:24:50.660513693Z"
     description: Deploys a Cribl LogStream Master in K8s.
     digest: 720365cbc57dc5c345c00d0b8482a7e41e1fdd31ca664524ae960cb297ca45ff
     icon: https://criblio.github.io/helm-charts/images/Cribl_Logo_Color_TM.png
     name: logstream-master
     type: application
     urls:
-    - https://criblio.github.io/helm-charts/logstream-master-2.4.1.tgz
+    - https://github.com/criblio/helm-charts/releases/download/logstream-master-2.4.1.tgz
     version: 2.4.1
   - apiVersion: v2
     appVersion: 2.4.0
-    created: "2021-03-16T14:22:40.365067-07:00"
+    created: "2021-05-04T18:24:50.659611486Z"
     description: Deploys a Cribl LogStream Master in K8s.
     digest: 9079db05c18e7cfa153802b72c78f32b995d53238d5ac04ea9f887899818c1b3
     icon: https://criblio.github.io/helm-charts/images/Cribl_Logo_Color_TM.png
     name: logstream-master
     type: application
     urls:
-    - https://criblio.github.io/helm-charts/logstream-master-2.4.0.tgz
+    - https://github.com/criblio/helm-charts/releases/download/logstream-master-2.4.0.tgz
     version: 2.4.0
   logstream-workergroup:
   - apiVersion: v2
+    appVersion: 2.4.5
+    created: "2021-05-04T18:24:50.674956493Z"
+    description: Deployment of LogStream Worker Group on K8s
+    digest: 620b454518c07b410e926e8270cae060823308db80a4ecdd895af0d7b01e218b
+    icon: https://criblio.github.io/helm-charts/images/Cribl_Logo_Color_TM.png
+    name: logstream-workergroup
+    type: application
+    urls:
+    - https://github.com/criblio/helm-charts/releases/download/v2.4.5/logstream-workergroup-2.4.5.tgz
+    version: 2.4.5
+  - apiVersion: v2
     appVersion: 2.4.3
-    created: "2021-03-16T14:22:40.376842-07:00"
+    created: "2021-05-04T18:24:50.672903079Z"
     description: Deployment of LogStream Worker Group on K8s
     digest: 8118c57f3344dc4cbb77dfe2ced215e058a8857f91d5e819a562e11d86df54ba
     icon: https://criblio.github.io/helm-charts/images/Cribl_Logo_Color_TM.png
     name: logstream-workergroup
     type: application
     urls:
-    - https://criblio.github.io/helm-charts/logstream-workergroup-2.4.3.tgz
+    - https://github.com/criblio/helm-charts/releases/download/logstream-workergroup-2.4.3.tgz
     version: 2.4.3
   - apiVersion: v2
     appVersion: 2.4.2
-    created: "2021-03-16T14:22:40.375755-07:00"
+    created: "2021-05-04T18:24:50.672015173Z"
     description: Deployment of LogStream Worker Group on K8s
     digest: 9272f069a9bcab04e51df18eab0fa569d5557e74e6b6edeb9e61db676558b7fc
     icon: https://criblio.github.io/helm-charts/images/Cribl_Logo_Color_TM.png
     name: logstream-workergroup
     type: application
     urls:
-    - https://criblio.github.io/helm-charts/logstream-workergroup-2.4.2.tgz
+    - https://github.com/criblio/helm-charts/releases/download/logstream-workergroup-2.4.2.tgz
     version: 2.4.2
   - apiVersion: v2
     appVersion: 2.4.1
-    created: "2021-03-16T14:22:40.37462-07:00"
+    created: "2021-05-04T18:24:50.664603221Z"
     description: Deployment of LogStream Worker Group on K8s
     digest: 4508eec4c350292ab4ddfc4509ee6dd343ec531ec7bc174f3f73dc59d8f28f4d
     icon: https://criblio.github.io/helm-charts/images/Cribl_Logo_Color_TM.png
     name: logstream-workergroup
     type: application
     urls:
-    - https://criblio.github.io/helm-charts/logstream-workergroup-2.4.1.tgz
+    - https://github.com/criblio/helm-charts/releases/download/logstream-workergroup-2.4.1.tgz
     version: 2.4.1
   - apiVersion: v2
     appVersion: 2.4.0
-    created: "2021-03-16T14:22:40.372295-07:00"
+    created: "2021-05-04T18:24:50.663239212Z"
     description: Deployment of LogStream Worker Group on K8s
     digest: 37ba436ea905e3c97e0ee82eca18743ae584d6117883a488c4f371011d39d8b0
     icon: https://criblio.github.io/helm-charts/images/Cribl_Logo_Color_TM.png
     name: logstream-workergroup
     type: application
     urls:
-    - https://criblio.github.io/helm-charts/logstream-workergroup-2.4.0.tgz
+    - https://github.com/criblio/helm-charts/releases/download/logstream-workergroup-2.4.0.tgz
     version: 2.4.0
-generated: "2021-03-16T14:22:40.359672-07:00"
+  pod-killer:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2021-05-04T18:24:50.675418097Z"
+    description: A Simple Cron Job that deletes pods based on pod name on a schedule defined in annotations.
+    digest: 8517fed2de37a818c2ed8745add7b7474a8a7318ae5c136fce17e815212ba016
+    icon: https://criblio.github.io/helm-charts/images/Cribl_Logo_Color_TM.png
+    name: pod-killer
+    type: application
+    urls:
+    - https://github.com/criblio/helm-charts/releases/download/v2.4.5/pod-killer-1.0.0.tgz
+    version: 1.0.0
+generated: "2021-05-04T18:24:50.658516979Z"

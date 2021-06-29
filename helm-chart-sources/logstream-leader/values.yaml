@@ -1,5 +1,5 @@
 ---
-# Default values for logstream-master.
+# Default values for logstream-leader.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
@@ -12,7 +12,7 @@ criblImage:
   tag: "3.0.2"
 
 imagePullSecrets: []
-nameOverride: "master"
+nameOverride: "leader"
 fullnameOverride: ""
 iter: 1
 
@@ -40,7 +40,7 @@ service:
       port: 9000
       protocol: TCP
       external: true
-    - name: mastercomm
+    - name: leadercomm
       port: 4200
       protocol: TCP
       external: false

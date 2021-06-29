@@ -7,6 +7,7 @@ This Chart deploys a Cribl LogStream leader instance.
 # DISCLAIMER
 
 This chart is a work in progress – it is provided as is.
+If you're migrating from the deprecated logstream-master chart, please see the [Migration](#migration) Section.
 
 # Deployment
 
@@ -55,7 +56,7 @@ This section covers the most likely values to override. To see the full scope of
 |service.internalLoadBalancerIP|none (IP Address)|The IP address to use for the load balancer service interface, if the internalType is set to LoadBalancer. Check with your Kubernetes setup to see if this is supported. |
 |service.ports|[]|<pre>- name: api<br>  port: 9000<br>  protocol: TCP<br>  external: true<br>- name: leadercomm<br>  port: 4200<br>  protocol: TCP<br>  external: false</pre>|The ports to make available both in the Deployment and the Service. Each "map" in the list needs the following values set: <dl><dt>containerPort</dt><dd>the port to be made available</dd><dt>name</dt><dd>a descriptive name of what the port is being used for</dd><dt>protocol</dt><dd>the protocol in use for this port (UDP/TCP)</dd><dt>external</dt><dd>Set to true to be exposed on the external service, or false not to</dd></dl>|
 |service.annotations|{}|Annotations for the service component – this is where you'll want to put load-balancer-specific configuration directives.|
-|criblImage.tag|2.4.5|The container image tag to pull from. By default, this will use the latest release, but you can also use version tags (like "2.3.2") to pull specific versions of LogStream. |
+|criblImage.tag|3.0.2|The container image tag to pull from. By default, this will use the same version as the chart release, but you can also use version tags (like "2.3.2") to pull specific versions of LogStream. |
 |consolidate_volumes|boolean|If this value exists, and the `helm` command is `upgrade`, this will use the split volumes that we created in charts before 2.4 and consolidate them down to one config volume. This is a ONE-TIME event.|
 |__Extra Configuration Options__|
 |[extraVolumeMounts](../../common_docs/EXTRA_EXAMPLES.md#extraVolumeMounts)|{}|Additional volumes to mount in the container.|
@@ -116,8 +117,7 @@ The Helm chart, without any values overrides, creates effectively a single-insta
 
 
 
-
-# Migrating from the logstream-master chart
+# <a name=migration></a>Migrating from the logstream-master chart
 
 ## Exporting your Configuration
 You'll need to "export" your data from the existing logstream-master pod. This is best done with a combination of kubectl and tar:

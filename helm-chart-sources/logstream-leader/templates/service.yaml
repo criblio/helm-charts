@@ -24,8 +24,6 @@ spec:
       {{- end }}
   selector:
     {{- include "logstream-leader.selectorLabels" . | nindent 4 }}
-  {{- if (and (not (empty .Values.service.externalClusterIP)) (eq $.Values.service.externalType "ClusterIP"))  }}
-  ClusterIP: {{ .Values.service.externalClusterIP }}
-  {{- else if (and (not (empty .Values.service.externalLoadBalancerIP)) (eq $.Values.service.externalType "LoadBalancer"))  }}
+  {{- if (and (not (empty .Values.service.externalLoadBalancerIP)) (eq $.Values.service.externalType "LoadBalancer"))  }}
   loadBalancerIP: {{ .Values.service.externalLoadBalancerIP }}
   {{- end -}}

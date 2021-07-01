@@ -22,9 +22,7 @@ spec:
       {{- end }}
   selector:
     {{- include "logstream-leader.selectorLabels" . | nindent 4 }}
-  {{- if (and (not (empty .Values.service.internalClusterIP)) (eq $.Values.service.internalType "ClusterIP"))  }}
-  ClusterIP: {{ .Values.service.internalClusterIP }}
-  {{- else if (and (not (empty .Values.service.internalLoadBalancerIP)) (eq $.Values.service.internalType "LoadBalancer"))  }}
+  {{- if (and (not (empty .Values.service.internalLoadBalancerIP)) (eq $.Values.service.internalType "LoadBalancer"))  }}
   loadBalancerIP: {{ .Values.service.internalLoadBalancerIP }}
   {{- end -}}
 

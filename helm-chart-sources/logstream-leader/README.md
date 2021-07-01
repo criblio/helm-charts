@@ -6,8 +6,12 @@ This Chart deploys a Cribl LogStream leader instance.
 
 # DISCLAIMER
 
-This chart is a work in progress – it is provided as is.
+This chart is the replacement for the logstream-master chart, which has been deprecated.
 If you're migrating from the deprecated logstream-master chart, please see the [Migration](#migration) Section.
+
+# New Capabilities
+* support for the 3.0.2 version of LogStream (default version)
+* support for using a fixed IP address for LoadBalancers in both created services, via the new `internalLoadBalancerIP` and `externalLoadBalancerIP` options. NOTE: This is not universally supported on K8s implementations. 
 
 # Deployment
 
@@ -120,7 +124,13 @@ The Helm chart, without any values overrides, creates effectively a single-insta
 # <a name=migration></a>Migrating from the logstream-master chart
 
 ## Exporting your Configuration
-You'll need to "export" your data from the existing logstream-master pod. This is best done with a combination of kubectl and tar:
+You'll need to "export" your data from the existing logstream-master pod. First, you'll need to get the current pod's name, as well as it's namespace. The easiest way to do this is to run `kubectl get pods -A` and look pods that start with the release name you used when you ran helm install. For example, if you installed with the following command:
+
+`helm install ls-master cribl/logstream-master`
+
+you'd look for a pod name that started with `ls-master`.
+
+Once you've identified your pod and namespace, you can export your configuration using a combination of kubectl and tar:
 
 ```
 kubectl exec <pod name> -n <namespace> -- bash -c "cd /opt/cribl/config-volume; tar cf - ." > cribl_backup.tar

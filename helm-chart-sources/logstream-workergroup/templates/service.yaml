@@ -18,3 +18,8 @@ spec:
       {{- end }}
   selector:
     {{- include "logstream-workergroup.selectorLabels" . | nindent 4 }}
+  {{- if (and (not (empty .Values.service.clusterIP)) (eq $.Values.service.type "ClusterIP"))  }}
+  ClusterIP: {{ .Values.service.clusterIP }}
+  {{- else if (and (not (empty .Values.service.loadBalancerIP)) (eq $.Values.service.type "LoadBalancer")) }}
+  loadBalancerIP: {{ .Values.service.loadBalancerIP }}
+  {{- end -}}

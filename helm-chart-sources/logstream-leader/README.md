@@ -4,14 +4,14 @@
 
 This Chart deploys a Cribl LogStream leader instance.
 
-# DISCLAIMER
+# Important Note
 
 This chart is the replacement for the logstream-master chart, which has been deprecated.
 If you're migrating from the deprecated logstream-master chart, please see the [Migration](#migration) Section.
 
 # New Capabilities
 * support for the 3.0.2 version of LogStream (default version)
-* support for using a fixed IP address for LoadBalancers in both created services, via the new `internalLoadBalancerIP` and `externalLoadBalancerIP` options. NOTE: This is not universally supported on K8s implementations. 
+* support for using a fixed IP address for LoadBalancers in both created services, via the new `service.internalLoadBalancerIP` and `service.externalLoadBalancerIP` options. NOTE: This is not universally supported on K8s implementations- make sure you check your implementation before trying to use this option. 
 
 # Deployment
 
@@ -53,10 +53,8 @@ This section covers the most likely values to override. To see the full scope of
 |config.healthPort|9000|The port to use for health checks (readiness/live).|
 |config.healthScheme|HTTP|The scheme to use for health checks - HTTP or HTTPS supported. If not specified, will default to HTTP. |
 |service.internalType|ClusterIP|The type to use for the `<release>-leader-internal` service. In 2.4.5 and beyond, this is set to ClusterIP by default. If you have any workergroups outside of the kubernetes cluster where the leader lives, you'll need to change this to NodePort or LoadBalancer to expose it outside of the cluster.|
-|service.internalClusterIP|none (IP Address)|The IP address to use for the service interface, if the internalType is set to ClusterIP. This IP address must be in the range allocated for the K8s cluster. |
 |service.internalLoadBalancerIP|none (IP Address)|The IP address to use for the load balancer service interface, if the internalType is set to LoadBalancer. Check with your Kubernetes setup to see if this is supported. |
 |service.externalType|LoadBalancer|The type to use for the user facing `<release>-leader` service. If ingress.enable is set, this will be force set to NodePort, to work with the ingress.| 
-|service.internalClusterIP|none (IP Address)|The IP address to use for the service interface, if the internalType is set to ClusterIP. This IP address must be in the range allocated for the K8s cluster. |
 |service.internalLoadBalancerIP|none (IP Address)|The IP address to use for the load balancer service interface, if the internalType is set to LoadBalancer. Check with your Kubernetes setup to see if this is supported. |
 |service.ports|[]|<pre>- name: api<br>  port: 9000<br>  protocol: TCP<br>  external: true<br>- name: leadercomm<br>  port: 4200<br>  protocol: TCP<br>  external: false</pre>|The ports to make available both in the Deployment and the Service. Each "map" in the list needs the following values set: <dl><dt>containerPort</dt><dd>the port to be made available</dd><dt>name</dt><dd>a descriptive name of what the port is being used for</dd><dt>protocol</dt><dd>the protocol in use for this port (UDP/TCP)</dd><dt>external</dt><dd>Set to true to be exposed on the external service, or false not to</dd></dl>|
 |service.annotations|{}|Annotations for the service component – this is where you'll want to put load-balancer-specific configuration directives.|
@@ -160,6 +158,30 @@ kubectl -n <namespace> delete <pod name>
 ```
 
 This will cause the pod to exit, but the deployment will replace it with a new pod which will use the same config persistent volume.
+
+## Reconfiguring the Worker Groups
+
+Now that you've got a new working leader chart, you need to tell the workers to connect to the new leader instead of the old `logstream-master` instance. This is a simple `helm upgrade` operation. You'll need to use the same command string that you used to install (changing the work "install" to "upgrade"), but changing the value of `config.host` (either via the --set option or in the values.yml file) with the new service that was created for the logstream-leader install. For example, if you ran the `logstream-leader` install with the release name `ls-lead`, like this:
+
+`helm install ls-lead -f <values file> cribl/logstream-leader`
+
+you'd run `kubectl get service -n <namespace> | grep ls-lead` to get the two services it created, and you'll want the name of the one that ends in `-internal`. In this case, that name would be `ls-lead-leader-internal`.
+
+If, for your workergroup install, you used a release name of `ls-wg1`, and a values file named `my-values.yml` with the following contents:
+
+```
+config:
+  host: logstream-master-internal
+  group: kubernetes
+  token: criblmaster
+  rejectSelfSignedCerts: 0
+```
+
+then you'd replace the value for host with `ls-lead-leader-internal` in the file, and then run:
+
+`helm upgrade ls-wg1 -f my-values.yml -n <namespace>`
+
+The upgrade *should* replace all the existing workergroup pods with newly reconfigured ones, but if you notice any workergroup pods with an AGE value that indicates it was started before the upgrade command, simply kill those pods, and they will respawn with the new configuration. 
 
 # Preloading Configuration
 

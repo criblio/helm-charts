@@ -159,7 +159,7 @@ volumes:
     {{- end }}
   - name: config-storage
     persistentVolumeClaim:
-      claimName: config-claim
+      claimName: leader-config-claim
   {{- if (and .Release.IsUpgrade .Values.consolidate_volumes) }}
   - name: local-storage
     persistentVolumeClaim:

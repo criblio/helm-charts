@@ -1,5 +1,5 @@
 apiVersion: v2
-name: logstream-master
+name: logstream-leader
 description: Deploys a Cribl LogStream Master in K8s.
 icon: https://criblio.github.io/helm-charts/images/Cribl_Logo_Color_TM.png
 

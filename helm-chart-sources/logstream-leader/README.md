@@ -11,7 +11,7 @@ If you're migrating from the deprecated logstream-master chart, please see the [
 
 # New Capabilities
 * support for the 3.0.2 version of LogStream (default version)
-* support for using a fixed IP address for LoadBalancers in both created services, via the new `service.internalLoadBalancerIP` and `service.externalLoadBalancerIP` options. NOTE: This is not universally supported on K8s implementations- make sure you check your implementation before trying to use this option. 
+* support for using a fixed IP address for LoadBalancers in both created services, via the new `service.internalLoadBalancerIP` and `service.externalLoadBalancerIP` options. NOTE: This is not universally supported on K8s implementations - make sure you check your implementation before trying to use this option. 
 
 # Deployment
 

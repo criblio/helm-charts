@@ -12,7 +12,7 @@ This Chart deploys a Cribl LogStream worker group.
 
 As built, this chart will deploy a simple worker group for Cribl LogStream, consisting of a deployment, a service, and a horizontal pod autoscaler config, as well as a secret used for configuration. 
 
-This chart does **not** deploy a master node – it depends on one already being present.
+This chart does **not** deploy a leader node – it depends on one already being present.
 
 ![Deployment Diagram](images/k8s-logstream-worker-group.svg)
 
@@ -28,10 +28,10 @@ This section covers the most likely values to override. To see the full scope of
 
 |Key|Default Value|Description|
 |---|-------------|-----------|
-|config.group|"criblmaster"|Tag/group to include in the URL (included as both a group value and a tag value). |
+|config.group|"criblleader"|Tag/group to include in the URL (included as both a group value and a tag value). |
 |config.tag|deprecated|This option is deprecated, but still supported for backward compatibility. |
-|config.token|"criblmaster"|The authentication token for your LogStream master. |
-|config.host|"logstream-master"|The resolvable hostname of your LogStream master. |
+|config.token|"criblleader"|The authentication token for your LogStream leader. |
+|config.host|"logstream-leader"|The resolvable hostname of your LogStream leader. |
 |config.rejectSelfSignedCerts|0| One of: `0` – allow self-signed certs; or `1` – deny self-signed certs. |
 |service.type|LoadBalancer|The type of service to create for the workergroup|
 |service.loadBalancerIP|none (IP Address)|The IP address to use for the load balancer service interface, if the type is set to LoadBalancer. Check with your Kubernetes setup to see if this is supported. |
@@ -58,10 +58,7 @@ This section covers the most likely values to override. To see the full scope of
 
 ### A Note About Versioning
 
-We recommend that you use the same version of the Cribl LogStream code on master nodes and workergroup nodes. If you're not making the move to 2.4.x on your master yet, make sure to override the `criblImage.tag` value in the install with the version you are running.
-
-
-
+We recommend that you use the same version of the Cribl LogStream code on leader nodes and workergroup nodes. 
 
 # Install
 
@@ -70,11 +67,11 @@ We recommend that you use the same version of the Cribl LogStream code on master
 
  `helm install logstream-wg cribl/logstream-workergroup`
 
-* To install the chart using the logstream master 'logstream.lab.cribl.io'
+* To install the chart using the logstream leader 'logstream.lab.cribl.io'
 
  `helm install logstream-wg cribl/logstream-workergroup --set config.host='logstream.lab.cribl.io`
 
-* To install the chart using the logstream master 'logstream.lab.cribl.io' in the namespace "cribl-helm"
+* To install the chart using the logstream leader 'logstream.lab.cribl.io' in the namespace "cribl-helm"
 
  `helm install logstream-wg cribl/logstream-workergroup --set config.host='logstream.lab.cribl.io' -n cribl-helm`
  
@@ -129,7 +126,7 @@ For example, if you want to add an additional TCP-based syslog port to the relea
 helm upgrade logstream-wg cribl/logstream-workergroup -f values.yaml
 ```
 
-Remember, if you installed in a namespace, you need to include the `-n <namespace>` option to any `helm` command. You'll still have to create the source in your LogStream master, and commit and deploy it to your worker group.
+Remember, if you installed in a namespace, you need to include the `-n <namespace>` option to any `helm` command. You'll still have to create the source in your LogStream leader, and commit and deploy it to your worker group.
 
 # Using Persistent Storage for Persistent Queueing
 

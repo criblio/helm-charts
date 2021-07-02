@@ -1,5 +1,5 @@
 ---
-# Default values for logstream-master.
+# Default values for logstream-leader.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
@@ -9,10 +9,10 @@ criblImage:
   repository: cribl/cribl
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "3.0.2"
+  tag: "3.0.3"
 
 imagePullSecrets: []
-nameOverride: "master"
+nameOverride: "leader"
 fullnameOverride: ""
 iter: 1
 
@@ -40,7 +40,7 @@ service:
       port: 9000
       protocol: TCP
       external: true
-    - name: mastercomm
+    - name: leadercomm
       port: 4200
       protocol: TCP
       external: false

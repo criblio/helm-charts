@@ -1,20 +1,25 @@
 ![Cribl Logo](../../images/Cribl_Logo_Color_TM.png)
 
-# logstream-master Helm Chart
+# logstream-leader Helm Chart
 
-This Chart deploys a Cribl LogStream master server.
+This Chart deploys a Cribl LogStream leader instance.
 
-# Deprecation Notice
-As of this version, 2.9.9, this chart has been deprecated. The new [logstream-leader](../logstream-leader/) chart is the official chart for deploying a Leader instance of LogStream. You *can* still run this chart with newer versions of the LogStream product (see the section on [Installing a specific version of LogStream](#versionInstall).
+# Important Note
 
+This chart is the replacement for the logstream-master chart, which has been deprecated.
+If you're migrating from the deprecated logstream-master chart, please see the [Migration](#migration) Section.
+
+# New Capabilities
+* support for the 3.0.2 version of LogStream (default version)
+* support for using a fixed IP address for LoadBalancers in both created services, via the new `service.internalLoadBalancerIP` and `service.externalLoadBalancerIP` options. NOTE: This is not universally supported on K8s implementations - make sure you check your implementation before trying to use this option. 
 
 # Deployment
 
-As built, this chart will deploy a Cribl LogStream master server, consisting of a deployment, two services, and a number of persistent volumes. 
+As built, this chart will deploy a Cribl LogStream leader server, consisting of a deployment, two services, and a number of persistent volumes. 
 
-![Deployment Diagram](images/k8s-logstream-master.svg)
+![Deployment Diagram](images/k8s-logstream-leader.svg)
 
-Of special note is the fact that two load balanced services are created – the main one (named after the Helm release), which is intended as the primary service interface for users; and the "internal" one (named `<helm-release>-internal`), which is intended for the workergroup-to-master communication.
+Of special note is the fact that two load balanced services are created – the main one (named after the Helm release), which is intended as the primary service interface for users; and the "internal" one (named `<helm-release>-internal`), which is intended for the workergroup-to-leader communication.
 
 # <span id="pre-reqs"> Prerequisites </span>
 
@@ -35,23 +40,25 @@ If you're running on EKS, see the [EKS-Specific Issues](../../common_docs/EKS_SP
 
 # Values to Override
 
-This section covers the most likely values to override. To see the full scope of values available, run `helm show values cribl/logstream-master`. 
+This section covers the most likely values to override. To see the full scope of values available, run `helm show values cribl/logstream-leader`. 
 
 |Key|Default Value (or type)|Description|
 |---|----|-------------|
 |config.adminPassword|String|The password you want the admin user to have set.|
-|config.token|String|The auth key you want to set up for worker access. The LogStream instance is configured as a distributed master server only if this value is set. (This can, of course, also be configured via the LogStream UI.) |
+|config.token|String|The auth key you want to set up for worker access. The LogStream instance is configured as a distributed leader server only if this value is set. (This can, of course, also be configured via the LogStream UI.) |
 |config.license|String|The license for your LogStream instance. If you do not set this, it will default to the "free" license. You can change this in the LogStream UI as well.|
-|config.groups| [] |The group names to configure for the master instance – this will create a mapping for each group, which looks for the tag `<groupname>`, and will create the basic structure of each group's configuration.|
+|config.groups| [] |The group names to configure for the leader instance – this will create a mapping for each group, which looks for the tag `<groupname>`, and will create the basic structure of each group's configuration.|
 |config.scName|\<default storage class\>|The StorageClass Name for all of the persistent volumes.|
 |config.rejectSelfSignedCerts|0|0 – allow self-signed certs; or 1 – deny self-signed certs. |
 |config.healthPort|9000|The port to use for health checks (readiness/live).|
 |config.healthScheme|HTTP|The scheme to use for health checks - HTTP or HTTPS supported. If not specified, will default to HTTP. |
-|service.internalType|ClusterIP|The type to use for the `<release>-master-internal` service. In 2.4.5 and beyond, this is set to ClusterIP by default. If you have any workergroups outside of the kubernetes cluster where the master lives, you'll need to change this to NodePort or LoadBalancer to expose it outside of the cluster.|
-|service.externalType|LoadBalancer|The type to use for the user facing `<release>-master` service. If ingress.enable is set, this will be force set to NodePort, to work with the ingress.| 
-|service.ports|[]|<pre>- name: api<br>  port: 9000<br>  protocol: TCP<br>  external: true<br>- name: mastercomm<br>  port: 4200<br>  protocol: TCP<br>  external: false</pre>|The ports to make available both in the Deployment and the Service. Each "map" in the list needs the following values set: <dl><dt>containerPort</dt><dd>the port to be made available</dd><dt>name</dt><dd>a descriptive name of what the port is being used for</dd><dt>protocol</dt><dd>the protocol in use for this port (UDP/TCP)</dd><dt>external</dt><dd>Set to true to be exposed on the external service, or false not to</dd></dl>|
+|service.internalType|ClusterIP|The type to use for the `<release>-leader-internal` service. In 2.4.5 and beyond, this is set to ClusterIP by default. If you have any workergroups outside of the kubernetes cluster where the leader lives, you'll need to change this to NodePort or LoadBalancer to expose it outside of the cluster.|
+|service.internalLoadBalancerIP|none (IP Address)|The IP address to use for the load balancer service interface, if the internalType is set to LoadBalancer. Check with your Kubernetes setup to see if this is supported. |
+|service.externalType|LoadBalancer|The type to use for the user facing `<release>-leader` service. If ingress.enable is set, this will be force set to NodePort, to work with the ingress.| 
+|service.internalLoadBalancerIP|none (IP Address)|The IP address to use for the load balancer service interface, if the internalType is set to LoadBalancer. Check with your Kubernetes setup to see if this is supported. |
+|service.ports|[]|<pre>- name: api<br>  port: 9000<br>  protocol: TCP<br>  external: true<br>- name: leadercomm<br>  port: 4200<br>  protocol: TCP<br>  external: false</pre>|The ports to make available both in the Deployment and the Service. Each "map" in the list needs the following values set: <dl><dt>containerPort</dt><dd>the port to be made available</dd><dt>name</dt><dd>a descriptive name of what the port is being used for</dd><dt>protocol</dt><dd>the protocol in use for this port (UDP/TCP)</dd><dt>external</dt><dd>Set to true to be exposed on the external service, or false not to</dd></dl>|
 |service.annotations|{}|Annotations for the service component – this is where you'll want to put load-balancer-specific configuration directives.|
-|criblImage.tag|2.4.5|The container image tag to pull from. By default, this will use the latest release, but you can also use version tags (like "2.3.2") to pull specific versions of LogStream. |
+|criblImage.tag|3.0.2|The container image tag to pull from. By default, this will use the same version as the chart release, but you can also use version tags (like "2.3.2") to pull specific versions of LogStream. |
 |consolidate_volumes|boolean|If this value exists, and the `helm` command is `upgrade`, this will use the split volumes that we created in charts before 2.4 and consolidate them down to one config volume. This is a ONE-TIME event.|
 |__Extra Configuration Options__|
 |[extraVolumeMounts](../../common_docs/EXTRA_EXAMPLES.md#extraVolumeMounts)|{}|Additional volumes to mount in the container.|
@@ -68,26 +75,14 @@ This section covers the most likely values to override. To see the full scope of
 
 # Basic Installation
 
-* To  install the chart with the release name "logstream-master":
+* To  install the chart with the release name "logstream-leader":
 
-  `helm install logstream-master cribl/logstream-master`
+  `helm install logstream-leader cribl/logstream-leader`
 
 
 * To install the chart using the storage class "ebs-sc"
 
-  `helm install logstream-master cribl/logstream-master --set config.scName='ebs-sc'`
-  
-# <a name="versionInstall"></a>Installing using a specific version of LogStream
-
-LogStream container images use semantic versioning in the tagging scheme; every "version" tag consists of `<major>.<minor>.<patch>`. For example, if you want LogStream version 3.0.2, you'd set your `criblImage.tag` value to `3.0.2` in the install command:
-
-  `helm install logstream-master cribl/logstream-master --set criblImage.tag="3.0.2"`
-  
-...and if you're upgrading a pre-existing release, just use the upgrade command:
-
-
-   `helm upgrade logstream-master cribl/logstream-master --set criblImage.tag="3.0.2"`
-   
+  `helm install logstream-leader cribl/logstream-leader --set config.scName='ebs-sc'`
   
 # Post-Install/Post-Upgrade
 
@@ -102,80 +97,95 @@ The Helm chart, without any values overrides, creates effectively a single-insta
 
   If you have a Standard or Enterprise license, you can add it as an override to your install using the `config.license` parameter:
 
-  `helm install logstream-master cribl/logstream-master --set config.license="<long encoded license string redacted>"`
+  `helm install logstream-leader cribl/logstream-leader --set config.license="<long encoded license string redacted>"`
   
 * Running Distributed on a Free License
 
-  If you are not specifying a license, you'll need to go into the LogStream user interface and accept the free license. If you've specified the chart's `config.groups` option, the master will be configured as a distributed master. If you don't, it will be configured as a LogStream single instance. You can change this configuration in LogStream's UI.
+  If you are not specifying a license, you'll need to go into the LogStream user interface and accept the free license. If you've specified the chart's `config.groups` option, the leader will be configured as a distributed leader. If you don't, it will be configured as a LogStream single instance. You can change this configuration in LogStream's UI.
 
 * Setting the admin password
 
   Normally, when you first install LogStream and log into the UI, it forces you to change your password. You can skip that by setting your admin password via the `config.adminPassword` parameter:
 
-  `helm install logstream-master cribl/logstream-master --set config.adminPassword="<new password>"`
+  `helm install logstream-leader cribl/logstream-leader --set config.adminPassword="<new password>"`
 
 * Setting up Worker Groups/Mappings
 
-  As mentioned above, the default is to install a vanilla deployment of LogStream. If you are deploying as a master, you can use the `config.groups` parameter to define the worker groups you want created and mapped. Each group in the list you provide will be created as a worker group, with a mapping rule to look for a tag with the worker group name in it. Here is an example:
+  As mentioned above, the default is to install a vanilla deployment of LogStream. If you are deploying as a leader, you can use the `config.groups` parameter to define the worker groups you want created and mapped. Each group in the list you provide will be created as a worker group, with a mapping rule to look for a tag with the worker group name in it. Here is an example:
 
-  `helm install logstream-master cribl/logstream-master --set config.groups={group1,group2,group3}`
+  `helm install logstream-leader cribl/logstream-leader --set config.groups={group1,group2,group3}`
 
   That command will create three worker groups: `group1`, `group2`, and `group3`, and a mapping rule for each.
 
 
-# Upgrading from a Pre-2.4.0 Version
-**NOTE**: This has changed in the 2.4.5 version.
 
-In LogStream 2.4.0, the introduction of the `$CRIBL_VOLUME_DIR` environment variable simplifies the persistent-storage requirement for logstream-master. Instead of maintaining multiple separate persistent volumes (one each for $CRIBL_HOME/{data,state,local,groups, .git, log}), they can all be consolidated into a single volume. 
+# <a name=migration></a>Migrating from the logstream-master chart
 
-In the Helm chart, we handle this via the `helm upgrade` command. If you are upgrading from a pre-2.4 version of the chart, you'll want to set the `consolidate_volumes` value, which will create a new, larger, volume and consolidate the data from the original volumes into it. This is done via an `initContainer` that handles the logistics. When it finishes, and the logstream-master pod comes back up, it will be with a single consolidated volume. 
+## Exporting your Configuration
+You'll need to "export" your data from the existing logstream-master pod. First, you'll need to get the current pod's name, as well as it's namespace. The easiest way to do this is to run `kubectl get pods -A` and look pods that start with the release name you used when you ran helm install. For example, if you installed with the following command:
 
-## WARNING: BACK UP YOUR DATA FIRST
+`helm install ls-master cribl/logstream-master`
 
-While we've tested this upgrade multiple times, there are always differences in environments that can cause problems. As a result, we recommend that you back up the data before running the upgrade command. This is best done with a combination of kubectl and tar:
+you'd look for a pod name that started with `ls-master`.
 
-```
-kubectl exec <pod name> -n <namespace> -- bash -c "cd /opt/cribl; tar cf - {state,data,local,groups}" > cribl_backup.tar
-```
-
-This command executes the tar based back up of all four volumes, and outputs it to a local tar file (cribl_backup.tar)
-
-## Running the Upgrade
-
-Helm makes upgrades easy, as you just need to run `helm repo update` to ensure that you have the latest repo updates available, followed by `helm upgrade` to actually upgrade the containers.
-
-For example, if you've installed the helm charts in the `logstream` namespace, named your release `ls-master`, and set up your Helm repo per the [pre-reqs](#pre-reqs) section (i.e., named it "cribl"), run the following:
+Once you've identified your pod and namespace, you can export your configuration using a combination of kubectl and tar:
 
 ```
-helm repo update
-helm upgrade ls-master --set consolidate_volumes=true -n logstream cribl/logstream-master
+kubectl exec <pod name> -n <namespace> -- bash -c "cd /opt/cribl/config-volume; tar cf - ." > cribl_backup.tar
 ```
 
-## Upgrade Order of Operations
+This command executes the tar based back up of the config-volume, and outputs it to a local tar file (cribl_backup.tar)
 
-While there should be no major problems running (e.g.) a 2.4.x master with 2.3.4 workers, this is not recommended. Cribl recommends that you upgrade the master Helm chart first, and then upgrade the workers (see [logstream-workergroup/README.md](/criblio/helm-charts/logstream-worker/README.md) for details). 
 
-### Idempotency of Upgrade
+## "Re-hydrating" the backup on the logstream-leader chart
 
-The upgrade operation does do a potentially destructive action in coalescing multiple volumes to a single volume, but that operation is only happens if the target single volume has no data on it. Once the upgrade is performed the first time, any further upgrade operations will effectively skip that coalescence operation, without causing any additional issues. 
-
-## Recovering from a Failed Upgrade
-
-If the upgrade fails, the suggested recovery path is removing the Helm chart and reinstalling, and then running this command to restore the data from the backup:
+Exploding the tarball onto the new persistent volume is a one time event - once the config-volume is restored, you'll make changes to the config via the LogStream UI or API, causing the config on disk to change, which you wouldn't want to overwrite the next time the pod restarts. You can do this manually by installing the logstream-leader chart, and then running the following command:
 
 ```
 cat cribl_backup.tar| kubectl -n <namespace> exec --stdin <pod name> -- bash -c "cd /opt/cribl/config-volume/; tar xf -"
 ```
 
-This will restore the data into the "new" volume (which is mounted as `/opt/cribl/config-volume`). If you want to double-check that, run:
+This will restore the data into the config volume (which is mounted as `/opt/cribl/config-volume`). If you want to double-check that, run:
 
 ```
 kubectl -n <namespace> exec <pod name> -- bash -c "ls -alR /opt/cribl/config-volume"
 ```
 
+After this, you want to *delete* the active pod, allowing the new one to come up with the restored configuration. To do this, you'd run the following kubectl command:
+
+```
+kubectl -n <namespace> delete <pod name>
+```
+
+This will cause the pod to exit, but the deployment will replace it with a new pod which will use the same config persistent volume.
+
+## Reconfiguring the Worker Groups
+
+Now that you've got a new working leader chart, you need to tell the workers to connect to the new leader instead of the old `logstream-master` instance. This is a simple `helm upgrade` operation. You'll need to use the same command string that you used to install (changing the work "install" to "upgrade"), but changing the value of `config.host` (either via the --set option or in the values.yml file) with the new service that was created for the logstream-leader install. For example, if you ran the `logstream-leader` install with the release name `ls-lead`, like this:
+
+`helm install ls-lead -f <values file> cribl/logstream-leader`
+
+you'd run `kubectl get service -n <namespace> | grep ls-lead` to get the two services it created, and you'll want the name of the one that ends in `-internal`. In this case, that name would be `ls-lead-leader-internal`.
+
+If, for your workergroup install, you used a release name of `ls-wg1`, and a values file named `my-values.yml` with the following contents:
+
+```
+config:
+  host: logstream-master-internal
+  group: kubernetes
+  token: criblmaster
+  rejectSelfSignedCerts: 0
+```
+
+then you'd replace the value for host with `ls-lead-leader-internal` in the file, and then run:
+
+`helm upgrade ls-wg1 -f my-values.yml -n <namespace>`
+
+The upgrade *should* replace all the existing workergroup pods with newly reconfigured ones, but if you notice any workergroup pods with an AGE value that indicates it was started before the upgrade command, simply kill those pods, and they will respawn with the new configuration. 
+
 # Preloading Configuration
 
-The advent of the `extraConfigmapMounts` [<img src="images/documentation.svg" width=20>](../../common_docs/EXTRA_EXAMPLES.md#extraConfigmapMounts) and `extraSecretMounts` [<img src="images/documentation.svg" width=20>](../../common_docs/EXTRA_EXAMPLES.md#extraSecretMounts) options provides the ability to "preload" configuration files into the master chart, via ConfigMaps and Secrets that you've created in your Kubernetes environment. However, with Configmaps and Secret Mounts being read-only – both *can* be made writeable, but the K8s docs recommend against it – you can't simply mount them into the configuration tree. They need to be mounted to a location outside of the `/opt/cribl` tree, and then the files must be copied into the tree at startup. This copying can be accomplished using environment variables, as we'll see below. 
+The advent of the `extraConfigmapMounts` [<img src="images/documentation.svg" width=20>](../../common_docs/EXTRA_EXAMPLES.md#extraConfigmapMounts) and `extraSecretMounts` [<img src="images/documentation.svg" width=20>](../../common_docs/EXTRA_EXAMPLES.md#extraSecretMounts) options provides the ability to "preload" configuration files into the leader chart, via ConfigMaps and Secrets that you've created in your Kubernetes environment. However, with Configmaps and Secret Mounts being read-only – both *can* be made writeable, but the K8s docs recommend against it – you can't simply mount them into the configuration tree. They need to be mounted to a location outside of the `/opt/cribl` tree, and then the files must be copied into the tree at startup. This copying can be accomplished using environment variables, as we'll see below. 
 
 ## Configuration Locations
 
@@ -194,7 +204,7 @@ The chart uses this capability to inject the license and to set up groups. We'll
 The easiest way to figure out which environment variable you need to use is to deploy the chart with all the options you plan to use (i.e., to use the `helm install` command with options that you plan to use for your deployment). Then check the pod definition for `CRIBL_*` environment variables. For example, if you used the following install command:
 
 ```
-% helm install lsms -f ../master-values.yaml -n logstream-ht cribl/logstream-master
+% helm install lsms -f ../leader-values.yaml -n logstream-ht cribl/logstream-leader
 ```
 
 You can now get the pod's name: 
@@ -202,13 +212,13 @@ You can now get the pod's name:
 ```
 % kubectl get pods -n logstream-ht
 NAME                                           READY   STATUS    RESTARTS   AGE
-lsms-master-659bfccdd6-xsz67                   1/1     Running   0          52m
+lsms-leader-659bfccdd6-xsz67                   1/1     Running   0          52m
 ```
 
 And then you can use `kubectl describe` to get the relevant environment variables:
 
 ```
-% kubectl describe  pod/lsms-master-659bfccdd6-xsz67 -n logstream-ht  | egrep "CRIBL_.*START"
+% kubectl describe  pod/lsms-leader-659bfccdd6-xsz67 -n logstream-ht  | egrep "CRIBL_.*START"
 CRIBL_BEFORE_START_CMD_1:      if [ ! -e $CRIBL_VOLUME_DIR/local/cribl/licenses.yml ]; then mkdir -p $CRIBL_VOLUME_DIR/local/cribl ; cp /var/tmp/config_bits/licenses.yml $CRIBL_VOLUME_DIR/local/cribl/licenses.yml; fi
 CRIBL_BEFORE_START_CMD_2:      if [ ! -e $CRIBL_VOLUME_DIR/local/cribl/mappings.yml ]; then mkdir -p $CRIBL_VOLUME_DIR/local/cribl;  cp /var/tmp/config_bits/groups.yml $CRIBL_VOLUME_DIR/local/cribl/groups.yml; cp /var/tmp/config_bits/mappings.yml $CRIBL_VOLUME_DIR/local/cribl/mappings.yml; fi
 CRIBL_AFTER_START_CMD_1:       [ ! -f $CRIBL_VOLUME_DIR/users_imported ] && sleep 20 && cp /var/tmp/config_bits/users.json $CRIBL_VOLUME_DIR/local/cribl/auth/users.json && touch $CRIBL_VOLUME_DIR/users_imported
@@ -259,7 +269,7 @@ We'll need this loaded into a ConfigMap object, so we'd run kubectl to create a 
 
 `kubectl create configmap job-config --from-file <containing directory> -n <deployment namespace>`
 
-So if that file is in a directory called `./config-dir`, and we're deploying the master chart into the `logstream` namespace, we'd create it like this:
+So if that file is in a directory called `./config-dir`, and we're deploying the leader chart into the `logstream` namespace, we'd create it like this:
 
 `kubectl create configmap job-config --from-file ./config-dir -n logstream`
 
@@ -316,10 +326,6 @@ Once you run `helm install` with this in the `values.yaml` file, you can do `kub
 ...and then look at `/opt/cribl/config-volume/groups/group1/local/cribl/jobs.yml` to verify that it is in place. 
 
 # Caveats/Known Issues
-
-* The pre-2.4 upgrade process creates an `initContainer`, which will run prior to any instance of the LogStream pod. Since the coalescence operation will not overwrite existing data, this is not a functional problem. But depending on your persistent-volume setup, it might cause pod restarts to take additional time waiting for the release of the volume claims. The only upgrade path that will have this issue is 2.3* -> 2.4.0. In the next iteration, we'll remove the `initContainer` from the upgrade path. 
-
-* The pre-2.4 upgrade process does leave the old `PersistentVolumes` and `PersistentVolumeClaims` around. This is, unfortunately, necessary for this upgrade path. In follow-on versions, these volumes will be removed from the chart.
 
 * [EKS-Specific Issues](../../common_docs/EKS_SPECIFICS.md).
 

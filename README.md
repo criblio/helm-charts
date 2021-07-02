@@ -3,7 +3,7 @@
 
 This is a Helm repository for charts published by Cribl, Inc.
 
-With the advent of the workergroup and master Helm charts, we now have a really fast way to deploy an entire distributed Cribl LogStream environment to a Kubernetes cluster.
+With the advent of the workergroup and leader Helm charts, we now have a really fast way to deploy an entire distributed Cribl LogStream environment to a Kubernetes cluster.
 
 # Prerequisites
 
@@ -34,7 +34,7 @@ helm repo add cribl https://criblio.github.io/helm-charts/
 The following example creates a distributed deployment with two autoscaled worker groups, `pcilogs` and `system-metrics`. It uses an auth token of `ABCDEF01-1234-5678-ABCD-ABCDEF012345`, sets an admin password, and installs our license:
 
 ```shell
-helm install ls-master cribl/logstream-master \
+helm install ls-leader cribl/logstream-leader \
   --set "config.groups={pcilogs,system-metrics}" \
   --set config.token="ABCDEF01-1234-5678-ABCD-ABCDEF012345" \
   --set config.adminPassword="<admin password>" \
@@ -42,13 +42,13 @@ helm install ls-master cribl/logstream-master \
   -n logstream
 
 helm install ls-wg-pci cribl/logstream-workergroup \
-  --set config.host="ls-master-internal" \
+  --set config.host="ls-leader-internal" \
   --set config.tag="pcilogs" \
   --set config.token="ABCDEF01-1234-5678-ABCD-ABCDEF012345" \
   -n logstream
 
 helm install ls-wg-system-metrics cribl/logstream-workergroup \
-  --set config.host="ls-master-internal" \
+  --set config.host="ls-leader-internal" \
   --set config.tag="system-metrics" \
   --set config.token="ABCDEF01-1234-5678-ABCD-ABCDEF012345" \
   -n logstream
@@ -56,7 +56,7 @@ helm install ls-wg-system-metrics cribl/logstream-workergroup \
 
 ## Running Distributed on a Free License
 
-If you are not specifying a license in your install, and you're looking to run distributed, you'll need to go into LogStream's user interface and accept the Free license. (The Free license allows one worker group.) If you specify the `config.groups` option, the master will be configured as a distributed master. If you don't, it will be configured as a single instance. (You can later manually reconfigure it as distributed via LogStream's UI.)
+If you are not specifying a license in your install, and you're looking to run distributed, you'll need to go into LogStream's user interface and accept the Free license. (The Free license allows one worker group.) If you specify the `config.groups` option, the leader will be configured as a distributed leader. If you don't, it will be configured as a single instance. (You can later manually reconfigure it as distributed via LogStream's UI.)
 
 # Upgrading
 
@@ -64,7 +64,7 @@ Upgrading LogStream to new bits is easy. Update the repo, and then upgrade each 
 
 ```
 helm repo update
-helm upgrade ls-master cribl/logstream-master -n logstream
+helm upgrade ls-leader cribl/logstream-leader -n logstream
 helm upgrade ls-wg-pci cribl/logstream-workergroup -n logstream
 helm upgrade ls-wg-system-metrics cribl/logstream-workergroup -n logstream
 ```

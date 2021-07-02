@@ -1,0 +1,29 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "logstream-leader.fullname" . }}
+  labels:
+    {{- include "logstream-leader.labels" . | nindent 4 }}
+  annotations:
+    {{- toYaml .Values.service.annotations  | nindent 4 }}
+
+spec:
+  type: {{- if (eq $.Values.ingress.enable true) }} NodePort {{- else }} {{ .Values.service.externalType }} {{- end }}
+  ports:
+      {{-  range .Values.service.ports }}
+      {{- if .external  }}
+      - port: {{ .port }}
+        targetPort: {{ .port }}
+        protocol: {{ .protocol }}
+        name: {{ .name }}
+        {{ if (and (or (eq $.Values.service.externalType "NodePort") (eq $.Values.ingress.enable true)) (not (empty .nodePort))) }}
+        nodePort: {{.nodePort}}
+        {{ end }}
+      {{- end }}
+      {{- end }}
+  selector:
+    {{- include "logstream-leader.selectorLabels" . | nindent 4 }}
+  {{- if (and (not (empty .Values.service.externalLoadBalancerIP)) (eq $.Values.service.externalType "LoadBalancer"))  }}
+  loadBalancerIP: {{ .Values.service.externalLoadBalancerIP }}
+  {{- end -}}

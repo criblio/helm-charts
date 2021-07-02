@@ -5,7 +5,7 @@
 This Chart deploys a Cribl LogStream master server.
 
 # Deprecation Notice
-As of this version, 2.9.9, this chart has been deprecated, in favor of the [logstream-leader](../logstream-leader/) chart. You *can* still run this chart with newer versions of the LogStream product (see the section on [Installing a specific version of LogStream](#versionInstall)
+As of this version, 2.9.9, this chart has been deprecated. The new [logstream-leader](../logstream-leader/) chart is the official chart for deploying a Leader instance of LogStream. You *can* still run this chart with newer versions of the LogStream product (see the section on [Installing a specific version of LogStream](#versionInstall).
 
 
 # Deployment
@@ -79,11 +79,11 @@ This section covers the most likely values to override. To see the full scope of
   
 # <a name="versionInstall"></a>Installing using a specific version of LogStream
 
-LogStream container images use semantic versioning in the tagging scheme; every "version" tag consists of `<major>.<minor>.<patch>`. For example, if you want the version 3.0.2 of LogStream, you'd set your value for `criblImage.tag` to `3.0.2`, in the install command:
+LogStream container images use semantic versioning in the tagging scheme; every "version" tag consists of `<major>.<minor>.<patch>`. For example, if you want LogStream version 3.0.2, you'd set your `criblImage.tag` value to `3.0.2` in the install command:
 
   `helm install logstream-master cribl/logstream-master --set criblImage.tag="3.0.2"`
   
-and if you're upgrading a pre-existing release, just use the upgrade command:
+...and if you're upgrading a pre-existing release, just use the upgrade command:
 
 
    `helm upgrade logstream-master cribl/logstream-master --set criblImage.tag="3.0.2"`

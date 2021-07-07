@@ -161,7 +161,7 @@ This will cause the pod to exit, but the deployment will replace it with a new p
 
 ## Reconfiguring the Worker Groups
 
-Now that you've got a new working leader chart, you need to tell the workers to connect to the new leader instead of the old `logstream-master` instance. This is a simple `helm upgrade` operation. You'll need to use the same command string that you used to install (changing the work "install" to "upgrade"), but changing the value of `config.host` (either via the --set option or in the values.yml file) with the new service that was created for the logstream-leader install. For example, if you ran the `logstream-leader` install with the release name `ls-lead`, like this:
+Now that you've got a new working leader chart, you need to tell the workers to connect to the new leader instead of the old `logstream-master` instance. This is a simple `helm upgrade` operation. You'll need to use the same command string that you used to install (changing the word "install" to "upgrade"), but changing the value of `config.host` (either via the --set option or in the values.yml file) with the new service that was created for the logstream-leader install. For example, if you ran the `logstream-leader` install with the release name `ls-lead`, like this:
 
 `helm install ls-lead -f <values file> cribl/logstream-leader`
 

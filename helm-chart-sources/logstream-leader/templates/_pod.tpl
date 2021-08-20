@@ -139,6 +139,10 @@ initContainers:
         mountPath: {{ .Values.config.criblHome }}/group
 {{- end }}
 
+{{- with .Values.nodeSelector }}
+nodeSelector:
+  {{- toYaml .  | nindent 2 }}
+{{- end }}
 volumes:
   {{- if  or .Values.config.license ( or .Values.config.adminPassword .Values.config.groups ) }}
   - name: initial-config

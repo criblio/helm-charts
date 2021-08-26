@@ -72,6 +72,11 @@ containers:
     resources:
       {{- toYaml .Values.resources | nindent 12 }}
 
+{{- with .Values.nodeSelector }}
+nodeSelector:
+  {{- toYaml .  | nindent 2 }}
+{{- end }}
+
 volumes:
   {{- range .Values.extraVolumeMounts }}
   - name: {{ .name }}

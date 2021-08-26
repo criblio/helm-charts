@@ -10,8 +10,8 @@ This chart is the replacement for the logstream-master chart, which has been dep
 If you're migrating from the deprecated logstream-master chart, please see the [Migration](#migration) Section.
 
 # New Capabilities
-* support for the 3.0.2 version of LogStream (default version)
-* support for using a fixed IP address for LoadBalancers in both created services, via the new `service.internalLoadBalancerIP` and `service.externalLoadBalancerIP` options. NOTE: This is not universally supported on K8s implementations - make sure you check your implementation before trying to use this option. 
+* support for the 3.1.0 version of LogStream (default version)
+* support for using the nodeSelector configuration option to manage pod scheduling
 
 # Deployment
 
@@ -60,6 +60,7 @@ This section covers the most likely values to override. To see the full scope of
 |service.annotations|{}|Annotations for the service component – this is where you'll want to put load-balancer-specific configuration directives.|
 |criblImage.tag|3.0.2|The container image tag to pull from. By default, this will use the same version as the chart release, but you can also use version tags (like "2.3.2") to pull specific versions of LogStream. |
 |consolidate_volumes|boolean|If this value exists, and the `helm` command is `upgrade`, this will use the split volumes that we created in charts before 2.4 and consolidate them down to one config volume. This is a ONE-TIME event.|
+|nodeSelector|{}|Add nodeSelector values to define which nodes the pods are scheduled on - see [k8s Documentation](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/) for details and allowed values. |
 |__Extra Configuration Options__|
 |[extraVolumeMounts](../../common_docs/EXTRA_EXAMPLES.md#extraVolumeMounts)|{}|Additional volumes to mount in the container.|
 |[extraSecretMounts](../../common_docs/EXTRA_EXAMPLES.md#extraSecretMounts)|[]|Pre-existing secrets to mount within the container. |

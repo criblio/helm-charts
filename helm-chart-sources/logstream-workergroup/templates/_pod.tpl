@@ -26,6 +26,24 @@ containers:
       chown  -R   "{{- .Values.securityContext.runAsUser }}:{{- .Values.securityContext.runAsGroup }}" /opt/cribl
       gosu "{{- .Values.securityContext.runAsUser }}:{{- .Values.securityContext.runAsGroup }}" /sbin/entrypoint.sh cribl
     {{- end }}
+    livenessProbe:
+      httpGet:
+        path: /api/v1/health
+        port: {{ .Values.config.healthPort }}
+        {{- if .Values.config.healthScheme }}
+        scheme: {{ .Values.config.healthScheme }}
+        {{- end }}
+      failureThreshold: 3
+      initialDelaySeconds: 20
+    readinessProbe:
+      httpGet:
+        path: /api/v1/health
+        port: {{ .Values.config.healthPort }}
+        {{- if .Values.config.healthScheme }}
+        scheme: {{ .Values.config.healthScheme }}
+        {{- end }}
+      failureThreshold: 3
+      initialDelaySeconds: 20
     env:
       - name: CRIBL_DIST_MASTER_URL
         valueFrom:

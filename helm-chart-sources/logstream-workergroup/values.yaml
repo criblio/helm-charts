@@ -18,7 +18,7 @@ criblImage:
   repository: cribl/cribl
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "3.1.1"
+  tag: "3.1.2"
 
 imagePullSecrets: []
 nameOverride: ""
@@ -29,6 +29,8 @@ config:
   token: criblleader
   rejectSelfSignedCerts: 0
   healthPort: 9000
+  tlsMaster:
+    enable: 
 
 deployment: deployment
 

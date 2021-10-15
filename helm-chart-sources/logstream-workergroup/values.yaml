@@ -29,7 +29,7 @@ config:
   token: criblleader
   rejectSelfSignedCerts: 0
   healthPort: 9000
-  tlsMaster:
+  tlsLeader:
     enable: 
 
 deployment: deployment

@@ -30,7 +30,7 @@ config:
   rejectSelfSignedCerts: 0
   healthPort: 9000
   tlsLeader:
-    enable: 
+    enable: false
 
 deployment: deployment
 

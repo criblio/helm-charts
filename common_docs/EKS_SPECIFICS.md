@@ -30,6 +30,18 @@ ingress:
 
 This example sets the ingress's class to `alb`, which tells the controller to use an ALB. It tells it to listen on port 80, and it sets the "scheme" to internet-facing, which provisions an ALB with a routable internet address.
 
+## AWS IAM Role for Worker Group
+
+To allow pods to use IAM Roles, you first need to configure an IAM OIDC Provider and IAM Role. You can read more about the required configs on the AWS Docs site: [IAM Roles for Service Accounts](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts-technical-overview.html)
+
+Once the OIDC Provider and IAM Role have been configured, add the following to your `values.yaml` file (update the placeholders with the appropriate values):
+
+```
+rbac:
+  create: true
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::01234567890:role/your-iam-role-name-for-logstream-worker-group
+```
 
 ## Known EKS Problems
 

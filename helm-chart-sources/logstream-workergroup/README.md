@@ -44,6 +44,7 @@ This section covers the most likely values to override. To see the full scope of
 |rbac.create|false|Enable Service Account Role & Binding Creation. |
 |rbac.resources|["pods"]|Set the resource boundary for the role being created (K8s resources). |
 |rbac.verbs|["get", "list"]|Set the API verbs allowed the role (defaults to read ops). |
+|rbac.annotations|{}|Sets annotations on the Service Account. Useful for [accessing cloud resources through IAM roles](../../common_docs/EKS_SPECIFICS.md#aws-iam-role-for-worker-group).|
 |nodeSelector|{}|Add nodeSelector values to define which nodes the pods are scheduled on - see [k8s Documentation](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/) for details and allowed values. |
 |__Extra Configuration Options__|
 |[extraVolumeMounts](../../common_docs/EXTRA_EXAMPLES.md#extraVolumeMounts)|{}|Additional Volumes to mount in the container.|

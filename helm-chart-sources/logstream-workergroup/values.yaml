@@ -13,6 +13,7 @@ rbac:
   verbs:
   - get
   - list
+  annotations: {}
 
 criblImage:
   repository: cribl/cribl

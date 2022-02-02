@@ -1,0 +1,37 @@
+# 
+# Example config for Cribl in kind, k8s in Docker.
+#
+# Start the cluster:
+#   kind create cluster --config kind.yaml
+#
+# Add Cribl:
+#   helm repo add cribl https://criblio.github.io/helm-charts/
+#   helm install cribl cribl/cribl
+# or, if you have the chart locally:
+#   helm install cribl ./helm-chart-sources/cribl
+#
+# Hit this:
+#   http://localhost:9000/
+#
+# Profit!
+#
+# See what's up:
+#   watch kubectl get pods -o wide
+#
+# Get a shell in the leader:
+#   kubectl exec -it cribl-leader-<tab><tab> -- bash
+#
+# See helm-chart-sources/cribl/values.yaml for things to tweak.
+#
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+nodes:
+- role: control-plane
+  extraPortMappings:
+    - containerPort: 30000
+      hostPort: 9000
+      protocol: TCP
+    - containerPort: 30001
+      hostPort: 4200
+      protocol: TCP
+- role: worker

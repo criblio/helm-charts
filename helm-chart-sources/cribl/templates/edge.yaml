@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ include "cribl.fullname" . }}-edge
+  labels:
+    {{- include "cribl.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "cribl.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+    {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      labels:
+        {{- include "cribl.selectorLabels" . | nindent 8 }}
+
+    spec:
+      {{- include "edge.pod" . | nindent 8 }}

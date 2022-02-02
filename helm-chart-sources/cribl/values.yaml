@@ -1,0 +1,82 @@
+replicaCount: 1
+
+rbac:
+  create: true
+  apiGroups:
+  - core
+  resources:
+  - pods
+  verbs:
+  - get
+  - list
+  annotations: {}
+
+criblImage:
+  repository: cribl/cribl
+  pullPolicy: Always
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+iter: 1
+
+autoscaling:
+  enabled: false
+
+config:
+  scName:
+  license:
+  token: criblmaster
+  adminPassword:
+  criblHome: /opt/cribl
+  rejectSelfSignedCerts: 0
+  healthPort: 9000
+  edgeHealthPort: 9420
+  groups: []
+  tlsLeader:
+    enable: false
+
+env: {}
+
+service:
+  internalType: ClusterIP
+  externalType: NodePort
+  annotations: {}
+  ports:
+    - name: http
+      port: 9000
+      protocol: TCP
+      external: true
+      nodePort: 30000
+    - name: leader
+      port: 4200
+      protocol: TCP
+      external: true
+      nodePort: 30001
+
+podAnnotations: {}
+
+podSecurityContext: {}
+
+securityContext: {}
+
+ingress:
+  enable: false
+  annotations: {}
+
+resources:
+  limits:
+    cpu: 2000m
+    memory: 4096Mi
+  requests:
+    cpu: 500m
+    memory: 1024Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+

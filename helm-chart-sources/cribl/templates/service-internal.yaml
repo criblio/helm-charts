@@ -1,0 +1,28 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "cribl.fullname" . }}-leader-internal
+  labels:
+    {{- include "cribl.labels" . | nindent 4 }}
+  annotations:
+    {{- toYaml .Values.service.annotations  | nindent 4 }}
+
+spec:
+  type: {{ .Values.service.internalType }}
+  ports:
+      {{- range .Values.service.ports }}
+      - port: {{ .port }}
+        targetPort: {{ .port }}
+        protocol: {{ .protocol }}
+        name: {{ .name }}
+        {{ if (and (eq $.Values.service.internalType "NodePort") (not (empty .nodePort))) }}
+        nodePort: {{.nodePort}}
+        {{ end }}
+      {{- end }}
+  selector:
+    {{- include "cribl.selectorLabels" . | nindent 4 }}
+  {{- if (and (not (empty .Values.service.internalLoadBalancerIP)) (eq $.Values.service.internalType "LoadBalancer"))  }}
+  loadBalancerIP: {{ .Values.service.internalLoadBalancerIP }}
+  {{- end -}}
+

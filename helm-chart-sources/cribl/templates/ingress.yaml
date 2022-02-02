@@ -1,0 +1,30 @@
+{{- if .Values.ingress.enable}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "cribl.fullname" . }}-leader
+  annotations:
+    {{- toYaml .Values.ingress.annotations  | nindent 4 }}
+
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /*
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ include "cribl.fullname" . }}-leader
+            {{- $miter := 1 -}}
+
+            {{-  range .Values.service.ports }}
+            {{- if (eq $miter 1) }}
+            {{- if .external }}
+            port:
+              number: {{ .port }}
+            {{- $miter = add $miter 1 }}
+            {{- end -}}
+            {{- end -}}
+            {{- end -}}
+
+{{- end }}

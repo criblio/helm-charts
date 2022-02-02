@@ -1,0 +1,7 @@
+apiVersion: v2
+name: cribl
+description: Deploys a Cribl leader, Stream workers, and Edge nodes in K8s.
+icon: https://criblio.github.io/helm-charts/images/Cribl_Logo_Color_TM.png
+type: application
+version: 0.1.0
+appVersion: 3.3.0-TC18

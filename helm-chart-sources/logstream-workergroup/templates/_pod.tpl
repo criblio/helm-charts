@@ -11,6 +11,9 @@ imagePullSecrets:
 initContainers:
   {{- toYaml . | nindent 8 }}
 {{- end }}
+{{- if .Values.config.hostNetwork }}
+hostNetwork: true
+{{- end }}
 containers:
   - name: {{ .Chart.Name }}
     image: "{{ .Values.criblImage.repository }}:{{ .Values.criblImage.tag | default .Chart.AppVersion }}"
@@ -26,6 +29,7 @@ containers:
       chown  -R   "{{- .Values.securityContext.runAsUser }}:{{- .Values.securityContext.runAsGroup }}" /opt/cribl
       gosu "{{- .Values.securityContext.runAsUser }}:{{- .Values.securityContext.runAsGroup }}" /sbin/entrypoint.sh cribl
     {{- end }}
+    {{- if not .Values.config.noProbes }}
     livenessProbe:
       httpGet:
         path: /api/v1/health
@@ -44,6 +48,7 @@ containers:
         {{- end }}
       failureThreshold: 3
       initialDelaySeconds: 20
+    {{- end }}
     env:
       - name: CRIBL_DIST_MASTER_URL
         valueFrom:

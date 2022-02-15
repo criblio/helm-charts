@@ -19,7 +19,7 @@ criblImage:
   repository: cribl/cribl
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "3.2.2"
+  tag: "3.3.0"
 
 imagePullSecrets: []
 nameOverride: ""

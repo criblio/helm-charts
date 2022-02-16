@@ -42,6 +42,7 @@ jobs:
           file: ${{ env.GITHUB_REF_SLUG }}/logstream-*.tgz
           file_glob: true
           tag: ${{ env.GITHUB_REF_SLUG }}
+          overwrite: true
 
       - name: Setup git config
         run: |

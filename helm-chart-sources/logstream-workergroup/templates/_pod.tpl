@@ -95,12 +95,17 @@ containers:
     resources:
       {{- toYaml .Values.resources | nindent 12 }}
 
+{{- with .Values.extraContainers }}
+  {{- toYaml . | nindent 2 }}
+{{- end }}
+
+
 {{- with .Values.nodeSelector }}
 nodeSelector:
   {{- toYaml .  | nindent 2 }}
 {{- end }}
 
-volumes:
+volumes: 
   {{- range .Values.extraVolumeMounts }}
   - name: {{ .name }}
     {{- if .existingClaim }}

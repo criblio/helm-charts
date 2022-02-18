@@ -112,6 +112,10 @@ containers:
         value: "[ ! -f $CRIBL_VOLUME_DIR/users_imported ] && sleep 20 && cp /var/tmp/config_bits/users.json $CRIBL_VOLUME_DIR/local/cribl/auth/users.json && touch $CRIBL_VOLUME_DIR/users_imported"
         {{- $a_iter = add $a_iter 1 }} 
      {{- end }}
+{{- with .Values.extraContainers }}
+  {{- toYaml . | nindent 2 }}
+{{- end }}
+
 initContainers:
 {{- with .Values.extraInitContainers }}
   {{- toYaml . | nindent 8 }}
@@ -197,6 +201,7 @@ volumes:
     csi: {{- toYaml .csi | nindent 6 }}
 {{- end }}
 {{- end }}
+
 
 {{- with .Values.nodeSelector }}
 nodeSelector:

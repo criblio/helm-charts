@@ -118,6 +118,82 @@ extraVolumeMounts:
   readOnly: false
 ```
 
+## Using extraContainers <a name="extraContainers"></a>
+_Availability: logstream-workergroup and logstream-master_
+
+The `extraContainers` option allows you to run one or more sidecar containers along with the main LogStream container. This allows you to implement the standard sidecar pattern with the logstream helm charts. This takes one or more container definitions.
+
+### Example
+Here is an simple container definition that uses the fluentd container as a sidecar, also mounting the config-storage volume from the logstream container within the sidecar. 
+
+```
+extraContainers:
+- name: fluentd
+  image: "fluentd"
+  volumeMounts:
+    - mountPath: /my_mounts/cribl-config
+      name: config-storage
+
+```
+
+## Using extraInitContainers <a name="extraInitContainers"></a>
+_Availability: logstream-workergroup and logstream-master_
+
+The `extraInitContainers` option allows you to run one or more `initContainer`s before the main LogStream worker container starts up. This can be useful for making OS-level changes to a persistent volume (like `chown` or `chmod` of files or directories), among other things. This takes one or more container definitions.
+
+### Example
+Here is an extremely simple container definition that uses the base alpine container image and changes the permissions on the directory `/opt/mypath` to 755.
+
+```
+extraInitContainers:
+- name: testing
+  image: "alpine:latest"
+  command: ["/bin/ash", "-c"]
+  args:
+    - chmod 755 /opt/mypath
+```
+
+## Using securityContext <a name="securityContext"></a>
+_Availability: logstream-workergroup and logstream-master_
+
+The `securityContext` option allows you to define a user ID and a group ID to run the container processes under. When you do this, the first step the container goes through, prior to starting LogStream, is to `chown` the `/opt/cribl` directory (recursively) to that user/group ID. On the logstream-master chart, it also `chown`s the `/opt/cribl/config-volume` directory tree. It then starts the `entrypoint.sh` script as the specified user.
+
+### Example
+This example runs the processes under the user ID of `1020` and the group ID of `30`. 
+
+```
+securityContext:
+  runAsUser: 1020
+  runAsGroup: 30
+```
+
+## env <a name="env"></a>
+_Availability: logstream-workergroup and logstream-master_
+
+The `env` option allows you to specify additional static environment variables for the container. This takes a set of key-value pairs.
+
+### Example
+This example creates two environment variables, `DATA_DIR` and `JOB_ID`.
+
+```
+env: 
+  DATA_DIR: "/var/tmp/data"
+  JOB_ID: "reconciliation"
+```
+
+## rbac.extraRules <a name="rbac.extraRules"></a>
+_Availability: logstream-workergroup_
+
+The `rbac.extraRules` option allows you to specify additional RBAC rules into the RBAC setup for logstream-workergroup. It does require `rbac.create` to be set to `true`. it takes a list of maps, just like the rules in a Kubernetes role. 
+
+### Example
+This example provides access to `deployments`, allowing verbs `get`, `list`, `watch`, `create`, `update`, `patch`, and `delete`, for the API groups `extensions` and `apps`.
+
+```
+- apiGroups: ["extensions", "apps"]
+  resources: ["deployments"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+```
 ## Using extraInitContainers <a name="extraInitContainers"></a>
 _Availability: logstream-workergroup and logstream-master_
 

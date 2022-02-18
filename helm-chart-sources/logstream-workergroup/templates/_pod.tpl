@@ -29,7 +29,7 @@ containers:
       chown  -R   "{{- .Values.securityContext.runAsUser }}:{{- .Values.securityContext.runAsGroup }}" /opt/cribl
       gosu "{{- .Values.securityContext.runAsUser }}:{{- .Values.securityContext.runAsGroup }}" /sbin/entrypoint.sh cribl
     {{- end }}
-    {{- if not .Values.config.noProbes }}
+    {{- if .Values.config.probes }}
     livenessProbe:
       httpGet:
         path: /api/v1/health

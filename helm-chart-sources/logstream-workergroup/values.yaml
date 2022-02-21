@@ -30,6 +30,7 @@ config:
   token: criblleader
   rejectSelfSignedCerts: 0
   healthPort: 9000
+  probes: true
   tlsLeader:
     enable: false
 

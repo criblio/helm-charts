@@ -4,8 +4,13 @@
 
 This Chart deploys a Cribl LogStream worker group.
 
+# IMPORTANT
+A change has been made in this version that changes the syntax for the rbac values. Please see the
+table below for values options for the rbac.apiGroups, rbac.verbs, and rbac.resources before you
+upgrade the chart.
+
 # New Capabilities
-* support for the 3.1.0 version of LogStream (default version)
+* support for the 3.4.0 version of LogStream (default version)
 
 # Deployment
 

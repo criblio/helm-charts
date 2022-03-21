@@ -44,8 +44,9 @@ This section covers the most likely values to override. To see the full scope of
 |autoscaling.maxReplicas|10|The maximum number of LogStream pods to scale to run.|
 |autoscaling.targetCPUUtilizationPercentage|50|The CPU utilization percentage that triggers scaling. |
 |rbac.create|false|Enable Service Account Role & Binding Creation. |
-|rbac.resources|["pods"]|Set the resource boundary for the role being created (K8s resources). |
-|rbac.verbs|["get", "list"]|Set the API verbs allowed the role (defaults to read ops). |
+|rbac.apiGroups|{core}|Set the apiGroups in roles rules|
+|rbac.resources|{pods}|Set the resource boundary for the role being created (K8s resources). |
+|rbac.verbs|{get,list}|Set the API verbs allowed the role (defaults to read ops). |
 |rbac.annotations|{}|Sets annotations on the Service Account. Useful for [accessing cloud resources through IAM roles](../../common_docs/EKS_SPECIFICS.md#aws-iam-role-for-worker-group).|
 |nodeSelector|{}|Add nodeSelector values to define which nodes the pods are scheduled on - see [k8s Documentation](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/) for details and allowed values. |
 |__Extra Configuration Options__|

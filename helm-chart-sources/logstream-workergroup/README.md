@@ -4,8 +4,13 @@
 
 This Chart deploys a Cribl LogStream worker group.
 
+# IMPORTANT
+A change has been made in this version that changes the syntax for the rbac values. Please see the
+table below for values options for the rbac.apiGroups, rbac.verbs, and rbac.resources before you
+upgrade the chart.
+
 # New Capabilities
-* support for the 3.1.0 version of LogStream (default version)
+* support for the 3.4.0 version of LogStream (default version)
 
 # Deployment
 
@@ -44,8 +49,9 @@ This section covers the most likely values to override. To see the full scope of
 |autoscaling.maxReplicas|10|The maximum number of LogStream pods to scale to run.|
 |autoscaling.targetCPUUtilizationPercentage|50|The CPU utilization percentage that triggers scaling. |
 |rbac.create|false|Enable Service Account Role & Binding Creation. |
-|rbac.resources|["pods"]|Set the resource boundary for the role being created (K8s resources). |
-|rbac.verbs|["get", "list"]|Set the API verbs allowed the role (defaults to read ops). |
+|rbac.apiGroups|{core}|Set the apiGroups in roles rules|
+|rbac.resources|{pods}|Set the resource boundary for the role being created (K8s resources). |
+|rbac.verbs|{get,list}|Set the API verbs allowed the role (defaults to read ops). |
 |rbac.annotations|{}|Sets annotations on the Service Account. Useful for [accessing cloud resources through IAM roles](../../common_docs/EKS_SPECIFICS.md#aws-iam-role-for-worker-group).|
 |nodeSelector|{}|Add nodeSelector values to define which nodes the pods are scheduled on - see [k8s Documentation](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/) for details and allowed values. |
 |__Extra Configuration Options__|

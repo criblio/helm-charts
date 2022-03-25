@@ -10,7 +10,7 @@ This chart is the replacement for the logstream-master chart, which has been dep
 If you're migrating from the deprecated logstream-master chart, please see the [Migration](#migration) Section.
 
 # New Capabilities
-* support for the 3.1.1 version of LogStream (default version)
+* Support for the 3.4.0 version of Cribl Stream (default version)
 
 # Deployment
 

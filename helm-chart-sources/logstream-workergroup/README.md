@@ -155,7 +155,7 @@ With the addition of the `extraVolumeMounts` capability, it is now feasible to u
 
 # More Info
 
-For additional documentation on this chart, see the [Cribl Docs](https://docs.cribl.io/docs/deploy-kubernetes-helm) page about it.
+For additional documentation on this chart, see the [Cribl Docs](https://docs.cribl.io/stream/deploy-kubernetes-helm) page about it.
 
 # Support/Feedback
 

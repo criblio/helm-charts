@@ -10,7 +10,7 @@ table below for values options for the rbac.apiGroups, rbac.verbs, and rbac.reso
 upgrade the chart.
 
 # New Capabilities
-* support for the 3.4.0 version of LogStream (default version)
+* Support for the 3.4.0 version of LogStream (default version)
 
 # Deployment
 

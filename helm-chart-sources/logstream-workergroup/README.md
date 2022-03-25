@@ -2,7 +2,7 @@
 
 # logstream-workergroup Helm Chart
 
-This Chart deploys a Cribl LogStream worker group.
+This Chart deploys a Cribl Stream worker group.
 
 # IMPORTANT
 A change has been made in this version that changes the syntax for the rbac values. Please see the
@@ -10,11 +10,11 @@ table below for values options for the rbac.apiGroups, rbac.verbs, and rbac.reso
 upgrade the chart.
 
 # New Capabilities
-* Support for the 3.4.0 version of LogStream (default version)
+* Support for the 3.4.0 version of Cribl Stream (default version)
 
 # Deployment
 
-As built, this chart will deploy a simple worker group for Cribl LogStream, consisting of a deployment, a service, and a horizontal pod autoscaler config, as well as a secret used for configuration. 
+As built, this chart will deploy a simple worker group for Cribl Stream, consisting of a deployment, a service, and a horizontal pod autoscaler config, as well as a secret used for configuration. 
 
 This chart does **not** deploy a leader node – it depends on one already being present.
 
@@ -34,8 +34,8 @@ This section covers the most likely values to override. To see the full scope of
 |---|-------------|-----------|
 |config.group|"criblleader"|Tag/group to include in the URL (included as both a group value and a tag value). |
 |config.tag|deprecated|This option is deprecated, but still supported for backward compatibility. |
-|config.token|"criblleader"|The authentication token for your LogStream leader. |
-|config.host|"logstream-leader"|The resolvable hostname of your LogStream leader. |
+|config.token|"criblleader"|The authentication token for your Cribl Stream leader. |
+|config.host|"logstream-leader"|The resolvable hostname of your Cribl Stream leader. |
 |config.rejectSelfSignedCerts|0| One of: `0` – allow self-signed certs; or `1` – deny self-signed certs. |
 |config.tlsLeader.enable|false|Enable TLS connectivity from the workergroup to its leader node |
 |config.hostNetwork|false|configures the workergroup to use the K8s host network instead of the container network.|
@@ -44,9 +44,9 @@ This section covers the most likely values to override. To see the full scope of
 |service.loadBalancerIP|none (IP Address)|The IP address to use for the load balancer service interface, if the type is set to LoadBalancer. Check with your Kubernetes setup to see if this is supported. |
 |service.ports|<pre>- name: tcpjson<br>  port: 10001<br>  protocol: TCP<br>- name: s2s<br>  port: 9997<br>  protocol: TCP<br>- name: http<br>  port: 10080<br>  protocol: TCP<br>- name: https<br>  port: 10081<br>  protocol: TCP<br>- name: syslog<br>  port: 5140<br>  protocol: TCP<br>- name: metrics<br>  port: 8125<br>  protocol: TCP<br>- name: elastic<br>  port: 9200<br>  protocol: TCP</pre>|The ports to make available both in the Deployment and the Service. Each "map" in the list needs the following values set: <dl><dt>name</dt><dd>A descriptive name of what the port is being used for.</dd><dt>port</dt><dd>The port to make available.</dd><dt>protocol</dt><dd>The protocol in use for this port (UDP/TCP).</dd></dl>|
 |service.annotations|{}|Annotations for the service component – this is where you'll want to put load-balancer-specific configuration directives.|
-|criblImage.tag|"3.1.1"|The container image tag to pull from. By default, this will use the version equivalent to the chart's `appVersion` value. But you can override this with "latest" to get the latest release, or with a version number to pull a specific version of LogStream. |
-|autoscaling.minReplicas|2|The minimum number of LogStream pods to run.|
-|autoscaling.maxReplicas|10|The maximum number of LogStream pods to scale to run.|
+|criblImage.tag|"3.1.1"|The container image tag to pull from. By default, this will use the version equivalent to the chart's `appVersion` value. But you can override this with "latest" to get the latest release, or with a version number to pull a specific version of Cribl Stream. |
+|autoscaling.minReplicas|2|The minimum number of Cribl Stream pods to run.|
+|autoscaling.maxReplicas|10|The maximum number of Cribl Stream pods to scale to run.|
 |autoscaling.targetCPUUtilizationPercentage|50|The CPU utilization percentage that triggers scaling. |
 |rbac.create|false|Enable Service Account Role & Binding Creation. |
 |rbac.apiGroups|{core}|Set the apiGroups in roles rules|
@@ -69,7 +69,7 @@ This section covers the most likely values to override. To see the full scope of
 
 ### A Note About Versioning
 
-We recommend that you use the same version of the Cribl LogStream code on leader nodes and workergroup nodes. 
+We recommend that you use the same version of the Cribl Stream code on leader nodes and workergroup nodes. 
 
 # Install
 
@@ -137,11 +137,11 @@ For example, if you want to add an additional TCP-based syslog port to the relea
 helm upgrade logstream-wg cribl/logstream-workergroup -f values.yaml
 ```
 
-Remember, if you installed in a namespace, you need to include the `-n <namespace>` option to any `helm` command. You'll still have to create the source in your LogStream leader, and commit and deploy it to your worker group.
+Remember, if you installed in a namespace, you need to include the `-n <namespace>` option to any `helm` command. You'll still have to create the source in your Cribl Stream leader, and commit and deploy it to your worker group.
 
 # Using Persistent Storage for Persistent Queueing
 
-With the addition of the `extraVolumeMounts` capability, it is now feasible to use persistent volumes for LogStream persistent queueing. However there is variability in persistent-storage implementations, and this variability can lead to problems in scaling workergroups, and we recommend only implementing this if you have confidence in your persistent storage implementations. If you choose to implement persistent volumes for queueing, please consider these suggestions:
+With the addition of the `extraVolumeMounts` capability, it is now feasible to use persistent volumes for Cribl Stream persistent queueing. However there is variability in persistent-storage implementations, and this variability can lead to problems in scaling workergroups, and we recommend only implementing this if you have confidence in your persistent storage implementations. If you choose to implement persistent volumes for queueing, please consider these suggestions:
 
 1. Use a shared-storage-volume mechanism. We've worked with the EFS CSI driver for AWS, and it works fairly well (though it can be a little tedious to configure).
 2. Understand your Kubernetes networking topology, and how it interacts with your persistent storage driver. (For example, if you're in AWS, ensure that your volumes are available in all Availability Zones that your nodes might run in.) 

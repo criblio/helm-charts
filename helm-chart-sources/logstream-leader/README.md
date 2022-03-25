@@ -87,7 +87,7 @@ This section covers the most likely values to override. To see the full scope of
   
 # Post-Install/Post-Upgrade
 
-Cribl Stream will not automatically deploy changes to the worker nodes. So you'll need to go into the Cribl Stream UI and [commit and deploy changes](https://docs.cribl.io/docs/deploy-distributed) for all of your worker groups. 
+Cribl Stream will not automatically deploy changes to the worker nodes. So you'll need to go into the Cribl Stream UI and [commit and deploy changes](https://docs.cribl.io/stream/deploy-distributed) for all of your worker groups. 
 
 
 # Cribl Stream Configuration Overrides
@@ -190,7 +190,7 @@ The advent of the `extraConfigmapMounts` [<img src="images/documentation.svg" wi
 
 ## Configuration Locations
 
-The chart creates a single configuration volume claim, `config-storage`, which gets mounted as `/opt/cribl/config-volume`. All Worker Group configuration lives under the `groups` subdirectory. If you have a worker group named `datacenter_a`, its configuration will live in `/opt/cribl/config-volume/groups/datacenter_a`. See the Cribl Stream docs' [Configuration Files](https://docs.cribl.io/docs/configuration-files) section for details on file locations.
+The chart creates a single configuration volume claim, `config-storage`, which gets mounted as `/opt/cribl/config-volume`. All Worker Group configuration lives under the `groups` subdirectory. If you have a worker group named `datacenter_a`, its configuration will live in `/opt/cribl/config-volume/groups/datacenter_a`. See the Cribl Stream docs' [Configuration Files](https://docs.cribl.io/stream/configuration-files/) section for details on file locations.
 
 ## <span id="env-vars"> Using Environment Variables to Copy Files </span>
 

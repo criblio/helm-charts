@@ -2,7 +2,7 @@
 
 # logstream-leader Helm Chart
 
-This Chart deploys a Cribl LogStream leader instance.
+This Chart deploys a Cribl Stream leader instance.
 
 # Important Note
 
@@ -10,11 +10,12 @@ This chart is the replacement for the logstream-master chart, which has been dep
 If you're migrating from the deprecated logstream-master chart, please see the [Migration](#migration) Section.
 
 # New Capabilities
-* support for the 3.1.1 version of LogStream (default version)
+
+* Support for the 3.4.0 version of Cribl Stream (default version)
 
 # Deployment
 
-As built, this chart will deploy a Cribl LogStream leader server, consisting of a deployment, two services, and a number of persistent volumes. 
+As built, this chart will deploy a Cribl Stream leader server, consisting of a deployment, two services, and a number of persistent volumes. 
 
 ![Deployment Diagram](images/k8s-logstream-leader.svg)
 
@@ -44,8 +45,8 @@ This section covers the most likely values to override. To see the full scope of
 |Key|Default Value (or type)|Description|
 |---|----|-------------|
 |config.adminPassword|String|The password you want the admin user to have set.|
-|config.token|String|The auth key you want to set up for worker access. The LogStream instance is configured as a distributed leader server only if this value is set. (This can, of course, also be configured via the LogStream UI.) |
-|config.license|String|The license for your LogStream instance. If you do not set this, it will default to the "free" license. You can change this in the LogStream UI as well.|
+|config.token|String|The auth key you want to set up for worker access. The Cribl Stream instance is configured as a distributed leader server only if this value is set. (This can, of course, also be configured via the Cribl Stream UI.) |
+|config.license|String|The license for your Cribl Stream instance. If you do not set this, it will default to the "free" license. You can change this in the Cribl Stream UI as well.|
 |config.groups| [] |The group names to configure for the leader instance – this will create a mapping for each group, which looks for the tag `<groupname>`, and will create the basic structure of each group's configuration.|
 |config.scName|\<default storage class\>|The StorageClass Name for all of the persistent volumes.|
 |config.rejectSelfSignedCerts|0|0 – allow self-signed certs; or 1 – deny self-signed certs. |
@@ -57,7 +58,7 @@ This section covers the most likely values to override. To see the full scope of
 |service.externalLoadBalancerIP|none (IP Address)|The IP address to use for the load balancer service interface, if the externalType is set to LoadBalancer. Check with your Kubernetes setup to see if this is supported. |
 |service.ports|[]|<pre>- name: api<br>  port: 9000<br>  protocol: TCP<br>  external: true<br>- name: leadercomm<br>  port: 4200<br>  protocol: TCP<br>  external: false</pre>|The ports to make available both in the Deployment and the Service. Each "map" in the list needs the following values set: <dl><dt>containerPort</dt><dd>the port to be made available</dd><dt>name</dt><dd>a descriptive name of what the port is being used for</dd><dt>protocol</dt><dd>the protocol in use for this port (UDP/TCP)</dd><dt>external</dt><dd>Set to true to be exposed on the external service, or false not to</dd></dl>|
 |service.annotations|{}|Annotations for the service component – this is where you'll want to put load-balancer-specific configuration directives.|
-|criblImage.tag|3.1.0|The container image tag to pull from. By default, this will use the same version as the chart release, but you can also use version tags (like "2.3.2") to pull specific versions of LogStream. |
+|criblImage.tag|3.4.0|The container image tag to pull from. By default, this will use the same version as the chart release, but you can also use version tags (like "3.3.1") to pull specific versions of Cribl Stream. |
 |consolidate_volumes|boolean|If this value exists, and the `helm` command is `upgrade`, this will use the split volumes that we created in charts before 2.4 and consolidate them down to one config volume. This is a ONE-TIME event.|
 |nodeSelector|{}|Add nodeSelector values to define which nodes the pods are scheduled on - see [k8s Documentation](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/) for details and allowed values. |
 |__Extra Configuration Options__|
@@ -87,12 +88,12 @@ This section covers the most likely values to override. To see the full scope of
   
 # Post-Install/Post-Upgrade
 
-LogStream will not automatically deploy changes to the worker nodes. So you'll need to go into the LogStream UI and [commit and deploy changes](https://docs.cribl.io/docs/deploy-distributed) for all of your worker groups. 
+Cribl Stream will not automatically deploy changes to the worker nodes. So you'll need to go into the Cribl Stream UI and [commit and deploy changes](https://docs.cribl.io/stream/deploy-distributed) for all of your worker groups. 
 
 
-# LogStream Configuration Overrides
+# Cribl Stream Configuration Overrides
 
-The Helm chart, without any values overrides, creates effectively a single-instance deployment of Cribl LogStream, using the standard container image. You can, if you so choose, configure distributed mode, licensing, admin user passwords, etc., all from the logstream UI. However, you can install the chart with value overrides to achieve the same goals.
+The Helm chart, without any values overrides, creates effectively a single-instance deployment of Cribl Stream, using the standard container image. You can, if you so choose, configure distributed mode, licensing, admin user passwords, etc., all from the Cribl Stream UI. However, you can install the chart with value overrides to achieve the same goals.
 
 * Applying a License
 
@@ -102,17 +103,17 @@ The Helm chart, without any values overrides, creates effectively a single-insta
   
 * Running Distributed on a Free License
 
-  If you are not specifying a license, you'll need to go into the LogStream user interface and accept the free license. If you've specified the chart's `config.groups` option, the leader will be configured as a distributed leader. If you don't, it will be configured as a LogStream single instance. You can change this configuration in LogStream's UI.
+  If you are not specifying a license, you'll need to go into the Cribl Stream user interface and accept the free license. If you've specified the chart's `config.groups` option, the leader will be configured as a distributed leader. If you don't, it will be configured as a Cribl Stream single instance. You can change this configuration in Cribl Stream's UI.
 
 * Setting the admin password
 
-  Normally, when you first install LogStream and log into the UI, it forces you to change your password. You can skip that by setting your admin password via the `config.adminPassword` parameter:
+  Normally, when you first install Cribl Stream and log into the UI, it forces you to change your password. You can skip that by setting your admin password via the `config.adminPassword` parameter:
 
   `helm install logstream-leader cribl/logstream-leader --set config.adminPassword="<new password>"`
 
 * Setting up Worker Groups/Mappings
 
-  As mentioned above, the default is to install a vanilla deployment of LogStream. If you are deploying as a leader, you can use the `config.groups` parameter to define the worker groups you want created and mapped. Each group in the list you provide will be created as a worker group, with a mapping rule to look for a tag with the worker group name in it. Here is an example:
+  As mentioned above, the default is to install a vanilla deployment of Cribl Stream. If you are deploying as a leader, you can use the `config.groups` parameter to define the worker groups you want created and mapped. Each group in the list you provide will be created as a worker group, with a mapping rule to look for a tag with the worker group name in it. Here is an example:
 
   `helm install logstream-leader cribl/logstream-leader --set config.groups={group1,group2,group3}`
 
@@ -140,7 +141,7 @@ This command executes the tar based back up of the config-volume, and outputs it
 
 ## "Re-hydrating" the backup on the logstream-leader chart
 
-Exploding the tarball onto the new persistent volume is a one time event - once the config-volume is restored, you'll make changes to the config via the LogStream UI or API, causing the config on disk to change, which you wouldn't want to overwrite the next time the pod restarts. You can do this manually by installing the logstream-leader chart, and then running the following command:
+Exploding the tarball onto the new persistent volume is a one time event - once the config-volume is restored, you'll make changes to the config via the Cribl Stream UI or API, causing the config on disk to change, which you wouldn't want to overwrite the next time the pod restarts. You can do this manually by installing the logstream-leader chart, and then running the following command:
 
 ```
 cat cribl_backup.tar| kubectl -n <namespace> exec --stdin <pod name> -- bash -c "cd /opt/cribl/config-volume/; tar xf -"
@@ -190,11 +191,11 @@ The advent of the `extraConfigmapMounts` [<img src="images/documentation.svg" wi
 
 ## Configuration Locations
 
-The chart creates a single configuration volume claim, `config-storage`, which gets mounted as `/opt/cribl/config-volume`. All Worker Group configuration lives under the `groups` subdirectory. If you have a worker group named `datacenter_a`, its configuration will live in `/opt/cribl/config-volume/groups/datacenter_a`. See the LogStream docs' [Configuration Files](https://docs.cribl.io/docs/configuration-files) section for details on file locations.
+The chart creates a single configuration volume claim, `config-storage`, which gets mounted as `/opt/cribl/config-volume`. All Worker Group configuration lives under the `groups` subdirectory. If you have a worker group named `datacenter_a`, its configuration will live in `/opt/cribl/config-volume/groups/datacenter_a`. See the Cribl Stream docs' [Configuration Files](https://docs.cribl.io/stream/configuration-files/) section for details on file locations.
 
 ## <span id="env-vars"> Using Environment Variables to Copy Files </span>
 
-The cribl container's `entrypoint.sh` file looks for up to 30 environment variables assumed to be shell-script snippets to execute before LogStream startup (`CRIBL_BEFORE_START_CMD_[1-30]`). It also looks for up to 30 environment variables to execute after LogStream startup (`CRIBL_AFTER_START_CMD_[1-30]`). 
+The cribl container's `entrypoint.sh` file looks for up to 30 environment variables assumed to be shell-script snippets to execute before Cribl Stream startup (`CRIBL_BEFORE_START_CMD_[1-30]`). It also looks for up to 30 environment variables to execute after Cribl Stream startup (`CRIBL_AFTER_START_CMD_[1-30]`). 
 
 The variables in each set need to be in order, and cannot skip a number. (The `entrypoint.sh` script breaks the loop the first time it doesn't find an env var, so if you have `CRIBL_BEFORE_START_CMD_1` skipping to `CRIBL_BEFORE_START_CMD_3`, then `CRIBL_BEFORE_START_CMD_3` will not be executed.)
 

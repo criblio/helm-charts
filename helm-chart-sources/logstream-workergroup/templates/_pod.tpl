@@ -105,6 +105,11 @@ nodeSelector:
   {{- toYaml .  | nindent 2 }}
 {{- end }}
 
+{{- with .Values.tolerations }}
+tolerations:
+  {{- toYaml . | nindent 8 }}
+{{- end }}
+
 volumes: 
   {{- range .Values.extraVolumeMounts }}
   - name: {{ .name }}

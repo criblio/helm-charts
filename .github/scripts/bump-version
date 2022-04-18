@@ -1,0 +1,22 @@
+#!/bin/bash
+set -e
+
+tag=$1
+if [ -z "$tag" ]; then
+  >&2 usage: $0 TAG
+  exit 2
+fi
+
+if [[ $tag = v* ]]; then
+    # v1.2.3 -> 1.2.3
+    tag=${tag:1}
+fi
+
+echo Bumping helm-charts default Cribl version to $tag
+git stash
+
+perl -i -pe "s/^(?:appVersion|version): \K[\d\.]+/$tag/" helm-chart-sources/logstream-{leader,workergroup}/Chart.yaml
+perl -i -pe "s/^\s+tag: \K[\d\.]+/$tag/" helm-chart-sources/logstream-{leader,workergroup}/values.yaml
+git commit -am "Bump version to $tag"
+git tag -am "Released version $tag" $tag
+git push origin master $tag

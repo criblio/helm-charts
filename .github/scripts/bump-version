@@ -18,5 +18,5 @@ git stash
 perl -i -pe "s/^(?:appVersion|version): \K[\d\.]+/$tag/" helm-chart-sources/logstream-{leader,workergroup}/Chart.yaml
 perl -i -pe "s/^\s+tag: \K[\d\.]+/$tag/" helm-chart-sources/logstream-{leader,workergroup}/values.yaml
 git commit -am "Bump version to $tag"
-git tag -am "Released version $tag" $tag
-git push origin master $tag
+git tag -am "Released version $tag" v$tag
+git push origin master v$tag

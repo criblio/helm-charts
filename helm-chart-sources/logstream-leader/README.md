@@ -6,12 +6,12 @@ This Chart deploys a Cribl Stream leader instance.
 
 # Important Note
 
-This chart is the replacement for the logstream-master chart, which has been deprecated.
-If you're migrating from the deprecated logstream-master chart, please see the [Migration](#migration) Section.
+This chart is the replacement for the `logstream‑master` chart, which has been deprecated.
+If you're migrating from the deprecated `logstream‑master` chart, please see the [Migration](#migration) Section.
 
 # New Capabilities
 
-* Support for the 3.4.0 version of Cribl Stream (default version)
+* Support for the 3.5.0 version of Cribl Stream (default version)
 
 # Deployment
 
@@ -36,7 +36,6 @@ The chart requires persistent storage; it will use your default storage class, o
 ## AWS-Specific Notes
 
 If you're running on EKS, see the [EKS-Specific Issues](../../common_docs/EKS_SPECIFICS.md) doc for details.
-
 
 # Values to Override
 
@@ -74,7 +73,6 @@ This section covers the most likely values to override. To see the full scope of
 |ingress.enable|false|Enable Ingress in front of the external service. Setting this to `true` changes the external service to type `NodePort`, and creates an ingress that connects to it.|
 |ingress.annotations|{}|If `ingress.enable` is set to `true`, this is where you'll want to put annotations to configure the specific ingress controller. _*NOTE: Ingress is supported only on Kubernetes 1.19 and later clusters*_. |
 
-
 # Basic Installation
 
 * To  install the chart with the release name "logstream-leader":
@@ -89,7 +87,6 @@ This section covers the most likely values to override. To see the full scope of
 # Post-Install/Post-Upgrade
 
 Cribl Stream will not automatically deploy changes to the worker nodes. So you'll need to go into the Cribl Stream UI and [commit and deploy changes](https://docs.cribl.io/stream/deploy-distributed) for all of your worker groups. 
-
 
 # Cribl Stream Configuration Overrides
 
@@ -119,16 +116,14 @@ The Helm chart, without any values overrides, creates effectively a single-insta
 
   That command will create three worker groups: `group1`, `group2`, and `group3`, and a mapping rule for each.
 
-
-
-# <a name=migration></a>Migrating from the logstream-master chart
+# <a name=migration></a>Migrating from the logstream-master Chart
 
 ## Exporting your Configuration
-You'll need to "export" your data from the existing logstream-master pod. First, you'll need to get the current pod's name, as well as it's namespace. The easiest way to do this is to run `kubectl get pods -A` and look pods that start with the release name you used when you ran helm install. For example, if you installed with the following command:
+You'll need to "export" your data from the existing logstream-master pod. First, you'll need to get the current pod's name, as well as its namespace. The easiest way to do this is to run `kubectl get pods -A` and look pods that start with the release name you used when you ran helm install. For example, if you installed with the following command:
 
 `helm install ls-master cribl/logstream-master`
 
-you'd look for a pod name that started with `ls-master`.
+You'd look for a pod name that started with `ls-master`.
 
 Once you've identified your pod and namespace, you can export your configuration using a combination of kubectl and tar:
 
@@ -136,10 +131,9 @@ Once you've identified your pod and namespace, you can export your configuration
 kubectl exec <pod name> -n <namespace> -- bash -c "cd /opt/cribl/config-volume; tar cf - ." > cribl_backup.tar
 ```
 
-This command executes the tar based back up of the config-volume, and outputs it to a local tar file (cribl_backup.tar)
+This command executes the tar based back up of the config-volume, and outputs it to a local tar file (cribl_backup.tar).
 
-
-## "Re-hydrating" the backup on the logstream-leader chart
+## "Re-hydrating" the Backup on the logstream-leader Chart
 
 Exploding the tarball onto the new persistent volume is a one time event - once the config-volume is restored, you'll make changes to the config via the Cribl Stream UI or API, causing the config on disk to change, which you wouldn't want to overwrite the next time the pod restarts. You can do this manually by installing the logstream-leader chart, and then running the following command:
 

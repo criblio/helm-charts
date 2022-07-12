@@ -2,21 +2,19 @@
 
 # logstream-workergroup Helm Chart
 
-This Chart deploys a Cribl Stream worker group.
+This chart deploys a Cribl Stream worker group.
 
 # IMPORTANT
-A change has been made in this version that changes the syntax for the rbac values. Please see the
-table below for values options for the rbac.apiGroups, rbac.verbs, and rbac.resources before you
-upgrade the chart.
+Versions starting with 3.4.0 include a change to the syntax for RBAC values. Before you upgrade the chart from pre-3.4.0 versions, please see the [table below](#values) for current options for the `rbac.apiGroups`, `rbac.verbs`, and `rbac.resources` values.
 
 # New Capabilities
-* Support for the 3.4.0 version of Cribl Stream (default version)
+* Support for the 3.5.0 version of Cribl Stream (default version)
 
 # Deployment
 
 As built, this chart will deploy a simple worker group for Cribl Stream, consisting of a deployment, a service, and a horizontal pod autoscaler config, as well as a secret used for configuration. 
 
-This chart does **not** deploy a leader node – it depends on one already being present.
+This chart does **not** deploy a leader node – it depends on that node's already being present.
 
 ![Deployment Diagram](images/k8s-logstream-worker-group.svg)
 
@@ -26,7 +24,7 @@ This chart does **not** deploy a leader node – it depends on one already being
 1. Cribl helm repo configured. To do this:
 	`helm repo add cribl https://criblio.github.io/helm-charts/`
 
-# Values to Override
+# <span id="values"> Values to Override </span>
 
 This section covers the most likely values to override. To see the full scope of values available, run `helm show values cribl/logstream-workergroup`. 
 
@@ -150,13 +148,13 @@ With the addition of the `extraVolumeMounts` capability, it is now feasible to u
 # Known Issues
 
 * The chart currently supports *only* TCP ports on the worker group services. This may be addressed in future versions.
-* [EKS-Specific Issues](../../common_docs/EKS_SPECIFICS.md).
+* [EKS-Specific Issues](../../common_docs/EKS_SPECIFICS.md).
 
 
 # More Info
 
-For additional documentation on this chart, see the [Cribl Docs](https://docs.cribl.io/stream/deploy-kubernetes-helm) page about it.
+For additional documentation on this chart, see the [Cribl Docs](https://docs.cribl.io/stream/deploy-kubernetes-helm) page about it.
 
 # Support/Feedback
 
-If you use this helm chart, we'd love to hear any feedback you might have on this chart. Join us on our [Slack Community](https://cribl.io/community) and navigate to the `#kubernetes` channel.
+If you use this helm chart, we'd love to hear any feedback you might have on this chart. Join us on our [Slack Community](https://cribl.io/community) and navigate to the `#kubernetes` channel.

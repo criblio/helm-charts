@@ -5,8 +5,7 @@
 This chart deploys a Cribl Stream worker group.
 
 # IMPORTANT
-Versions starting with 3.4.0 include a change to the syntax for RBAC values. Before you
-upgrade the chart from pre-3.4.0 versions, please see the table below for current options for the `rbac.apiGroups`, `rbac.verbs`, and `rbac.resources` values.
+Versions starting with 3.4.0 include a change to the syntax for RBAC values. Before you upgrade the chart from pre-3.4.0 versions, please see the [table below](#values) for current options for the `rbac.apiGroups`, `rbac.verbs`, and `rbac.resources` values.
 
 # New Capabilities
 * Support for the 3.5.0 version of Cribl Stream (default version)
@@ -25,7 +24,7 @@ This chart does **not** deploy a leader node – it depends on that node's alrea
 1. Cribl helm repo configured. To do this:
 	`helm repo add cribl https://criblio.github.io/helm-charts/`
 
-# Values to Override
+# <span id="values"> Values to Override </span>
 
 This section covers the most likely values to override. To see the full scope of values available, run `helm show values cribl/logstream-workergroup`. 
 

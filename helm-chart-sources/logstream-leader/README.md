@@ -133,7 +133,7 @@ kubectl exec <pod name> -n <namespace> -- bash -c "cd /opt/cribl/config-volume; 
 
 This command executes the tar based back up of the config-volume, and outputs it to a local tar file (cribl_backup.tar).
 
-## "Re-hydrating" the Backup on the logstream-leader Chart
+## "Re-Hydrating" the Backup on the logstream-leader Chart
 
 Exploding the tarball onto the new persistent volume is a one time event - once the config-volume is restored, you'll make changes to the config via the Cribl Stream UI or API, causing the config on disk to change, which you wouldn't want to overwrite the next time the pod restarts. You can do this manually by installing the logstream-leader chart, and then running the following command:
 

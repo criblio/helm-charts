@@ -19,7 +19,7 @@ As built, this chart will deploy a Cribl Stream leader server, consisting of a 
 
 ![Deployment Diagram](images/k8s-logstream-leader.svg)
 
-Of special note is the fact that two load balanced services are created – the main one (named after the Helm release), which is intended as the primary service interface for users; and the "internal" one (named `<helm-release>-internal`), which is intended for the workergroup-to-leader communication.
+Of special note is the fact that two load-balanced services are created – the main one (named after the Helm release), which is intended as the primary service interface for users; and the "internal" one (named `<helm-release>-internal`), which is intended for the workergroup-to-leader communication.
 
 # <span id="pre-reqs"> Prerequisites </span>
 

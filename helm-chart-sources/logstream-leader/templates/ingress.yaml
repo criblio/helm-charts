@@ -26,5 +26,7 @@ spec:
             {{- end -}}
             {{- end -}}
             {{- end -}}
-
+  {{- if .Values.ingress.host }}
+    host: {{ .Values.ingress.host }}
+  {{- end }}
 {{- end }}

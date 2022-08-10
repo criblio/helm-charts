@@ -8,12 +8,7 @@ metadata:
 
 spec:
   rules:
-  {{- if .Values.ingress.host }}
-  - host: {{ .Values.ingress.host }}
-    http:
-  {{- else }}
   - http:
-  {{- end }}
       paths:
       - path: /*
         pathType: Prefix
@@ -31,5 +26,7 @@ spec:
             {{- end -}}
             {{- end -}}
             {{- end -}}
-
+  {{- if .Values.ingress.host }}
+    host: {{ .Values.ingress.host }}
+  {{- end }}
 {{- end }}

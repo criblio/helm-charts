@@ -3,7 +3,7 @@ set -e
 
 tag=$1
 if [ -z "$tag" ]; then
-  >&2 usage: $0 TAG
+  >&2 echo usage: $0 TAG
   exit 2
 fi
 
@@ -17,6 +17,8 @@ git stash
 
 perl -i -pe "s/^(?:appVersion|version): \K[\d\.]+/$tag/" helm-chart-sources/logstream-{leader,workergroup}/Chart.yaml
 perl -i -pe "s/^\s+tag: \K[\d\.]+/$tag/" helm-chart-sources/logstream-{leader,workergroup}/values.yaml
+perl -i -pe "s/Support for the \K[\d\.]+/$tag/" helm-chart-sources/logstream-{leader,workergroup}/README.md
+
 git commit -am "Bump version to $tag"
 git tag -am "Released version $tag" v$tag
 git push origin master v$tag

@@ -3,7 +3,7 @@
 
 This is a Helm repository for charts published by Cribl, Inc.
 
-With the advent of the Worker Group and Leader Helm charts, we now have a really fast way to deploy an entire distributed Cribl Stream environment to a Kubernetes cluster.
+With the advent of the `workergroup` and `leader` Helm charts, we now have a really fast way to deploy an entire distributed Cribl Stream environment to a Kubernetes cluster.
 
 # Prerequisites
 

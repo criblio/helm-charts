@@ -31,7 +31,7 @@ Add the Cribl Helm repo.
 helm repo add cribl https://criblio.github.io/helm-charts/
 ```
 
-The following example creates a distributed deployment with two auto-scaled worker groups, `pcilogs` and `system-metrics`. It uses an auth token of `ABCDEF01-1234-5678-ABCD-ABCDEF012345`, sets an admin password, and installs our license. For Workers to communication with the Leader node, both Worker Group deployments reference the Service (`ls-leader-internal`) created by the Leader helm chart deployment.
+The following example creates a distributed deployment with two auto-scaled worker groups, `pcilogs` and `system-metrics`. It uses an auth token of `ABCDEF01-1234-5678-ABCD-ABCDEF012345`, sets an admin password, and installs our license. For Workers to communicate with the Leader node, both Worker Group deployments reference the Service (`ls-leader-internal`) created by deployment of the Leader Helm chart.
 
 ```shell
 helm install ls-leader cribl/logstream-leader \

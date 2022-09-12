@@ -47,7 +47,7 @@ rbac:
 
 ### Persistent Storage Issues
 
-With the logstream-master chart, the default persistent storage (and the CSI driver) use EBS for persistent volumes. EBS volumes are availability-zone–specific. If the EKS cluster is using a single node group that spans availability zones, and a node dies, there's no guarantee that there will be another node on which to schedule it in that availability zone. When that happens, the master pod will sit in an error state until there is a node in that availability zone that can access the EBS volume. 
+With the logstream-leader chart, the default persistent storage (and the CSI driver) use EBS for persistent volumes. EBS volumes are availability-zone–specific. If the EKS cluster is using a single node group that spans availability zones, and a node dies, there's no guarantee that there will be another node on which to schedule it in that availability zone. When that happens, the master pod will sit in an error state until there is a node in that availability zone that can access the EBS volume.
 
 #### Avoidance
 

@@ -121,10 +121,10 @@ extraVolumeMounts:
 ## Using extraContainers <a name="extraContainers"></a>
 _Availability: logstream-workergroup and logstream-leader_
 
-The `extraContainers` option allows you to run one or more sidecar containers along with the main LogStream container. This allows you to implement the standard sidecar pattern with the logstream helm charts. This takes one or more container definitions.
+The `extraContainers` option allows you to run one or more sidecar containers along with the main Cribl Stream container. This allows you to implement the standard sidecar pattern with the helm charts. This takes one or more container definitions.
 
 ### Example
-Here is an simple container definition that uses the fluentd container as a sidecar, also mounting the config-storage volume from the logstream container within the sidecar. 
+Here is a simple container definition that uses the fluentd container as a sidecar, also mounting the config-storage volume from the logstream container within the sidecar. 
 
 ```
 extraContainers:
@@ -139,7 +139,7 @@ extraContainers:
 ## Using extraInitContainers <a name="extraInitContainers"></a>
 _Availability: logstream-workergroup and logstream-leader_
 
-The `extraInitContainers` option allows you to run one or more `initContainer`s before the main LogStream worker container starts up. This can be useful for making OS-level changes to a persistent volume (like `chown` or `chmod` of files or directories), among other things. This takes one or more container definitions.
+The `extraInitContainers` option allows you to run one or more `initContainer`s before the main Cribl Stream worker container starts up. This can be useful for making OS-level changes to a persistent volume (like `chown` or `chmod` of files or directories), among other things. This takes one or more container definitions.
 
 ### Example
 Here is an extremely simple container definition that uses the base alpine container image and changes the permissions on the directory `/opt/mypath` to 755.
@@ -156,7 +156,7 @@ extraInitContainers:
 ## Using securityContext <a name="securityContext"></a>
 _Availability: logstream-workergroup and logstream-leader_
 
-The `securityContext` option allows you to define a user ID and a group ID to run the container processes under. When you do this, the first step the container goes through, prior to starting LogStream, is to `chown` the `/opt/cribl` directory (recursively) to that user/group ID. On the logstream-leader chart, it also `chown`s the `/opt/cribl/config-volume` directory tree. It then starts the `entrypoint.sh` script as the specified user.
+The `securityContext` option allows you to define a user ID and a group ID to run the container processes under. When you do this, the first step the container goes through, prior to starting Cribl Stream, is to `chown` the `/opt/cribl` directory (recursively) to that user/group ID. On the logstream-leader chart, it also `chown`s the `/opt/cribl/config-volume` directory tree. It then starts the `entrypoint.sh` script as the specified user.
 
 ### Example
 This example runs the processes under the user ID of `1020` and the group ID of `30`. 
@@ -197,7 +197,7 @@ This example provides access to `deployments`, allowing verbs `get`, `list`, `wa
 ## Using extraInitContainers <a name="extraInitContainers"></a>
 _Availability: logstream-workergroup and logstream-leader_
 
-The `extraInitContainers` option allows you to run one or more `initContainer`s before the main LogStream worker container starts up. This can be useful for making OS-level changes to a persistent volume (like `chown` or `chmod` of files or directories), among other things. This takes one or more container definitions.
+The `extraInitContainers` option allows you to run one or more `initContainer`s before the main Cribl Stream worker container starts up. This can be useful for making OS-level changes to a persistent volume (like `chown` or `chmod` of files or directories), among other things. This takes one or more container definitions.
 
 ### Example
 Here is an extremely simple container definition that uses the base alpine container image and changes the permissions on the directory `/opt/mypath` to 755.
@@ -214,7 +214,7 @@ extraInitContainers:
 ## Using securityContext <a name="securityContext"></a>
 _Availability: logstream-workergroup and logstream-leader_
 
-The `securityContext` option allows you to define a user ID and a group ID to run the container processes under. When you do this, the first step the container goes through, prior to starting LogStream, is to `chown` the `/opt/cribl` directory (recursively) to that user/group ID. On the logstream-leader chart, it also `chown`s the `/opt/cribl/config-volume` directory tree. It then starts the `entrypoint.sh` script as the specified user.
+The `securityContext` option allows you to define a user ID and a group ID to run the container processes under. When you do this, the first step the container goes through, prior to starting Cribl Stream, is to `chown` the `/opt/cribl` directory (recursively) to that user/group ID. On the logstream-leader chart, it also `chown`s the `/opt/cribl/config-volume` directory tree. It then starts the `entrypoint.sh` script as the specified user.
 
 ### Example
 This example runs the processes under the user ID of `1020` and the group ID of `30`. 

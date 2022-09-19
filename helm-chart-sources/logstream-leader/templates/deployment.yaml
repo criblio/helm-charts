@@ -12,6 +12,23 @@ spec:
   selector:
     matchLabels:
       {{- include "logstream-leader.selectorLabels" . | nindent 6 }}
+  {{- $strategy := default "Recreate" .Values.strategy.type }}
+  {{- if and (ne $strategy "Recreate") (ne $strategy "RollingUpdate") }}
+    {{- fail (printf "Not a valid strategy type for Deployment (%s)" $strategy) }}
+  {{- end }}
+  strategy:
+    type: {{ $strategy }}
+    {{- with .Values.strategy.rollingUpdate }}
+      {{- if and (eq $strategy "RollingUpdate") (or .surge .unavailable) }}
+    rollingUpdate:
+        {{- with .unavailable }}
+      maxUnavailable: {{ . }}
+        {{- end }}
+        {{- with .surge }}
+      maxSurge: {{ . }}
+        {{- end }}
+      {{- end }}
+    {{- end }}
   template:
     metadata:
     {{- with .Values.podAnnotations }}

@@ -45,6 +45,12 @@ service:
       protocol: TCP
       external: false
 
+strategy:
+  type: Recreate
+  rollingUpdate:
+    maxSurge:
+    maxUnavailable:
+
 podAnnotations: {}
 
 podSecurityContext: {}

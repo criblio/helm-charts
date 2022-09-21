@@ -46,6 +46,7 @@ This section covers the most likely values to override. To see the full scope of
 |autoscaling.minReplicas|2|The minimum number of Cribl Stream pods to run.|
 |autoscaling.maxReplicas|10|The maximum number of Cribl Stream pods to scale to run.|
 |autoscaling.targetCPUUtilizationPercentage|50|The CPU utilization percentage that triggers scaling. |
+|autoscaling.behavior|{}|[Scaling behavior configuration](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/#configurable-scaling-behavior)|
 |rbac.create|false|Enable Service Account Role & Binding Creation. |
 |rbac.apiGroups|{core}|Set the apiGroups in roles rules|
 |rbac.resources|{pods}|Set the resource boundary for the role being created (K8s resources). |

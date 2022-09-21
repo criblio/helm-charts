@@ -65,6 +65,9 @@ service:
   - name: elastic
     port: 9200
     protocol: TCP
+  - name: hec
+    port: 8088
+    protocol: TCP
 
 resources: 
   limits:

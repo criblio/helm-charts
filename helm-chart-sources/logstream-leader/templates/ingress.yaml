@@ -7,6 +7,13 @@ metadata:
     {{- toYaml .Values.ingress.annotations  | nindent 4 }}
 
 spec:
+  {{- with .Values.ingress.tls }}
+  tls:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- if .Values.ingress.ingressClassName }}
+  ingressClassName: {{ .Values.ingress.ingressClassName }}
+  {{- end }}
   rules:
   - http:
       paths:

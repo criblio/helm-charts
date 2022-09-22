@@ -32,7 +32,7 @@ This example sets the ingress's class to `alb`, which tells the controller to us
 
 ## AWS IAM Role for Worker Group
 
-To allow pods to use IAM Roles, you first need to configure an IAM OIDC Provider and IAM Role. You can read more about the required configs on the AWS Docs site: [IAM Roles for Service Accounts](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts-technical-overview.html)
+To allow pods to use IAM Roles, you first need to configure an IAM OIDC Provider and IAM Role. You can read more about the required configs on the AWS Docs site: [IAM Roles for Service Accounts](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html)
 
 Once the OIDC Provider and IAM Role have been configured, add the following to your `values.yaml` file (update the placeholders with the appropriate values):
 
@@ -40,7 +40,7 @@ Once the OIDC Provider and IAM Role have been configured, add the following to y
 rbac:
   create: true
   annotations:
-    eks.amazonaws.com/role-arn: arn:aws:iam::01234567890:role/your-iam-role-name-for-logstream-worker-group
+    eks.amazonaws.com/role-arn: arn:aws:iam::01234567890:role/your-iam-role-name-for-cribl-stream-worker-group
 ```
 
 ## Known EKS Problems

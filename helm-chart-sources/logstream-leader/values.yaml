@@ -59,8 +59,13 @@ securityContext: {}
 
 ingress:
   enable: false
-  host:
   annotations: {}
+  tls: {}
+#    - hosts:
+#        - cribl.example.com
+#      secretName: cribl-example-com-tls
+  ingressClassName:
+  host:
 
 resources:
   limits:

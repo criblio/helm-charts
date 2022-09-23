@@ -50,6 +50,7 @@ containers:
       - name: {{ .name }}
         containerPort: {{ .port }}
       {{- end }}
+    {{- if .Values.config.probes }}
     livenessProbe:
       httpGet:
         path: /api/v1/health
@@ -68,6 +69,7 @@ containers:
         {{- end }}
       failureThreshold: 3
       initialDelaySeconds: 60
+    {{- end }}
     resources:
       {{- toYaml .Values.resources | nindent 12 }}
     env:

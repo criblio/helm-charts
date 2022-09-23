@@ -27,6 +27,9 @@ config:
   criblHome: /opt/cribl
   rejectSelfSignedCerts: 0
   healthPort: 9000
+  # -- Perform health checks on the Leader pod.
+  # Recommended that this be enabled to automatically restart the Leader if the Pod is unhealthy
+  probes: true
   groups: []
 
 env: {}

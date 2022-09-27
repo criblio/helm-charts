@@ -18,12 +18,7 @@ spec:
   {{- end }}
   rules:
   {{- range .rules }}
-    {{- if .host }}
-    - host: {{ .host }}
-      http:
-    {{- else }}
     - http:
-    {{- end }}
         paths:
           {{- range .paths }}
           - path: {{ .path }}
@@ -34,6 +29,9 @@ spec:
                 port:
                   number: {{ .port }}
           {{- end }}
+    {{- if .host }}
+      host: {{ .host }}
+    {{- end }}
   {{- end }}
 {{- end }}
 {{- end }}

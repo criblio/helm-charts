@@ -97,3 +97,42 @@ autoscaling:
 #       value: 1
 #       periodSeconds: 180
 
+# -- K8s ingress resources
+# @default -- see `values.yaml`
+ingress:
+  # -- Enable creation of ingress resources
+  enable: false
+  # Annotations applied to all ingresses
+  annotations: {}
+  # `ingressClassName` applied to all ingresses
+  ingressClassName:
+  # Array of ingresses (each entry will become an Ingress resource)
+  # You must define your ingress resources!
+  ingress: {}
+#    - name: ingress-example
+#      # TLS secrets for this ingress
+#      tls: {}
+#      # Override the ingressClassName for this ingress
+#      ingressClassName:
+#      # Annotation overrides (merged with defaults)
+#      annotations: {}
+#      # Array of Ingress rules
+#      # https://kubernetes.io/docs/concepts/services-networking/ingress/#ingress-rules
+#      rules:
+#        - host: ingress.example.com
+#          paths:
+#            - path: /*
+#              port: 8088
+#        - host: ingress2.example.com
+#          paths:
+#            - path: /exact/path/matching
+#              # Other path kinds can be specified (default is Prefix)
+#              # https://kubernetes.io/docs/concepts/services-networking/ingress/#path-types
+#              kind: Exact
+#              port: 8080
+#            - path: /*
+#              port: 8082
+#        # Example default rule without host name
+#        - paths:
+#            - path: /*
+#              port: 8088

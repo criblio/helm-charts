@@ -43,6 +43,24 @@ rbac:
     eks.amazonaws.com/role-arn: arn:aws:iam::01234567890:role/your-iam-role-name-for-cribl-stream-worker-group
 ```
 
+## EKS Fargate Resource Settings
+
+The CPU limits may not exceed the requests, otherwise the Pod will fail to initialize with an error. Additionally, the requested CPU and memory configuration must be valid for the Fargate platform. The [supported values for CPU and Memory resources](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-cpu-memory-error.html) are available on the AWS documentation.
+
+> setting cgroup config for procHooks process caused: failed to write "200000": write /sys/fs/cgroup/cpu,cpuacct/kubepods/burstable/.../cpu.cfs_quota_us: invalid argument: unknown
+
+A sample validated resource config that provisions 4 vCPU and 8 GB of RAM on EKS Fargate:
+
+```yaml
+resources:
+  limits:
+    cpu: 4
+    memory: 8192Mi
+  requests:
+    cpu: 4
+    memory: 8192Mi
+```
+
 ## Known EKS Problems
 
 ### Persistent Storage Issues

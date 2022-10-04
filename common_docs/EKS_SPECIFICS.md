@@ -43,9 +43,19 @@ rbac:
     eks.amazonaws.com/role-arn: arn:aws:iam::01234567890:role/your-iam-role-name-for-cribl-stream-worker-group
 ```
 
-## EKS Fargate Resource Settings
+## Known EKS Problems
 
-The CPU limits may not exceed the requests, otherwise the Pod will fail to initialize with an error. Additionally, the requested CPU and memory configuration must be valid for the Fargate platform. The [supported values for CPU and Memory resources](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-cpu-memory-error.html) are available on the AWS documentation.
+### Persistent Storage Issues
+
+With the logstream-master chart, the default persistent storage (and the CSI driver) use EBS for persistent volumes. EBS volumes are availability-zone–specific. If the EKS cluster is using a single node group that spans availability zones, and a node dies, there's no guarantee that there will be another node on which to schedule it in that availability zone. When that happens, the master pod will sit in an error state until there is a node in that availability zone that can access the EBS volume. 
+
+#### Avoidance
+
+The solution to this is to use availability-zone–aware node groups with autoscaling. Our internal clusters are set up with nodegroups that have a minimum of 1 node and a maximum of 4 nodes, and each nodegroup is in a specific AZ. The `eksctl` docs pages detail the way to deal with this problem – see [https://eksctl.io/usage/autoscaling/#zone-aware-auto-scaling](https://eksctl.io/usage/autoscaling/#zone-aware-auto-scaling). 
+
+### EKS Fargate Resource Settings
+
+The CPU limits must not exceed the requests, otherwise the Pod will fail to initialize with an error. Additionally, the requested CPU and memory configuration must be valid for the Fargate platform. The [supported values for CPU and Memory resources](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-cpu-memory-error.html) are available on the AWS documentation.
 
 > setting cgroup config for procHooks process caused: failed to write "200000": write /sys/fs/cgroup/cpu,cpuacct/kubepods/burstable/.../cpu.cfs_quota_us: invalid argument: unknown
 
@@ -60,15 +70,3 @@ resources:
     cpu: 4
     memory: 8192Mi
 ```
-
-## Known EKS Problems
-
-### Persistent Storage Issues
-
-With the logstream-master chart, the default persistent storage (and the CSI driver) use EBS for persistent volumes. EBS volumes are availability-zone–specific. If the EKS cluster is using a single node group that spans availability zones, and a node dies, there's no guarantee that there will be another node on which to schedule it in that availability zone. When that happens, the master pod will sit in an error state until there is a node in that availability zone that can access the EBS volume. 
-
-#### Avoidance
-
-The solution to this is to use availability-zone–aware node groups with autoscaling. Our internal clusters are set up with nodegroups that have a minimum of 1 node and a maximum of 4 nodes, and each nodegroup is in a specific AZ. The `eksctl` docs pages detail the way to deal with this problem – see [https://eksctl.io/usage/autoscaling/#zone-aware-auto-scaling](https://eksctl.io/usage/autoscaling/#zone-aware-auto-scaling). 
-
-### 

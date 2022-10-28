@@ -9,7 +9,7 @@ criblImage:
   repository: cribl/cribl
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: 3.5.2
+  tag: 3.5.4
 
 imagePullSecrets: []
 nameOverride: "leader"
@@ -27,6 +27,9 @@ config:
   criblHome: /opt/cribl
   rejectSelfSignedCerts: 0
   healthPort: 9000
+  # -- Perform health checks on the Leader pod.
+  # Recommended that this be enabled to automatically restart the Leader if the Pod is unhealthy
+  probes: true
   groups: []
 
 env: {}
@@ -45,6 +48,12 @@ service:
       protocol: TCP
       external: false
 
+strategy:
+  type: Recreate
+  rollingUpdate:
+    maxSurge:
+    maxUnavailable:
+
 podAnnotations: {}
 
 podSecurityContext: {}
@@ -53,8 +62,13 @@ securityContext: {}
 
 ingress:
   enable: false
-  host:
   annotations: {}
+  tls: {}
+#    - hosts:
+#        - cribl.example.com
+#      secretName: cribl-example-com-tls
+  ingressClassName:
+  host:
 
 resources:
   limits:

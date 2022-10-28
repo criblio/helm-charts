@@ -8,7 +8,7 @@ This chart deploys a Cribl Stream worker group.
 Versions starting with 3.4.0 include a change to the syntax for RBAC values. Before you upgrade the chart from pre-3.4.0 versions, please see the [table below](#values) for current options for the `rbac.apiGroups`, `rbac.verbs`, and `rbac.resources` values.
 
 # New Capabilities
-* Support for the 3.5.2 version of Cribl Stream (default version)
+* Support for the 3.5.4 version of Cribl Stream (default version)
 
 # Deployment
 
@@ -40,12 +40,15 @@ This section covers the most likely values to override. To see the full scope of
 |config.probes|true|enables (true) or disables (false) the liveness and readiness probes.|
 |service.type|LoadBalancer|The type of service to create for the workergroup|
 |service.loadBalancerIP|none (IP Address)|The IP address to use for the load balancer service interface, if the type is set to LoadBalancer. Check with your Kubernetes setup to see if this is supported. |
-|service.ports|<pre>- name: tcpjson<br>  port: 10001<br>  protocol: TCP<br>- name: s2s<br>  port: 9997<br>  protocol: TCP<br>- name: http<br>  port: 10080<br>  protocol: TCP<br>- name: https<br>  port: 10081<br>  protocol: TCP<br>- name: syslog<br>  port: 5140<br>  protocol: TCP<br>- name: metrics<br>  port: 8125<br>  protocol: TCP<br>- name: elastic<br>  port: 9200<br>  protocol: TCP</pre>|The ports to make available both in the Deployment and the Service. Each "map" in the list needs the following values set: <dl><dt>name</dt><dd>A descriptive name of what the port is being used for.</dd><dt>port</dt><dd>The port to make available.</dd><dt>protocol</dt><dd>The protocol in use for this port (UDP/TCP).</dd></dl>|
+|service.ports|<pre>- name: tcpjson<br>  port: 10001<br>  protocol: TCP<br>- name: s2s<br>  port: 9997<br>  protocol: TCP<br>- name: http<br>  port: 10080<br>  protocol: TCP<br>- name: https<br>  port: 10081<br>  protocol: TCP<br>- name: syslog<br>  port: 5140<br>  protocol: TCP<br>- name: metrics<br>  port: 8125<br>  protocol: TCP<br>- name: elastic<br>  port: 9200<br>  protocol: TCP<br>- name: hec<br>  port: 8088<br>  protocol: TCP</pre>|The ports to make available both in the Deployment and the Service. Each "map" in the list needs the following values set: <dl><dt>name</dt><dd>A descriptive name of what the port is being used for.</dd><dt>port</dt><dd>The port to make available.</dd><dt>protocol</dt><dd>The protocol in use for this port (UDP/TCP).</dd></dl>|
 |service.annotations|{}|Annotations for the service component – this is where you'll want to put load-balancer-specific configuration directives.|
+|ingress|see `values.yaml`|Ingress controller configuration|
+|ingress.enable|false|Enable creating Ingress resources|
 |criblImage.tag|"3.4.0"|The container image tag to pull from. By default, this will use the version equivalent to the chart's `appVersion` value. But you can override this with "latest" to get the latest release, or with a version number (e.g., "3.4.0") to pull a specific version of Cribl Stream. |
 |autoscaling.minReplicas|2|The minimum number of Cribl Stream pods to run.|
 |autoscaling.maxReplicas|10|The maximum number of Cribl Stream pods to scale to run.|
 |autoscaling.targetCPUUtilizationPercentage|50|The CPU utilization percentage that triggers scaling. |
+|autoscaling.behavior|{}|[Scaling behavior configuration](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/#configurable-scaling-behavior)|
 |rbac.create|false|Enable Service Account Role & Binding Creation. |
 |rbac.apiGroups|{core}|Set the apiGroups in roles rules|
 |rbac.resources|{pods}|Set the resource boundary for the role being created (K8s resources). |

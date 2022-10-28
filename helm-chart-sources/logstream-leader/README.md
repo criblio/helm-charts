@@ -11,7 +11,7 @@ If you're migrating from the deprecated `logstream‑master` chart, please see t
 
 # New Capabilities
 
-* Support for the 3.5.2 version of Cribl Stream (default version)
+* Support for the 3.5.4 version of Cribl Stream (default version)
 
 # Deployment
 
@@ -49,6 +49,7 @@ This section covers the most likely values to override. To see the full scope of
 |config.groups| [] |The group names to configure for the leader instance – this will create a mapping for each group, which looks for the tag `<groupname>`, and will create the basic structure of each group's configuration.|
 |config.scName|\<default storage class\>|The StorageClass Name for all of the persistent volumes.|
 |config.rejectSelfSignedCerts|0|0 – allow self-signed certs; or 1 – deny self-signed certs. |
+|config.probes|true|Perform health checks on the Leader pod. Recommended that this be enabled to automatically restart the Leader if the Pod is unhealthy.|
 |config.healthPort|9000|The port to use for health checks (readiness/live).|
 |config.healthScheme|HTTP|The scheme to use for health checks - HTTP or HTTPS supported. If not specified, will default to HTTP. |
 |service.internalType|ClusterIP|The type to use for the `<release>-leader-internal` service. In 2.4.5 and beyond, this is set to ClusterIP by default. If you have any workergroups outside of the kubernetes cluster where the leader lives, you'll need to change this to NodePort or LoadBalancer to expose it outside of the cluster.|
@@ -72,6 +73,8 @@ This section covers the most likely values to override. To see the full scope of
 |[env](../../common_docs/EXTRA_EXAMPLES.md#env)|[]|Additional static environment variables.|
 |ingress.enable|false|Enable Ingress in front of the external service. Setting this to `true` changes the external service to type `NodePort`, and creates an ingress that connects to it.|
 |ingress.annotations|{}|If `ingress.enable` is set to `true`, this is where you'll want to put annotations to configure the specific ingress controller. _*NOTE: Ingress is supported only on Kubernetes 1.19 and later clusters*_. |
+|ingress.tls|{}|[Ingress TLS configuration](https://kubernetes.io/docs/concepts/services-networking/ingress/#tls)|
+|ingress.ingressClassName|none|Override the default ingress class ([added in Kubernetes 1.18](https://kubernetes.io/docs/concepts/services-networking/ingress/#deprecated-annotation))|
 
 # Basic Installation
 

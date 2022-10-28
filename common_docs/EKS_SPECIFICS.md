@@ -32,7 +32,7 @@ This example sets the ingress's class to `alb`, which tells the controller to us
 
 ## AWS IAM Role for Worker Group
 
-To allow pods to use IAM Roles, you first need to configure an IAM OIDC Provider and IAM Role. You can read more about the required configs on the AWS Docs site: [IAM Roles for Service Accounts](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts-technical-overview.html)
+To allow pods to use IAM Roles, you first need to configure an IAM OIDC Provider and IAM Role. You can read more about the required configs on the AWS Docs site: [IAM Roles for Service Accounts](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html)
 
 Once the OIDC Provider and IAM Role have been configured, add the following to your `values.yaml` file (update the placeholders with the appropriate values):
 
@@ -40,7 +40,7 @@ Once the OIDC Provider and IAM Role have been configured, add the following to y
 rbac:
   create: true
   annotations:
-    eks.amazonaws.com/role-arn: arn:aws:iam::01234567890:role/your-iam-role-name-for-logstream-worker-group
+    eks.amazonaws.com/role-arn: arn:aws:iam::01234567890:role/your-iam-role-name-for-cribl-stream-worker-group
 ```
 
 ## Known EKS Problems
@@ -53,4 +53,21 @@ With the logstream-leader chart, the default persistent storage (and the CSI dri
 
 The solution to this is to use availability-zone–aware node groups with autoscaling. Our internal clusters are set up with nodegroups that have a minimum of 1 node and a maximum of 4 nodes, and each nodegroup is in a specific AZ. The `eksctl` docs pages detail the way to deal with this problem – see [https://eksctl.io/usage/autoscaling/#zone-aware-auto-scaling](https://eksctl.io/usage/autoscaling/#zone-aware-auto-scaling). 
 
-### 
+
+### EKS Fargate Resource Settings
+
+The CPU limits must not exceed the requests, otherwise the Pod will fail to initialize with an error. Additionally, the requested CPU and memory configuration must be valid for the Fargate platform. The [supported values for CPU and Memory resources](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-cpu-memory-error.html) are available on the AWS documentation.
+
+> setting cgroup config for procHooks process caused: failed to write "200000": write /sys/fs/cgroup/cpu,cpuacct/kubepods/burstable/.../cpu.cfs_quota_us: invalid argument: unknown
+
+A sample validated resource config that provisions 4 vCPU and 8 GB of RAM on EKS Fargate:
+
+```yaml
+resources:
+  limits:
+    cpu: 4
+    memory: 8192Mi
+  requests:
+    cpu: 4
+    memory: 8192Mi
+```

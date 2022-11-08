@@ -1,0 +1,10 @@
+apiVersion: v2
+name: common
+description: Common templates for Cribl Helm Charts
+maintainers:
+  - name: Cribl, Inc.
+    email: support@cribl.io
+    url: https://github.com/criblio/helm-charts
+type: library
+version: 1.0.0
+appVersion: 1.0.0

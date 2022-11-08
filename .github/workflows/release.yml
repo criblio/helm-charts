@@ -8,8 +8,6 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
-    env:
-      HELM_VERSION: 3.5.3
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
@@ -21,10 +19,9 @@ jobs:
         run: mkdir -p $GITHUB_WORKSPACE/${{ env.GITHUB_REF_SLUG }}
 
       - name: Install Helm
-        run: |
-          mkdir -p $GITHUB_WORKSPACE/bin/
-          echo "$GITHUB_WORKSPACE/bin/" >> $GITHUB_PATH
-          curl -Ls https://get.helm.sh/helm-v${HELM_VERSION}-linux-amd64.tar.gz | tar xzvf - --strip-components=1 -C $GITHUB_WORKSPACE/bin/
+        uses: azure/setup-helm@v3
+        with:
+          version: 3.9.4
 
       - name: helm lint
         run: helm lint helm-chart-sources/*
@@ -39,7 +36,7 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ${{ env.GITHUB_REF_SLUG }}/logstream-*.tgz
+          file: ${{ env.GITHUB_REF_SLUG }}/*.tgz
           file_glob: true
           tag: ${{ env.GITHUB_REF_SLUG }}
           overwrite: true

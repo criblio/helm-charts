@@ -35,7 +35,7 @@ The following example creates a distributed deployment with two auto-scaled work
 - `pcilogs` 
 - `system-metrics`
 
-It does the following:
+In addition, the example:
 
 - Uses an auth token of `ABCDEF01-1234-5678-ABCD-ABCDEF012345`
 - Sets an admin password
@@ -66,7 +66,7 @@ helm install ls-wg-system-metrics cribl/logstream-workergroup \
 
 ## Running Distributed on a Free License
 
-To run a distributed instance without specifying a license in your install, go into Cribl Stream's user interface and accept the Free license. The Free license allows only one worker group. 
+To run a distributed instance without specifying a license in your install, go into Cribl Stream's user interface and accept the Free license. The Free license allows only one Worker Group. 
 
 If you specify the `config.groups` option, the Leader will be configured as a distributed Leader. If you don't, it will be configured as a single instance. You can later manually reconfigure it as distributed via Cribl Stream's UI.
 

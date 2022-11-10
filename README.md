@@ -68,7 +68,7 @@ helm install ls-wg-system-metrics cribl/logstream-workergroup \
 
 To run a distributed instance without specifying a license in your install, go into Cribl Stream's user interface and accept the Free license. The Free license allows only one Worker Group. 
 
-You can configure the Leader as Distributed, by specifying the [`config.groups`](https://docs.cribl.io/stream/deploy-distributed#using-yaml-config-file) option. If you don't specify it, the default configuration is Single Instance mode. You can later manually reconfigure it as Distributed via Cribl Stream's UI.
+You can configure the Leader as Distributed, by specifying the `config.groups` option. If you don't specify it, the default configuration is Single Instance mode. You can later manually reconfigure it as Distributed via Cribl Stream's UI.
 
 # Upgrading
 

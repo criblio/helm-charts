@@ -5,7 +5,7 @@ The `envValueFrom` option takes a list of maps, just as the `env` attribute does
 
 ### Example
 
-This example exposes the Pod Name as the environment variable `PODNAME`, and the name of the node it's running on as the environment variable `NODENAME`.
+This example exposes the Pod Name as the environment variable `PODNAME`, and the name of the Node it's running on as the environment variable `NODENAME`.
 
 ```
 envValueFrom:
@@ -51,7 +51,7 @@ extraConfigmapMounts:
 ## Using extraSecretMounts <a name="extraSecretMounts"></a>
 _Availability: logstream-workergroup and logstream-leader_
 
-The `extraSecretMounts` option allows you to mount a K8s [Secret](https://kubernetes.io/docs/concepts/configuration/secret/) object within a pod. It takes a list of maps that define each Secret you wish to mount. It uses a subset of the fields that you'd normally use in a `volumeMount`. Fields:
+The `extraSecretMounts` option allows you to mount a K8s [Secret](https://kubernetes.io/docs/concepts/configuration/secret/) object within a Pod. It takes a list of maps that define each Secret you wish to mount. It uses a subset of the fields that you'd normally use in a `volumeMount`. Fields:
 
 <dl>
 <dt>name</dt>

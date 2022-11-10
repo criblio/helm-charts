@@ -2,7 +2,7 @@
 
 # logstream-leader Helm Chart
 
-This Chart deploys a Cribl Stream leader instance.
+This Chart deploys a Cribl Stream Leader instance.
 
 # Important Note
 
@@ -15,11 +15,11 @@ If you're migrating from the deprecated `logstream‑master` chart, please see t
 
 # Deployment
 
-As built, this chart will deploy a Cribl Stream leader server, consisting of a deployment, two services, and a number of persistent volumes. 
+As built, this chart will deploy a Cribl Stream Leader server, consisting of a deployment, two services, and a number of persistent volumes. 
 
 ![Deployment Diagram](images/k8s-logstream-leader.svg)
 
-Of special note is the fact that two load-balanced services are created – the main one (named after the Helm release), which is intended as the primary service interface for users; and the "internal" one (named `<helm-release>-internal`), which is intended for the workergroup-to-leader communication.
+Note: Two load-balanced services are created – the main one (named after the Helm release), which is intended as the primary service interface for users; and the "internal" one (named `<helm-release>-internal`), which is intended for the workergroup-to-leader communication.
 
 # <span id="pre-reqs"> Prerequisites </span>
 
@@ -31,7 +31,7 @@ Of special note is the fact that two load-balanced services are created – the 
 
 ## Persistent Storage
 
-The chart requires persistent storage; it will use your default storage class, or you can override that class (`config.scName`) with the name of a storage class to use. This has been tested primarily using AWS EBS storage, via the CSI EBS driver. The volumes are created as `ReadWriteOnce` claims. For more info on Storage Classes, see the [Kubernetes.IO Storage Classes page](https://kubernetes.io/docs/concepts/storage/storage-classes/).
+The chart requires persistent storage; it will use your default storage class, or you can override that class (`config.scName`) with the name of a storage class to use. We tested this primarily using AWS EBS storage, via the CSI EBS driver. The volumes are created as `ReadWriteOnce` claims. For more info on Storage Classes, see the [Kubernetes.IO Storage Classes page](https://kubernetes.io/docs/concepts/storage/storage-classes/).
 
 ## AWS-Specific Notes
 
@@ -93,7 +93,7 @@ Cribl Stream will not automatically deploy changes to the worker nodes. So you'
 
 # Cribl Stream Configuration Overrides
 
-The Helm chart, without any values overrides, creates effectively a single-instance deployment of Cribl Stream, using the standard container image. You can, if you so choose, configure distributed mode, licensing, admin user passwords, etc., all from the Cribl Stream UI. However, you can install the chart with value overrides to achieve the same goals.
+The Helm chart, without any values overrides, creates a Single-Instance deployment of Cribl Stream, using the standard container image. You can, if you so choose, configure a Distributed mode, licensing, admin user passwords, etc., all from the Cribl Stream UI. However, you can install the chart with value overrides to achieve the same goals.
 
 * Applying a License
 
@@ -103,7 +103,7 @@ The Helm chart, without any values overrides, creates effectively a single-insta
   
 * Running Distributed on a Free License
 
-  If you are not specifying a license, you'll need to go into the Cribl Stream user interface and accept the free license. If you've specified the chart's `config.groups` option, the leader will be configured as a distributed leader. If you don't, it will be configured as a Cribl Stream single instance. You can change this configuration in Cribl Stream's UI.
+  If you are not specifying a license, you'll need to go into the Cribl Stream user interface and accept the free license. You can configure the Leader in Distributed mode, by using the chart's `config.groups` option. If you don't, it will be configured as Cribl Stream Single-Instance mode. You can change this configuration in Cribl Stream's UI.
 
 * Setting the admin password
 
@@ -113,7 +113,7 @@ The Helm chart, without any values overrides, creates effectively a single-insta
 
 * Setting up Worker Groups/Mappings
 
-  As mentioned above, the default is to install a vanilla deployment of Cribl Stream. If you are deploying as a leader, you can use the `config.groups` parameter to define the worker groups you want created and mapped. Each group in the list you provide will be created as a worker group, with a mapping rule to look for a tag with the worker group name in it. Here is an example:
+  As mentioned above, the default is to install a vanilla deployment of Cribl Stream. If you are deploying as a Leader, you can use the `config.groups` parameter to define the worker groups you want created and mapped. Each group in the list you provide will be created as a worker group, with a mapping rule to look for a tag with the worker group name in it. Here is an example:
 
   `helm install logstream-leader cribl/logstream-leader --set config.groups={group1,group2,group3}`
 
@@ -138,7 +138,7 @@ This command executes the tar based back up of the config-volume, and outputs it
 
 ## "Re-Hydrating" the Backup on the logstream-leader Chart
 
-Exploding the tarball onto the new persistent volume is a one time event - once the config-volume is restored, you'll make changes to the config via the Cribl Stream UI or API, causing the config on disk to change, which you wouldn't want to overwrite the next time the pod restarts. You can do this manually by installing the logstream-leader chart, and then running the following command:
+Exploding the tarball onto the new persistent volume is a one time event. Once the config-volume is restored, you'll make changes to the config via the Cribl Stream UI or API, causing the config on disk to change, which you wouldn't want to overwrite the next time the Pod restarts. You can do this manually by installing the logstream-leader chart, and then running the following command:
 
 ```
 cat cribl_backup.tar| kubectl -n <namespace> exec --stdin <pod name> -- bash -c "cd /opt/cribl/config-volume/; tar xf -"

@@ -6,7 +6,7 @@ version: 4.0.0
 appVersion: "4.0.0"
 icon: https://criblio.github.io/helm-charts/images/Cribl_Logo_Color_TM.png
 
-dependencies:
-  - name: common
-    version: 1.0.0
-    repository: https://criblio.github.io/helm-charts
+#dependencies:
+#  - name: common
+#    version: 1.0.0
+#    repository: https://criblio.github.io/helm-charts

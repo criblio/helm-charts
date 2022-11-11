@@ -1,0 +1,41 @@
+{{- define "common.ingress" -}}
+{{- if eq .Values.ingress.enable true }}
+{{- range .Values.ingress.ingress }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "common.fullname" $ }}-{{ .name }}
+  {{- if or (($.Values.ingress).annotations) .annotations }}
+  annotations:
+    {{- $annotations := merge (.annotations) (($.Values.ingress).annotations) }}
+    {{- toYaml $annotations | nindent 4 }}
+  {{- end }}
+spec:
+  {{- with .tls }}
+  tls:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- if or (($.Values.ingress).className) (.className) }}
+  ingressClassName: {{ coalesce (.className) $.Values.ingress.className }}
+  {{- end }}
+  rules:
+  {{- range .rules }}
+    - http:
+        paths:
+          {{- range .paths }}
+          - path: {{ .path }}
+            pathType: {{ .kind | default "Prefix" }}
+            backend:
+              service:
+                name: {{ include "common.fullname" $ }}
+                port:
+                  number: {{ .port }}
+          {{- end }}
+    {{- if .host }}
+      host: {{ .host | quote }}
+    {{- end }}
+  {{- end }}
+{{- end }}
+{{- end }}
+{{- end }}

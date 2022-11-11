@@ -1,0 +1,48 @@
+suite: DaemonSet
+templates:
+  - daemonset.yaml
+tests:
+  - it: Creates a DaemonSet
+    asserts:
+      - isKind:
+          of: DaemonSet
+      - isAPIVersion:
+          of: apps/v1
+
+  - it: Can define custom repository and tag
+    set:
+      image:
+        repository: foo/bar
+        tag: 42.0.0
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: foo/bar:42.0.0
+
+  - it: Has a ServiceAccount
+    release:
+      name: foo
+    asserts:
+      - equal:
+          path: spec.template.spec.serviceAccountName
+          value: foo-edge
+
+  - it: Sets the default CRIBL_DIST_LEADER_URL
+    set:
+      cribl.leader: foo
+    release:
+      name: foo
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].env[0].valueFrom.secretKeyRef.name
+          value: foo-edge-cribl-settings
+
+  - it: Sets the custom CRIBL_DIST_LEADER_URL
+    set:
+      cribl.existingSecretForLeader: foo
+    release:
+      name: foo
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].env[0].valueFrom.secretKeyRef.name
+          value: foo

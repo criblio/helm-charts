@@ -3,7 +3,7 @@ name: edge
 description: A Helm chart for Kubernetes
 type: application
 version: 4.0.0
-appVersion: "4.0.0"
+appVersion: 4.0.0
 icon: https://criblio.github.io/helm-charts/images/Cribl_Logo_Color_TM.png
 
 #dependencies:

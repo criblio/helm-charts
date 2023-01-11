@@ -1,0 +1,66 @@
+suite: Ingress
+templates:
+  - ingress.yaml
+  - service.yaml
+tests:
+  - it: Doesn't create an Ingress by default
+    template: ingress.yaml
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: Should leave the service type as the default
+    template: service.yaml
+    asserts:
+      - equal:
+          path: spec.type
+          value: "LoadBalancer"
+
+  - it: Creates an Ingress resource
+    set:
+      ingress.enable: true
+    template: ingress.yaml
+    asserts:
+      - containsDocument:
+          kind: Ingress
+          apiVersion: networking.k8s.io/v1
+
+  - it: Should set the default prefix
+    set:
+      ingress.enable: true
+    template: ingress.yaml
+    asserts:
+      - equal:
+          path: spec.rules[0].http.paths[0].path
+          value: "/*"
+
+  - it: Should update the ingress prefix
+    set:
+      ingress:
+        enable: true
+        prefix: "/foo"
+    template: ingress.yaml
+    asserts:
+      - equal:
+          path: spec.rules[0].http.paths[0].path
+          value: "/foo"
+
+  - it: Should use NodePort for the service when ingress is enabled
+    set:
+      ingress.enable: true
+    template: service.yaml
+    asserts:
+      - equal:
+          path: spec.type
+          value: "NodePort"
+
+  - it: Should set the ingressClassName
+    set:
+      ingress:
+        enable: true
+        ingressClassName: foo
+    template: ingress.yaml
+    asserts:
+      - equal:
+          path: spec.ingressClassName
+          value: "foo"

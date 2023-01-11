@@ -17,7 +17,7 @@ spec:
   rules:
   - http:
       paths:
-      - path: /
+      - path: {{ .Values.ingress.prefix }}
         pathType: Prefix
         backend:
           service:

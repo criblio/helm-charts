@@ -14,3 +14,24 @@ tests:
       - equal:
           path: spec.externalTrafficPolicy
           value: Local
+
+  - it: Should not configure the loadBalancerSourceRanges by default
+    asserts:
+      - isNull:
+          path: spec.loadBalancerSourceRanges
+
+  - it: Should configure the loadBalancerSourceRanges
+    set:
+      service.loadBalancerSourceRanges:
+        - "192.168.0.0/24"
+        - "192.168.1.0/24"
+        - "172.16.0.0/16"
+    asserts:
+      - isNotNull:
+          path: spec.loadBalancerSourceRanges
+      - equal:
+          path: spec.loadBalancerSourceRanges
+          value:
+            - "192.168.0.0/24"
+            - "192.168.1.0/24"
+            - "172.16.0.0/16"

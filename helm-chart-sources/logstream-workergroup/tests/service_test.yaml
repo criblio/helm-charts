@@ -1,0 +1,16 @@
+suite: Service
+templates:
+  - service.yaml
+tests:
+  - it: Should not configure the externalTrafficPolicy by default
+    asserts:
+      - isNull:
+          path: spec.externalTrafficPolicy
+
+  - it: Should configure the externalTrafficPolicy
+    set:
+      service.externalTrafficPolicy: Local
+    asserts:
+      - equal:
+          path: spec.externalTrafficPolicy
+          value: Local

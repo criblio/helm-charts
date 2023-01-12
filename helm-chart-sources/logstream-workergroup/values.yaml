@@ -42,6 +42,7 @@ podAnnotations: {}
 service:
   type: LoadBalancer
   annotations: {}
+  # externalTrafficPolicy: Local
 
   ports:
   - name: tcpjson

@@ -71,6 +71,12 @@ service:
   - name: hec
     port: 8088
     protocol: TCP
+  - name: criblhttp
+    port: 10200
+    protocol: TCP
+  - name: cribltcp
+    port: 10300
+    protocol: TCP
 
 resources: 
   limits:

@@ -21,7 +21,7 @@ envValueFrom:
       fieldRef:
         fieldPath: metadata.name
 # Extra environment variables
-extraEnv: []
+extraEnv: {}
 # Extra environment variables (from Secrets)
 extraEnvFrom: []
 # Extra ConfigMaps

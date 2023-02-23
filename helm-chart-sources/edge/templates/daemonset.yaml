@@ -120,6 +120,9 @@ spec:
             - name: {{ tpl $key $ }}
               value: "{{ tpl (print $value) $ }}"
             {{- end }}
+            {{- if .Values.extraEnvFrom }}
+            {{- toYaml .Values.envValueFrom | nindent 12 }}
+            {{- end }}
             {{- if .Values.envValueFrom }}
             {{- toYaml .Values.envValueFrom | nindent 12 }}
             {{- end }}

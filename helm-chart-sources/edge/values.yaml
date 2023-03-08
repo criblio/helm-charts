@@ -30,11 +30,6 @@ extraConfigMaps: []
 extraSecretMounts: []
 # Extra Volume mounts
 extraVolumeMounts:
-  # This is needed to report Docker container info.
-  # Only Docker is supported today, containerd coming soon
-  - name: docker-sock
-    mountPath: /var/run/docker.sock
-    hostPath: /var/run/docker.sock
   # This is needed to access host processes and metrics.
   - name: host-root
     mountPath: /hostfs

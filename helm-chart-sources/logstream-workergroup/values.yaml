@@ -33,6 +33,7 @@ config:
   probes: true
   tlsLeader:
     enable: false
+  tags: []
 
 deployment: deployment
 

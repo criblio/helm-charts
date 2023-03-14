@@ -1,0 +1,25 @@
+suite: Secret
+templates:
+  - hpa.yaml
+tests:
+  - it: Should name with default
+    asserts:
+      - equal:
+          path: metadata.name
+          value: RELEASE-NAME-logstream-workergroup-kubernetes
+
+  - it: Should kebab-case non-RFC 1123 compliant names from camelCase
+    set:
+      config.group: "defaultHybrid"
+    asserts:
+      - equal:
+          path: metadata.name
+          value: RELEASE-NAME-logstream-workergroup-default-hybrid
+
+  - it: Should kebab-case non-RFC 1123 compliant names from underscores
+    set:
+      config.group: "g_o_a_t"
+    asserts:
+      - equal:
+          path: metadata.name
+          value: RELEASE-NAME-logstream-workergroup-g-o-a-t

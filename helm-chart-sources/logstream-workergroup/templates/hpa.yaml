@@ -7,9 +7,9 @@ apiVersion: autoscaling/v2beta2
 kind: HorizontalPodAutoscaler
 metadata:
   {{- if .Values.config.group }}
-  name: {{ include "logstream-workergroup.fullname" . }}-{{ .Values.config.group }}
+  name: {{ include "logstream-workergroup.fullname" . }}-{{ (kebabcase .Values.config.group) }}
   {{- else if .Values.config.tag }}
-  name: {{ include "logstream-workergroup.fullname" . }}-{{ .Values.config.tag }}
+  name: {{ include "logstream-workergroup.fullname" . }}-{{ (kebabcase .Values.config.tag) }}
   {{- end }}
 
   labels:

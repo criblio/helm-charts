@@ -3,9 +3,9 @@ entries:
   common:
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2023-03-14T18:03:33.843177162Z"
+    created: "2023-03-14T18:37:15.341259208Z"
     description: Common templates for Cribl Helm Charts
-    digest: bf9725d30b9cba8a1199333e61360ad4ef0429b8a584d47b30b37a9721f36f09
+    digest: 8e1b102c6494b96f30a6a50cf3d2f04d8af40b2b9453326aa8bed540096b5501
     maintainers:
     - email: support@cribl.io
       name: Cribl, Inc.
@@ -13,19 +13,19 @@ entries:
     name: common
     type: library
     urls:
-    - https://github.com/criblio/helm-charts/releases/download/v4.0.4.1/common-1.0.0.tgz
+    - https://github.com/criblio/helm-charts/releases/download/v4.0.4.2/common-1.0.0.tgz
     version: 1.0.0
   edge:
   - apiVersion: v2
-    appVersion: 4.0.4.1
-    created: "2023-03-14T18:03:33.845373407Z"
+    appVersion: 4.0.4.2
+    created: "2023-03-14T18:37:15.342407831Z"
     description: A Helm chart for Kubernetes
-    digest: b4bd7170c22c2e12e3aaf9d68970f53fb3a749c0d4ab6fec92b5ce216d4ab4c1
+    digest: 815802ac92744e561b6f6764fe4b9b77c3a77781f1049829e28bf1f5433ae082
     icon: https://criblio.github.io/helm-charts/images/Cribl_Logo_Color_TM.png
     name: edge
     type: application
     urls:
-    - https://github.com/criblio/helm-charts/releases/download/v4.0.4.1/edge-4.0.4.tgz
+    - https://github.com/criblio/helm-charts/releases/download/v4.0.4.2/edge-4.0.4.tgz
     version: 4.0.4
   - apiVersion: v2
     appVersion: 4.0.3
@@ -73,15 +73,15 @@ entries:
     version: 4.0.0
   logstream-leader:
   - apiVersion: v2
-    appVersion: 4.0.4.1
-    created: "2023-03-14T18:03:33.846667892Z"
+    appVersion: 4.0.4.2
+    created: "2023-03-14T18:37:15.343514553Z"
     description: Deploys a Cribl Stream Leader in K8s.
-    digest: 38de7a94a88df1e70ceb19d98ee8fa441fa8819381e62e8c91a48cdb07a4f2b2
+    digest: 7875effd6755de73abb614acaf96af2022ecdf14fa0c467c824c4279cf499782
     icon: https://criblio.github.io/helm-charts/images/Cribl_Logo_Color_TM.png
     name: logstream-leader
     type: application
     urls:
-    - https://github.com/criblio/helm-charts/releases/download/v4.0.4.1/logstream-leader-4.0.4.tgz
+    - https://github.com/criblio/helm-charts/releases/download/v4.0.4.2/logstream-leader-4.0.4.tgz
     version: 4.0.4
   - apiVersion: v2
     appVersion: 4.0.3
@@ -339,15 +339,15 @@ entries:
     version: 2.4.5
   logstream-workergroup:
   - apiVersion: v2
-    appVersion: 4.0.4.1
-    created: "2023-03-14T18:03:33.848010581Z"
+    appVersion: 4.0.4.2
+    created: "2023-03-14T18:37:15.344598175Z"
     description: Deployment of Cribl Stream Worker Group on K8s
-    digest: 605064ec5283a8b8c14fdb99889f85d69db6dae6174dea77a287cb633a9eef2f
+    digest: c3b56d12d8ab8989ecae6c5706e6985e0d17fd08befb09ddd0cc5635014b6b2f
     icon: https://criblio.github.io/helm-charts/images/Cribl_Logo_Color_TM.png
     name: logstream-workergroup
     type: application
     urls:
-    - https://github.com/criblio/helm-charts/releases/download/v4.0.4.1/logstream-workergroup-4.0.4.tgz
+    - https://github.com/criblio/helm-charts/releases/download/v4.0.4.2/logstream-workergroup-4.0.4.tgz
     version: 4.0.4
   - apiVersion: v2
     appVersion: 4.0.3
@@ -594,14 +594,14 @@ entries:
   pod-killer:
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2023-03-14T18:03:33.848503413Z"
+    created: "2023-03-14T18:37:15.345024483Z"
     description: A Simple Cron Job that deletes pods based on pod name on a schedule
       defined in annotations.
-    digest: 72b7788491fd62e1667193274e6b4d64c7308cb066b9645d60a3b52c83f0f26e
+    digest: e6e7a03dffb0d579aebdd0da1876a3b818254364e40deb779bd0b218b6de9f51
     icon: https://criblio.github.io/helm-charts/images/Cribl_Logo_Color_TM.png
     name: pod-killer
     type: application
     urls:
-    - https://github.com/criblio/helm-charts/releases/download/v4.0.4.1/pod-killer-1.0.0.tgz
+    - https://github.com/criblio/helm-charts/releases/download/v4.0.4.2/pod-killer-1.0.0.tgz
     version: 1.0.0
-generated: "2023-03-14T18:03:33.842734833Z"
+generated: "2023-03-14T18:37:15.3408481Z"

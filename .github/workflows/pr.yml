@@ -1,0 +1,24 @@
+name: Pull Request
+on:
+  pull_request
+
+jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Install Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: 3.9.4
+
+      - name: Install unittest plugin
+        run: helm plugin install https://github.com/quintush/helm-unittest
+
+      - name: helm lint
+        run: helm lint helm-chart-sources/*
+
+      - name: helm unittest
+        run: helm unittest -3 helm-chart-sources/*

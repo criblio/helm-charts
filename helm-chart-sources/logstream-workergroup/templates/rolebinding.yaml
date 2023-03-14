@@ -8,7 +8,7 @@ metadata:
     {{- include "logstream-workergroup.labels" . | nindent 4 }}
 subjects:
   - kind: ServiceAccount
-    name: {{ include "logstream-workergroup.fullname" . }}
+    name: {{ include "logstream-workergroup.serviceAccountName" . }}
     namespace: {{ .Release.Namespace }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io

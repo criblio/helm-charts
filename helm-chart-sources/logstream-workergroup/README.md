@@ -56,6 +56,8 @@ This section covers the most likely values to override. To see the full scope of
 |rbac.resources|{pods}|Set the resource boundary for the role being created (K8s resources). |
 |rbac.verbs|{get,list}|Set the API verbs allowed the role (defaults to read ops). |
 |rbac.annotations|{}|Sets annotations on the Service Account. Useful for [accessing cloud resources through IAM roles](../../common_docs/EKS_SPECIFICS.md#aws-iam-role-for-worker-group).|
+|serviceAccount.create|true|Create a ServiceAccount used by the Pods.|
+|serviceAccount.name|`undefined`|The ServiceAccount name. If `serviceAccount.create` is true, the ServiceAccount is named this value. If false, the ServiceAccount must already exist.|
 |nodeSelector|{}|Add nodeSelector values to define which nodes the pods are scheduled on - see [k8s Documentation](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/) for details and allowed values. |
 |__Extra Configuration Options__|
 |[extraVolumeMounts](../../common_docs/EXTRA_EXAMPLES.md#extraVolumeMounts)|{}|Additional Volumes to mount in the container.|
@@ -113,6 +115,11 @@ Versions 2.4.0+ include access mechanisms for worker groups to access the Kubern
 * `rbac.resources` – specifies the Kubernetes API resources that will be available to the release.
 * `rbac.verbs` – specifies the API verbs that will be available to the release.
 * `rbac.extraRules` – additional rulesets for the cluster role.
+
+Additionally, you may customize the ServiceAccount resource utilized by the chart:
+
+* `serviceAccount.create` - controls if a ServiceAccount resource is created during chart deployment.
+* `serviceAccount.name` - the configured name of the ServiceAccount. If `serviceAccount.create` is `true`, the ServiceAccount is named this value. If `false`, then the ServiceAccount must already exist and is mapped in the RoleBinding.
 
 For more info on the verbs and resources available, see the [Kubernetes documentation](https://kubernetes.io/docs/reference/access-authn-authz/rbac/). 
 

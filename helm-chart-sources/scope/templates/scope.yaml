@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: scope
+  labels:
+  {{- include "scope.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.scope.type }}
+  selector:
+    app: scope
+  {{- include "scope.selectorLabels" . | nindent 4 }}
+  ports:
+  {{- .Values.scope.ports | toYaml | nindent 2 }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: scope
+  labels:
+  {{- include "scope.labels" . | nindent 4 }}
+data:
+  scope.yml: {{ .Values.scope.scopeYml | toYaml | indent 1 }}

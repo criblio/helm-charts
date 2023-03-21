@@ -1,0 +1,32 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "scope.fullname" . }}-webhook-cert-setup
+  labels:
+  {{- include "scope.labels" . | nindent 4 }}
+spec:
+  backoffLimit: {{ .Values.webhookCertSetup.backoffLimit }}
+  template:
+    spec:
+      containers:
+      - args:
+        - --service
+        - scope
+        - --webhook
+        - scope.default.appscope.io
+        - --secret
+        - scope-secret
+        - --namespace
+        - default
+        command:
+        - ./generate_certificate.sh
+        env:
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.webhookCertSetup.webhookCertSetup.image.repository }}:{{
+          .Values.webhookCertSetup.webhookCertSetup.image.tag | default .Chart.AppVersion
+          }}
+        name: webhook-cert-setup
+        resources: {}
+      restartPolicy: OnFailure
+      serviceAccountName: {{ include "scope.fullname" . }}-webhook-cert-sa

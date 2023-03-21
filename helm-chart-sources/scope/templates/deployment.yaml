@@ -1,0 +1,60 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ include "scope.fullname" . }}-webhook-cert-sa
+  labels:
+  {{- include "scope.labels" . | nindent 4 }}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: scope-cert-sa
+  labels:
+  {{- include "scope.labels" . | nindent 4 }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: scope
+  labels:
+    app: scope
+  {{- include "scope.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.scope.replicas }}
+  selector:
+    matchLabels:
+      app: scope
+    {{- include "scope.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: scope
+      {{- include "scope.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - args:
+        - -c
+        - /usr/local/bin/scope k8s --server --metricdest /tmp/metrics.log --metricformat
+          ndjson --eventdest /tmp/events.log || sleep 1000
+        command:
+        - /bin/bash
+        env:
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.scope.scope.image.repository }}:{{ .Values.scope.scope.image.tag
+          | default .Chart.AppVersion }}
+        imagePullPolicy: {{ .Values.scope.scope.imagePullPolicy }}
+        name: scope
+        ports:
+        - containerPort: 4443
+          protocol: TCP
+        resources: {}
+        volumeMounts:
+        - mountPath: /etc/certs
+          name: certs
+          readOnly: true
+      serviceAccountName: {{ include "scope.fullname" . }}-cert-sa
+      volumes:
+      - name: certs
+        secret:
+          secretName: scope-secret

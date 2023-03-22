@@ -50,8 +50,8 @@ This section covers the most likely values to override. To see the full scope of
 |config.scName|\<default storage class\>|The StorageClass Name for all of the persistent volumes.|
 |config.rejectSelfSignedCerts|0|0 – allow self-signed certs; or 1 – deny self-signed certs. |
 |config.probes|true|Perform health checks on the Leader pod. Recommended that this be enabled to automatically restart the Leader if the Pod is unhealthy.|
-|config.healthPort|9000|The port to use for health checks (readiness/live).|
-|config.healthScheme|HTTP|The scheme to use for health checks - HTTP or HTTPS supported. If not specified, will default to HTTP. |
+|config.livenessProbe|see `values.yaml`|[livenessProbe](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-a-liveness-http-request) configuration|
+|config.readinessProbe|see `values.yaml`|[readinessProbe](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-readiness-probes) configuration|
 |service.internalType|ClusterIP|The type to use for the `<release>-leader-internal` service. In 2.4.5 and beyond, this is set to ClusterIP by default. If you have any workergroups outside of the kubernetes cluster where the leader lives, you'll need to change this to NodePort or LoadBalancer to expose it outside of the cluster.|
 |service.internalLoadBalancerIP|none (IP Address)|The IP address to use for the load balancer service interface, if the internalType is set to LoadBalancer. Check with your Kubernetes setup to see if this is supported. |
 |service.externalType|LoadBalancer|The type to use for the user facing `<release>-leader` service. If ingress.enable is set, this will be force set to NodePort, to work with the ingress.| 
@@ -282,7 +282,7 @@ extraConfigmapMounts:
   - name: job-config
     configMap: job-config
     mountPath: /var/tmp/job-config
-```	
+```
 
 This example will mount the files in the ConfigMap into the pod's `/var/tmp/job-config` directory. 
 

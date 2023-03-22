@@ -72,11 +72,11 @@ containers:
       - name: CRIBL_DIST_MODE
         value: leader
       - name: CRIBL_DIST_MASTER_URL
-        value: "tcp://{{ .Values.config.token }}@0.0.0.0:4200"
+        value: "tcp://{{ .Values.config.token }}@{{ .Values.config.bindHost }}:4200"
       - name: CRIBL_DIST_LEADER_URL
-        value: "tcp://{{ .Values.config.token }}@0.0.0.0:4200"
+        value: "tcp://{{ .Values.config.token }}@{{ .Values.config.bindHost }}:4200"
       {{- end }}
-      # Single Volume for persistents (CRIBL-3848)
+      # Single Volume for persistence (CRIBL-3848)
       - name: CRIBL_VOLUME_DIR
         value: {{ .Values.config.criblHome }}/config-volume
       {{ if .Values.envValueFrom }}

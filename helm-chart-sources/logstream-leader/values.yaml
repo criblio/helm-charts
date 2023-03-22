@@ -25,6 +25,7 @@ config:
   token:
   adminPassword:
   criblHome: /opt/cribl
+  bindHost: 0.0.0.0
   rejectSelfSignedCerts: 0
   # -- Perform health checks on the Leader pod.
   # Recommended that this be enabled to automatically restart the Leader if the Pod is unhealthy

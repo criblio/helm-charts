@@ -25,6 +25,7 @@ config:
   token:
   adminPassword:
   criblHome: /opt/cribl
+  bindHost: 0.0.0.0
   rejectSelfSignedCerts: 0
   healthPort: 9000
   # -- Perform health checks on the Leader pod.
@@ -84,4 +85,3 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
-

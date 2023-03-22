@@ -1,0 +1,49 @@
+suite: Deployment
+templates:
+  - deployment.yaml
+tests:
+  - it: Should have health checks by default
+    asserts:
+      - isNotNull:
+          path: spec.template.spec.containers[0].readinessProbe
+      - isNotNull:
+          path: spec.template.spec.containers[0].livenessProbe
+
+  - it: Should disable health checks
+    set:
+      config.probes: false
+    asserts:
+      - isNull:
+          path: spec.template.spec.containers[0].readinessProbe
+      - isNull:
+          path: spec.template.spec.containers[0].livenessProbe
+
+  - it: Should customize health checks
+    set:
+      config:
+        readinessProbe:
+          httpGet:
+            path: /isnt/a/real/endpoint
+            port: 420
+            scheme: HTTPS
+          initialDelaySeconds: 5
+          failureThreshold: 1
+        livenessProbe:
+          httpGet: null
+          initialDelaySeconds: null
+          failureThreshold: null
+          foo: bar
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].readinessProbe
+          value:
+            httpGet:
+              path: /isnt/a/real/endpoint
+              port: 420
+              scheme: HTTPS
+            initialDelaySeconds: 5
+            failureThreshold: 1
+      - equal:
+          path: spec.template.spec.containers[0].livenessProbe
+          value:
+            foo: bar

@@ -51,24 +51,14 @@ containers:
         containerPort: {{ .port }}
       {{- end }}
     {{- if .Values.config.probes }}
+    {{- with .Values.config.livenessProbe }}
     livenessProbe:
-      httpGet:
-        path: /api/v1/health
-        port: {{ .Values.config.healthPort }}
-        {{- if .Values.config.healthScheme }}
-        scheme: {{ .Values.config.healthScheme }}
-        {{- end }}
-      failureThreshold: 3
-      initialDelaySeconds: 60
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
+    {{- with .Values.config.readinessProbe }}
     readinessProbe:
-      httpGet:
-        path: /api/v1/health
-        port: {{ .Values.config.healthPort }}
-        {{- if .Values.config.healthScheme }}
-        scheme: {{ .Values.config.healthScheme }}
-        {{- end }}
-      failureThreshold: 3
-      initialDelaySeconds: 60
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
     {{- end }}
     resources:
       {{- toYaml .Values.resources | nindent 12 }}

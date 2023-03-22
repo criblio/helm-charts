@@ -33,8 +33,21 @@ config:
   group: kubernetes
   token: criblleader
   rejectSelfSignedCerts: 0
-  healthPort: 9000
   probes: true
+  livenessProbe:
+    httpGet:
+      path: /api/v1/health
+      port: 9000
+      scheme: HTTP
+    initialDelaySeconds: 20
+    failureThreshold: 3
+  readinessProbe:
+    httpGet:
+      path: /api/v1/health
+      port: 9000
+      scheme: HTTP
+    initialDelaySeconds: 20
+    failureThreshold: 3
   tlsLeader:
     enable: false
   tags: []

@@ -1,100 +1,24 @@
 kubernetesClusterDomain: cluster.local
+
+image:
+  repository: mbiesekcribl/scope
+  pullPolicy: Always
+  tag: 1.3.2
+
 scope:
   ports:
   - name: 4443-tcp
     port: 443
     protocol: TCP
     targetPort: 4443
-  replicas: 1
-  scope:
-    image:
-      repository: mbiesekcribl/scope
-      tag: 1.3.2
-    imagePullPolicy: IfNotPresent
-  scopeYml: |-
-    cribl:
-      enable: false
-      transport:
-        type: ""
-        tls:
-          enable: false
-          validateserver: false
-          cacertpath: ""
-      authtoken: ""
-    metric:
-      enable: true
-      format:
-        type: ndjson
-        verbosity: 4
-      transport:
-        type: file
-        path: /tmp/metrics.log
-        buffering: line
-        tls:
-          enable: false
-          validateserver: false
-          cacertpath: ""
-      watch:
-      - type: fs
-      - type: net
-      - type: http
-      - type: dns
-      - type: process
-      - type: statsd
-    event:
-      enable: true
-      format:
-        type: ndjson
-      transport:
-        type: file
-        path: /tmp/events.log
-        buffering: line
-        tls:
-          enable: false
-          validateserver: false
-          cacertpath: ""
-      watch:
-      - type: file
-        name: (\/logs?\/)|(\.log$)|(\.log[.\d])
-        value: .*
-      - type: console
-        name: (stdout|stderr)
-        value: .*
-        allowbinary: false
-      - type: net
-        name: .*
-        field: .*
-        value: .*
-      - type: fs
-        name: .*
-        field: .*
-        value: .*
-      - type: dns
-        name: .*
-        field: .*
-        value: .*
-      - type: http
-        name: .*
-        field: .*
-        value: .*
-    libscope:
-      configevent: false
-      summaryperiod: 10
-      commanddir: /scope/cmd
-      log:
-        level: warning
-        transport:
-          type: file
-          path: /scope/libscope.log
-          buffering: line
-          tls:
-            enable: false
-            validateserver: false
-            cacertpath: ""
-      snapshot:
-        coredump: false
-        backtrace: false
   type: ClusterIP
+# scope configuration 
+config:
+  cribldest:
+  metricdest:
+  eventdest:
+  token:
+  metricFormat: "ndjson"
 webhookCertSetup:
   backoffLimit: 3
   webhookCertSetup:

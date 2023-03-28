@@ -19,4 +19,193 @@ metadata:
   labels:
   {{- include "scope.labels" . | nindent 4 }}
 data:
-  scope.yml: {{ .Values.scope.scopeYml | toYaml | indent 1 }}
+  validation: {{ required "At least one of destination must be defined: cribl, events , metrics" (or .Values.config.cribldest .Values.config.metricdest .Values.config.eventdest) }}
+  scope.yml: |-
+    cribl:
+      {{- if not .Values.config.cribldest }}
+      enable: false
+      {{- else if eq .Values.config.cribldest "edge" }}}}
+      enable: true
+      transport:
+        type: edge
+      {{- else if .Values.config.cribldest | hasPrefix "file://" }}}}
+      enable: true
+      transport:
+        type: file
+        path: {{ include "scope.extractUnixFilePath" (list .Values.config.cribldest) }}
+      {{- else if .Values.config.cribldest | hasPrefix "tcp://" }}}}
+      enable: true
+      transport:
+        type: tcp
+        host: {{ include "scope.extractHost" (list .Values.config.cribldest) }}
+        port: {{ include "scope.extractPort" (list .Values.config.cribldest) }}
+        tls:
+          enable: false
+          validateserver: true
+      {{- else if .Values.config.cribldest | hasPrefix "udp://" }}}}
+      enable: true
+      transport:
+        type: udp
+        host: {{ include "scope.extractHost" (list .Values.config.cribldest) }}
+        port: {{ include "scope.extractPort" (list .Values.config.cribldest) }}
+        tls:
+          enable: false
+          validateserver: true
+      {{- else if .Values.config.cribldest | hasPrefix "tls://" }}}}
+      enable: true
+      transport:
+        type: tcp
+        host: {{ include "scope.extractHost" (list .Values.config.cribldest) }}
+        port: {{ include "scope.extractPort" (list .Values.config.cribldest) }}
+        tls:
+          enable: true
+          validateserver: true
+      {{- else if .Values.config.cribldest | hasPrefix "unix://" }}}}
+      enable: true
+      transport:
+        type: unix
+        path: {{ include "scope.extractUnixFilePath" (list .Values.config.cribldest) }}
+      {{- end }}
+    metric:
+      {{- if not .Values.config.metricdest }}
+      enable: false
+      {{- else if eq .Values.config.metricdest "edge" }}}}
+      enable: true
+      {{- else if .Values.config.metricdest | hasPrefix "file://" }}}}
+      enable: true
+      transport:
+        type: file
+        path: {{ include "scope.extractUnixFilePath" (list .Values.config.metricdest) }}
+        buffering: line
+      {{- else if .Values.config.metricdest | hasPrefix "tcp://" }}}}
+      enable: true
+      transport:
+        type: tcp
+        host: {{ include "scope.extractHost" (list .Values.config.metricdest) }}
+        port: {{ include "scope.extractPort" (list .Values.config.metricdest) }}
+        tls:
+          enable: false
+          validateserver: true
+      {{- else if .Values.config.metricdest | hasPrefix "udp://" }}}}
+      enable: true
+      transport:
+        type: udp
+        host: {{ include "scope.extractHost" (list .Values.config.metricdest) }}
+        port: {{ include "scope.extractPort" (list .Values.config.metricdest) }}
+        tls:
+          enable: false
+          validateserver: true
+      {{- else if .Values.config.metricdest | hasPrefix "tls://" }}}}
+      enable: true
+      transport:
+        type: tcp
+        host: {{ include "scope.extractHost" (list .Values.config.metricdest) }}
+        port: {{ include "scope.extractPort" (list .Values.config.metricdest) }}
+        tls:
+          enable: true
+          validateserver: true
+      {{- else if .Values.config.metricdest | hasPrefix "unix://" }}}}
+      enable: true
+      transport:
+        type: unix
+        path: {{ include "scope.extractUnixFilePath" (list .Values.config.metricdest) }}
+      {{- end }}
+      format:
+        type: {{ .Values.config.metricFormat }}
+        verbosity: 4
+      watch:
+      - type: fs
+      - type: net
+      - type: http
+      - type: dns
+      - type: process
+      - type: statsd
+    event:
+      {{- if not .Values.config.eventdest }}
+      enable: false
+      {{- else if eq .Values.config.eventdest "edge" }}}}
+      enable: true
+      transport:
+        type: edge
+      {{- else if .Values.config.eventdest | hasPrefix "file://" }}}}
+      enable: true
+      transport:
+        type: file
+        path: {{ include "scope.extractUnixFilePath" (list .Values.config.eventdest) }}
+        buffering: line
+      {{- else if .Values.config.eventdest | hasPrefix "tcp://" }}}}
+      enable: true
+      transport:
+        type: tcp
+        host: {{ include "scope.extractHost" (list .Values.config.eventdest) }}
+        port: {{ include "scope.extractPort" (list .Values.config.eventdest) }}
+        tls:
+          enable: false
+          validateserver: true
+      {{- else if .Values.config.eventdest | hasPrefix "udp://" }}}}
+      enable: true
+      transport:
+        type: udp
+        host: {{ include "scope.extractHost" (list .Values.config.eventdest) }}
+        port: {{ include "scope.extractPort" (list .Values.config.eventdest) }}
+        tls:
+          enable: false
+          validateserver: true
+      {{- else if .Values.config.eventdest | hasPrefix "tls://" }}}}
+      enable: true
+      transport:
+        type: tcp
+        host: {{ include "scope.extractHost" (list .Values.config.eventdest) }}
+        port: {{ include "scope.extractPort" (list .Values.config.eventdest) }}
+        tls:
+          enable: true
+          validateserver: true
+      {{- else if .Values.config.eventdest | hasPrefix "unix://" }}}}
+      enable: true
+      transport:
+        type: unix
+        path: {{ include "scope.extractUnixFilePath" (list .Values.config.eventdest) }}
+      {{- end }}
+      format:
+        type: ndjson
+    watch:
+    - type: file
+      name: (\/logs?\/)|(\.log$)|(\.log[.\d])
+      value: .*
+    - type: console
+      name: (stdout|stderr)
+      value: .*
+      allowbinary: false
+    - type: net
+      name: .*
+      field: .*
+      value: .*
+    - type: fs
+      name: .*
+      field: .*
+      value: .*
+    - type: dns
+      name: .*
+      field: .*
+      value: .*
+    - type: http
+      name: .*
+      field: .*
+      value: .*
+    libscope:
+      configevent: false
+      summaryperiod: 10
+      commanddir: /scope/cmd
+      log:
+        level: warning
+        transport:
+          type: file
+          path: /scope/libscope.log
+          buffering: line
+          tls:
+            enable: false
+            validateserver: false
+            cacertpath: ""
+      snapshot:
+        coredump: false
+        backtrace: false

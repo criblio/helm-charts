@@ -34,16 +34,25 @@ spec:
       containers:
       - args:
         - -c
-        - /usr/local/bin/scope k8s --server --metricdest /tmp/metrics.log --metricformat
-          ndjson --eventdest /tmp/events.log || sleep 1000
+        - /usr/local/bin/scope k8s --server
+          {{- if .Values.config.cribldest }}
+          --cribldest {{ .Values.config.cribldest }}
+          {{- end }}
+          {{- if .Values.config.metricdest }}
+          --metricdest {{ .Values.config.metricdest }}
+          {{- end }}
+          {{- if .Values.config.eventdest }}
+          --eventdest {{ .Values.config.eventdest }}
+          {{- end }}
+          --metricformat {{ .Values.config.metricFormat }} || sleep 1000
         command:
         - /bin/bash
         env:
         - name: KUBERNETES_CLUSTER_DOMAIN
           value: {{ quote .Values.kubernetesClusterDomain }}
-        image: {{ .Values.scope.scope.image.repository }}:{{ .Values.scope.scope.image.tag
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag
           | default .Chart.AppVersion }}
-        imagePullPolicy: {{ .Values.scope.scope.imagePullPolicy }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
         name: scope
         ports:
         - containerPort: 4443

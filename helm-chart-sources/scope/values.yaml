@@ -8,7 +8,7 @@ scope:
   replicas: 1
   scope:
     image:
-      repository: cribl/scope
+      repository: mbiesekcribl/scope
       tag: 1.3.2
     imagePullPolicy: IfNotPresent
   scopeYml: |-

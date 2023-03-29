@@ -30,7 +30,7 @@ jobs:
         run: helm package helm-chart-sources/* -d ${{ env.GITHUB_REF_SLUG }}/
 
       - name: helm repo
-        run: helm repo index --url https://github.com/criblio/helm-charts/releases/download/ --merge index.yaml .
+        run: helm repo index --url https://github.com/michalbiesek/helm-charts/releases/download/ --merge index.yaml .
 
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v2

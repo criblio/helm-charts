@@ -28,7 +28,7 @@ kubectl create namespace cribl-stream
 Add the Cribl Helm repo.
 
 ```
-helm repo add cribl https://criblio.github.io/helm-charts/
+helm repo add cribl https://michalbiesek.github.io/helm-charts/
 ```
 
 The following example creates a distributed deployment with two auto-scaled worker groups:

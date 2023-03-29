@@ -1,7 +1,7 @@
 apiVersion: v2
 name: pod-killer
 description: A Simple Cron Job that deletes pods based on pod name on a schedule defined in annotations.
-icon: https://criblio.github.io/helm-charts/images/Cribl_Logo_Color_TM.png
+icon: https://michalbiesek.github.io/helm-charts/images/Cribl_Logo_Color_TM.png
 
 # A chart can be either an 'application' or a 'library' chart.
 #

@@ -27,7 +27,7 @@ Note: Two load-balanced services are created – the main one (named after the H
 
 1. Helm (preferably v3) installed – instructions are [here](https://helm.sh/docs/intro/install/).
 1. Cribl helm repo configured. To do this:
-	`helm repo add cribl https://criblio.github.io/helm-charts/`
+	`helm repo add cribl https://michalbiesek.github.io/helm-charts/`
 
 ## Persistent Storage
 

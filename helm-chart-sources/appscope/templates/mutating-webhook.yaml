@@ -12,7 +12,7 @@ webhooks:
   - v1beta1
   clientConfig:
     service:
-      name: appscope
+      name: scope
       namespace: '{{ .Release.Namespace }}'
       path: /mutate
   failurePolicy: Fail

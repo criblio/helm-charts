@@ -20,7 +20,6 @@ metadata:
     app: scope
   {{- include "scope.labels" . | nindent 4 }}
 spec:
-  replicas: {{ .Values.scope.replicas }}
   selector:
     matchLabels:
       app: scope
@@ -34,17 +33,18 @@ spec:
       containers:
       - args:
         - -c
-        - /usr/local/bin/scope k8s --server
-          {{- if .Values.config.cribldest }}
-          --cribldest {{ .Values.config.cribldest }}
+        - /usr/local/bin/scope k8s
+          {{- if .Values.config.criblDestination }}
+          --cribldest {{ .Values.config.criblDestination }}
           {{- end }}
-          {{- if .Values.config.metricdest }}
-          --metricdest {{ .Values.config.metricdest }}
+          {{- if .Values.config.metricDestination }}
+          --metricdest {{ .Values.config.metricDestination }}
+          --metricformat {{ .Values.config.metricFormat }}
           {{- end }}
-          {{- if .Values.config.eventdest }}
-          --eventdest {{ .Values.config.eventdest }}
+          {{- if .Values.config.eventDestination }}
+          --eventdest {{ .Values.config.eventDestination }}
           {{- end }}
-          --metricformat {{ .Values.config.metricFormat }} || sleep 1000
+          --server || sleep 1000
         command:
         - /bin/bash
         env:
@@ -55,8 +55,10 @@ spec:
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         name: scope
         ports:
-        - containerPort: 4443
-          protocol: TCP
+        {{-  range .Values.service.ports }}
+        - containerPort: {{ .targetPort }}
+          protocol: {{ .protocol }}
+        {{- end }}
         resources: {}
         volumeMounts:
         - mountPath: /etc/certs

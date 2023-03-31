@@ -5,12 +5,12 @@ metadata:
   labels:
   {{- include "scope.labels" . | nindent 4 }}
 spec:
-  type: {{ .Values.scope.type }}
+  type: {{ .Values.service.type }}
   selector:
     app: scope
   {{- include "scope.selectorLabels" . | nindent 4 }}
   ports:
-  {{- .Values.scope.ports | toYaml | nindent 2 }}
+  {{- .Values.service.ports | toYaml | nindent 2 }}
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -19,96 +19,96 @@ metadata:
   labels:
   {{- include "scope.labels" . | nindent 4 }}
 data:
-  validation: {{ required "At least one of destination must be defined: cribl, events , metrics" (or .Values.config.cribldest .Values.config.metricdest .Values.config.eventdest) }}
+  validation: {{ required "Following destination must be defined: cribl or events and metrics" (or .Values.config.criblDestination (and .Values.config.metricDestination .Values.config.eventDestination)) }}
   scope.yml: |-
     cribl:
-      {{- if not .Values.config.cribldest }}
+      {{- if not .Values.config.criblDestination }}
       enable: false
-      {{- else if eq .Values.config.cribldest "edge" }}}}
+      {{- else if eq .Values.config.criblDestination "edge" }}}}
       enable: true
       transport:
         type: edge
-      {{- else if .Values.config.cribldest | hasPrefix "file://" }}}}
+      {{- else if .Values.config.criblDestination | hasPrefix "file://" }}}}
       enable: true
       transport:
         type: file
-        path: {{ include "scope.extractUnixFilePath" (list .Values.config.cribldest) }}
-      {{- else if .Values.config.cribldest | hasPrefix "tcp://" }}}}
+        path: {{ include "scope.extractUnixFilePath" (list .Values.config.criblDestination) }}
+      {{- else if .Values.config.criblDestination | hasPrefix "tcp://" }}}}
       enable: true
       transport:
         type: tcp
-        host: {{ include "scope.extractHost" (list .Values.config.cribldest) }}
-        port: {{ include "scope.extractPort" (list .Values.config.cribldest) }}
+        host: {{ include "scope.extractHost" (list .Values.config.criblDestination) }}
+        port: {{ include "scope.extractPort" (list .Values.config.criblDestination) }}
         tls:
           enable: false
           validateserver: true
-      {{- else if .Values.config.cribldest | hasPrefix "udp://" }}}}
+      {{- else if .Values.config.criblDestination | hasPrefix "udp://" }}}}
       enable: true
       transport:
         type: udp
-        host: {{ include "scope.extractHost" (list .Values.config.cribldest) }}
-        port: {{ include "scope.extractPort" (list .Values.config.cribldest) }}
+        host: {{ include "scope.extractHost" (list .Values.config.criblDestination) }}
+        port: {{ include "scope.extractPort" (list .Values.config.criblDestination) }}
         tls:
           enable: false
           validateserver: true
-      {{- else if .Values.config.cribldest | hasPrefix "tls://" }}}}
+      {{- else if .Values.config.criblDestination | hasPrefix "tls://" }}}}
       enable: true
       transport:
         type: tcp
-        host: {{ include "scope.extractHost" (list .Values.config.cribldest) }}
-        port: {{ include "scope.extractPort" (list .Values.config.cribldest) }}
+        host: {{ include "scope.extractHost" (list .Values.config.criblDestination) }}
+        port: {{ include "scope.extractPort" (list .Values.config.criblDestination) }}
         tls:
           enable: true
           validateserver: true
-      {{- else if .Values.config.cribldest | hasPrefix "unix://" }}}}
+      {{- else if .Values.config.criblDestination | hasPrefix "unix://" }}}}
       enable: true
       transport:
         type: unix
-        path: {{ include "scope.extractUnixFilePath" (list .Values.config.cribldest) }}
+        path: {{ include "scope.extractUnixFilePath" (list .Values.config.criblDestination) }}
       {{- end }}
     metric:
-      {{- if not .Values.config.metricdest }}
+      {{- if not .Values.config.metricDestination }}
       enable: false
-      {{- else if eq .Values.config.metricdest "edge" }}}}
+      {{- else if eq .Values.config.metricDestination "edge" }}}}
       enable: true
-      {{- else if .Values.config.metricdest | hasPrefix "file://" }}}}
+      {{- else if .Values.config.metricDestination | hasPrefix "file://" }}}}
       enable: true
       transport:
         type: file
-        path: {{ include "scope.extractUnixFilePath" (list .Values.config.metricdest) }}
+        path: {{ include "scope.extractUnixFilePath" (list .Values.config.metricDestination) }}
         buffering: line
-      {{- else if .Values.config.metricdest | hasPrefix "tcp://" }}}}
+      {{- else if .Values.config.metricDestination | hasPrefix "tcp://" }}}}
       enable: true
       transport:
         type: tcp
-        host: {{ include "scope.extractHost" (list .Values.config.metricdest) }}
-        port: {{ include "scope.extractPort" (list .Values.config.metricdest) }}
+        host: {{ include "scope.extractHost" (list .Values.config.metricDestination) }}
+        port: {{ include "scope.extractPort" (list .Values.config.metricDestination) }}
         tls:
           enable: false
           validateserver: true
-      {{- else if .Values.config.metricdest | hasPrefix "udp://" }}}}
+      {{- else if .Values.config.metricDestination | hasPrefix "udp://" }}}}
       enable: true
       transport:
         type: udp
-        host: {{ include "scope.extractHost" (list .Values.config.metricdest) }}
-        port: {{ include "scope.extractPort" (list .Values.config.metricdest) }}
+        host: {{ include "scope.extractHost" (list .Values.config.metricDestination) }}
+        port: {{ include "scope.extractPort" (list .Values.config.metricDestination) }}
         tls:
           enable: false
           validateserver: true
-      {{- else if .Values.config.metricdest | hasPrefix "tls://" }}}}
+      {{- else if .Values.config.metricDestination | hasPrefix "tls://" }}}}
       enable: true
       transport:
         type: tcp
-        host: {{ include "scope.extractHost" (list .Values.config.metricdest) }}
-        port: {{ include "scope.extractPort" (list .Values.config.metricdest) }}
+        host: {{ include "scope.extractHost" (list .Values.config.metricDestination) }}
+        port: {{ include "scope.extractPort" (list .Values.config.metricDestination) }}
         tls:
           enable: true
           validateserver: true
-      {{- else if .Values.config.metricdest | hasPrefix "unix://" }}}}
+      {{- else if .Values.config.metricDestination | hasPrefix "unix://" }}}}
       enable: true
       transport:
         type: unix
-        path: {{ include "scope.extractUnixFilePath" (list .Values.config.metricdest) }}
+        path: {{ include "scope.extractUnixFilePath" (list .Values.config.metricDestination) }}
       {{- end }}
       format:
         type: {{ .Values.config.metricFormat }}
@@ -121,50 +121,50 @@ data:
       - type: process
       - type: statsd
     event:
-      {{- if not .Values.config.eventdest }}
+      {{- if not .Values.config.eventDestination }}
       enable: false
-      {{- else if eq .Values.config.eventdest "edge" }}}}
+      {{- else if eq .Values.config.eventDestination "edge" }}}}
       enable: true
       transport:
         type: edge
-      {{- else if .Values.config.eventdest | hasPrefix "file://" }}}}
+      {{- else if .Values.config.eventDestination | hasPrefix "file://" }}}}
       enable: true
       transport:
         type: file
-        path: {{ include "scope.extractUnixFilePath" (list .Values.config.eventdest) }}
+        path: {{ include "scope.extractUnixFilePath" (list .Values.config.eventDestination) }}
         buffering: line
-      {{- else if .Values.config.eventdest | hasPrefix "tcp://" }}}}
+      {{- else if .Values.config.eventDestination | hasPrefix "tcp://" }}}}
       enable: true
       transport:
         type: tcp
-        host: {{ include "scope.extractHost" (list .Values.config.eventdest) }}
-        port: {{ include "scope.extractPort" (list .Values.config.eventdest) }}
+        host: {{ include "scope.extractHost" (list .Values.config.eventDestination) }}
+        port: {{ include "scope.extractPort" (list .Values.config.eventDestination) }}
         tls:
           enable: false
           validateserver: true
-      {{- else if .Values.config.eventdest | hasPrefix "udp://" }}}}
+      {{- else if .Values.config.eventDestination | hasPrefix "udp://" }}}}
       enable: true
       transport:
         type: udp
-        host: {{ include "scope.extractHost" (list .Values.config.eventdest) }}
-        port: {{ include "scope.extractPort" (list .Values.config.eventdest) }}
+        host: {{ include "scope.extractHost" (list .Values.config.eventDestination) }}
+        port: {{ include "scope.extractPort" (list .Values.config.eventDestination) }}
         tls:
           enable: false
           validateserver: true
-      {{- else if .Values.config.eventdest | hasPrefix "tls://" }}}}
+      {{- else if .Values.config.eventDestination | hasPrefix "tls://" }}}}
       enable: true
       transport:
         type: tcp
-        host: {{ include "scope.extractHost" (list .Values.config.eventdest) }}
-        port: {{ include "scope.extractPort" (list .Values.config.eventdest) }}
+        host: {{ include "scope.extractHost" (list .Values.config.eventDestination) }}
+        port: {{ include "scope.extractPort" (list .Values.config.eventDestination) }}
         tls:
           enable: true
           validateserver: true
-      {{- else if .Values.config.eventdest | hasPrefix "unix://" }}}}
+      {{- else if .Values.config.eventDestination | hasPrefix "unix://" }}}}
       enable: true
       transport:
         type: unix
-        path: {{ include "scope.extractUnixFilePath" (list .Values.config.eventdest) }}
+        path: {{ include "scope.extractUnixFilePath" (list .Values.config.eventDestination) }}
       {{- end }}
       format:
         type: ndjson

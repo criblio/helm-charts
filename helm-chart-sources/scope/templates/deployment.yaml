@@ -44,6 +44,9 @@ spec:
           {{- if .Values.config.eventDestination }}
           --eventdest {{ .Values.config.eventDestination }}
           {{- end }}
+          {{- if .Values.config.debug }}
+          --debug
+          {{- end }}
           --server || sleep 1000
         command:
         - /bin/bash

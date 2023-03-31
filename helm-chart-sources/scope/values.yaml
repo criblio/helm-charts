@@ -18,6 +18,7 @@ config:
   criblDestination:
   metricDestination:
   eventDestination:
+  debug: false
   token:
   metricFormat: "ndjson"
 

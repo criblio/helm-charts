@@ -9,7 +9,7 @@ This chart deploys an Appscope in a Kubernetes Cluster.
 * To  install the chart with the release name "logstream-wg" and send events & metrics to `cribl-internal:10090`:
 
 ```
-    helm install scope cribl/scope --set config.criblDestination="tcp://cribl-internal:10090"
+    helm install appscope cribl/appscope --set config.criblDestination="tcp://cribl-internal:10090"
 ```
 
 # Prerequisites

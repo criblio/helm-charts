@@ -29,7 +29,7 @@ helm repo add cribl https://michalbiesek.github.io/helm-charts/
 This will deploy scope Helm chart and send metrics & events to `cribl-internal:10090`.
 
 ```
-helm install scope cribl/scope/ --set config.criblDestination="tcp://cribl-internal:10090"
+helm install appscope cribl/appscope --set config.criblDestination="tcp://cribl-internal:10090"
 ```
 
 ```

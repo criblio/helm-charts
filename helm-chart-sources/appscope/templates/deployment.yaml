@@ -44,6 +44,8 @@ spec:
           {{- if .Values.config.eventDestination }}
           --eventdest {{ .Values.config.eventDestination }}
           {{- end }}
+          --app {{ .Values.config.app }}
+          --namespace {{ .Values.config.namespace }}
           {{- if .Values.config.debug }}
           --debug
           {{- end }}

@@ -11,13 +11,13 @@ spec:
       containers:
       - args:
         - --service
-        - scope
+        - {{ .Values.config.app }}
         - --webhook
-        - scope.default.appscope.io
+        - {{ .Values.config.app }}.{{ .Values.config.namespace }}.appscope.io
         - --secret
         - scope-secret
         - --namespace
-        - default
+        - {{ .Values.config.namespace }}
         command:
         - ./generate_certificate.sh
         env:

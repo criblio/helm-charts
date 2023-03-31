@@ -18,9 +18,11 @@ config:
   criblDestination:
   metricDestination:
   eventDestination:
-  debug: false
   token:
   metricFormat: "ndjson"
+  namespace: "default"
+  app: "scope"
+  debug: false
 
 # webhook cert setup
 webhookCertSetup:

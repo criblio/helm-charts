@@ -8,14 +8,14 @@ metadata:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: scope-cert-sa
+  name: appscope-cert-sa
   labels:
   {{- include "appscope.labels" . | nindent 4 }}
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: scope
+  name: appscope
   labels:
     app: scope
   {{- include "appscope.labels" . | nindent 4 }}

@@ -64,7 +64,7 @@ Create the name of the service account to use
 {{/*
 Extract the path from File or Unix variant
 */}}
-{{- define "scope.extractUnixFilePath" -}}
+{{- define "appscope.extractUnixFilePath" -}}
 {{- $input_cfg := index . 0 -}}
 {{- $filePath := split "://" $input_cfg -}}
 {{- print $filePath._1 }}
@@ -73,7 +73,7 @@ Extract the path from File or Unix variant
 {{/*
 Extract the port from TCP, UDP or TLS variant
 */}}
-{{- define "scope.extractPort" -}}
+{{- define "appscope.extractPort" -}}
 {{- $input_cfg := index . 0 -}}
 {{- $netPath := split "://" $input_cfg -}}
 {{- $host_port := split ":" $netPath._1 -}}
@@ -83,7 +83,7 @@ Extract the port from TCP, UDP or TLS variant
 {{/*
 Extract the host from TCP, UDP or TLS variant
 */}}
-{{- define "scope.extractHost" -}}
+{{- define "appscope.extractHost" -}}
 {{- $input_cfg := index . 0 -}}
 {{- $netPath := split "://" $input_cfg -}}
 {{- $host_port := split ":" $netPath._1 -}}

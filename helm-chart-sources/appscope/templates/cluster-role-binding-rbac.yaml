@@ -1,14 +1,14 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: {{ include "scope.fullname" . }}-cluster-role-binding
+  name: {{ include "appscope.fullname" . }}-cluster-role-binding
   labels:
-  {{- include "scope.labels" . | nindent 4 }}
+  {{- include "appscope.labels" . | nindent 4 }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: '{{ include "scope.fullname" . }}-cluster-role'
+  name: '{{ include "appscope.fullname" . }}-cluster-role'
 subjects:
 - kind: ServiceAccount
-  name: '{{ include "scope.fullname" . }}-cert-sa'
+  name: '{{ include "appscope.fullname" . }}-cert-sa'
   namespace: '{{ .Release.Namespace }}'

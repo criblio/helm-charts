@@ -3,9 +3,9 @@ kind: MutatingWebhookConfiguration
 metadata:
   name: scope.default.appscope.io
   annotations:
-    cert-manager.io/inject-ca-from: {{ .Release.Namespace }}/{{ include "scope.fullname" . }}-
+    cert-manager.io/inject-ca-from: {{ .Release.Namespace }}/{{ include "appscope.fullname" . }}-
   labels:
-  {{- include "scope.labels" . | nindent 4 }}
+  {{- include "appscope.labels" . | nindent 4 }}
 webhooks:
 - admissionReviewVersions:
   - v1

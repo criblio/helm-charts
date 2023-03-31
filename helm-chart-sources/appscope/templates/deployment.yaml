@@ -1,16 +1,16 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: {{ include "scope.fullname" . }}-webhook-cert-sa
+  name: {{ include "appscope.fullname" . }}-webhook-cert-sa
   labels:
-  {{- include "scope.labels" . | nindent 4 }}
+  {{- include "appscope.labels" . | nindent 4 }}
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: scope-cert-sa
   labels:
-  {{- include "scope.labels" . | nindent 4 }}
+  {{- include "appscope.labels" . | nindent 4 }}
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -18,17 +18,17 @@ metadata:
   name: scope
   labels:
     app: scope
-  {{- include "scope.labels" . | nindent 4 }}
+  {{- include "appscope.labels" . | nindent 4 }}
 spec:
   selector:
     matchLabels:
       app: scope
-    {{- include "scope.selectorLabels" . | nindent 6 }}
+    {{- include "appscope.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
         app: scope
-      {{- include "scope.selectorLabels" . | nindent 8 }}
+      {{- include "appscope.selectorLabels" . | nindent 8 }}
     spec:
       containers:
       - args:
@@ -67,7 +67,7 @@ spec:
         - mountPath: /etc/certs
           name: certs
           readOnly: true
-      serviceAccountName: {{ include "scope.fullname" . }}-cert-sa
+      serviceAccountName: {{ include "appscope.fullname" . }}-cert-sa
       volumes:
       - name: certs
         secret:

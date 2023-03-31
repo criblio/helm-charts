@@ -1,9 +1,9 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "scope.fullname" . }}-webhook-cert-setup
+  name: {{ include "appscope.fullname" . }}-webhook-cert-setup
   labels:
-  {{- include "scope.labels" . | nindent 4 }}
+  {{- include "appscope.labels" . | nindent 4 }}
 spec:
   backoffLimit: {{ .Values.webhookCertSetup.backoffLimit }}
   template:
@@ -29,4 +29,4 @@ spec:
         name: webhook-cert-setup
         resources: {}
       restartPolicy: OnFailure
-      serviceAccountName: {{ include "scope.fullname" . }}-webhook-cert-sa
+      serviceAccountName: {{ include "appscope.fullname" . }}-webhook-cert-sa

@@ -3,12 +3,12 @@ kind: Service
 metadata:
   name: scope
   labels:
-  {{- include "scope.labels" . | nindent 4 }}
+  {{- include "appscope.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
   selector:
     app: scope
-  {{- include "scope.selectorLabels" . | nindent 4 }}
+  {{- include "appscope.selectorLabels" . | nindent 4 }}
   ports:
   {{- .Values.service.ports | toYaml | nindent 2 }}
 ---
@@ -17,7 +17,7 @@ kind: ConfigMap
 metadata:
   name: scope
   labels:
-  {{- include "scope.labels" . | nindent 4 }}
+  {{- include "appscope.labels" . | nindent 4 }}
 data:
   validation: {{ required "Following destination must be defined: cribl or events and metrics" (or .Values.config.criblDestination (and .Values.config.metricDestination .Values.config.eventDestination)) }}
   scope.yml: |-

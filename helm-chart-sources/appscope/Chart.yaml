@@ -1,5 +1,5 @@
 apiVersion: v2
-name: scope
+name: appscope
 description: Deployment of AppScope in K8s.
 type: application
 version: 1.3.2

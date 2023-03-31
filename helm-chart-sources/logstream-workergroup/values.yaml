@@ -68,33 +68,43 @@ service:
   - name: tcpjson
     port: 10001
     protocol: TCP
+    #nodePort:
   - name: s2s
     port: 9997
     protocol: TCP
+    #nodePort:
   - name: http
     port: 10080
     protocol: TCP
+    #nodePort:
   - name: https
     port: 10081
-    protocol: TCP    
+    protocol: TCP
+    #nodePort:
   - name: syslog
     port: 5140
     protocol: TCP
+    #nodePort:
   - name: metrics
     port: 8125
     protocol: TCP
+    #nodePort:
   - name: elastic
     port: 9200
     protocol: TCP
+    #nodePort:
   - name: hec
     port: 8088
     protocol: TCP
+    #nodePort:
   - name: criblhttp
     port: 10200
     protocol: TCP
+    #nodePort:
   - name: cribltcp
     port: 10300
     protocol: TCP
+    #nodePort:
 
 resources: 
   limits:

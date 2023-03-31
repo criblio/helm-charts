@@ -35,3 +35,16 @@ tests:
             - "192.168.0.0/24"
             - "192.168.1.0/24"
             - "172.16.0.0/16"
+
+  - it: No default set for nodePort
+    asserts:
+      - isNull:
+          path: spec.ports[0].nodePort
+
+  - it: Default values set for nodePort
+    set:
+      service.ports[0].nodePort: 30000
+    asserts:
+      - equal:
+          path: spec.ports[0].nodePort
+          value: 30000

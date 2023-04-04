@@ -176,6 +176,9 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
+# Allow overriding the default kube priority class, if needed
+priorityClassName: ""
+
 # Cribl Edge in K8s does not require a Service
 # It is recommended to use a Worker Group deployment for receiving logs from network sources.
 service:

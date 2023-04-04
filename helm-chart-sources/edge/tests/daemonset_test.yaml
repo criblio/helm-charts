@@ -46,3 +46,18 @@ tests:
       - equal:
           path: spec.template.spec.containers[0].env[0].valueFrom.secretKeyRef.name
           value: foo
+
+  - it: Doesn't set a default priorityClassName
+    asserts:
+      - isNull:
+          path: spec.template.spec.priorityClassName
+
+  - it: Should set a custom priorityClassName
+    set:
+      priorityClassName: gotta-goat-fast
+    asserts:
+      - isNotNull:
+          path: spec.template.spec.priorityClassName
+      - equal:
+          path: spec.template.spec.priorityClassName
+          value: gotta-goat-fast

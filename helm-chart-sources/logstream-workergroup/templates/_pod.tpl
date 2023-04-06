@@ -1,6 +1,6 @@
 {{- define "workergroup.pod" -}}
 {{- if .Values.rbac.create }}
-serviceAccountName: {{ include "logstream-workergroup.fullname" . }}
+serviceAccountName: {{ include "logstream-workergroup.serviceAccountName" . }}
 {{- end }}
 
 {{- with .Values.imagePullSecrets }}

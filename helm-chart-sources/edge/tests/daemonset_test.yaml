@@ -3,6 +3,8 @@ templates:
   - daemonset.yaml
 tests:
   - it: Creates a DaemonSet
+    set:
+      cribl.leader: 1
     asserts:
       - isKind:
           of: DaemonSet
@@ -11,6 +13,7 @@ tests:
 
   - it: Can define custom repository and tag
     set:
+      cribl.leader: 1
       image:
         repository: foo/bar
         tag: 42.0.0
@@ -20,6 +23,8 @@ tests:
           value: foo/bar:42.0.0
 
   - it: Has a ServiceAccount
+    set:
+      cribl.leader: 1
     release:
       name: foo
     asserts:
@@ -40,6 +45,7 @@ tests:
   - it: Sets the custom CRIBL_DIST_LEADER_URL
     set:
       cribl.existingSecretForLeader: foo
+      cribl.leader: 1
     release:
       name: foo
     asserts:
@@ -48,13 +54,101 @@ tests:
           value: foo
 
   - it: Doesn't set a default priorityClassName
+    set:
+      cribl.leader: 1
     asserts:
       - isNull:
           path: spec.template.spec.priorityClassName
 
+  - it: Should set extraEnvFrom
+    set:
+      cribl.leader: 1
+      extraEnvFrom:
+        - name: AABBCC
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+    asserts:
+      - isNotNull:
+          path: spec.template.spec.containers[0].env
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: AABBCC
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+
+  - it: Should set envValueFrom
+    set:
+      cribl.leader: 1
+      extraEnvFrom:
+        - name: ENV1
+          value: test
+        - name: ENV2
+          value: test
+    asserts:
+      - isNotNull:
+          path: spec.template.spec.containers[0].env
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: ENV1
+            value: test
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: ENV2
+            value: test
+
+  - it: Should set multiple extraEnvFrom
+    set:
+      cribl.leader: 1
+      extraEnvFrom:
+        - name: TEST
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: TEST2
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+    asserts:
+      - isNotNull:
+          path: spec.template.spec.containers[0].env
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: TEST
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: TEST2
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+
+  - it: Should set extraEnv
+    set:
+      cribl.leader: 1
+      extraEnv:
+        EEEEE: "ABC"
+    asserts:
+      - isNotNull:
+          path: spec.template.spec.containers[0].env
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: EEEEE
+            value: "ABC"
+
   - it: Should set a custom priorityClassName
     set:
       priorityClassName: gotta-goat-fast
+      cribl.leader: 1
     asserts:
       - isNotNull:
           path: spec.template.spec.priorityClassName

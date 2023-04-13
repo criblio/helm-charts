@@ -3,15 +3,12 @@ templates:
   - networking/service.yaml
 tests:
   - it: Doesn't create a Service by default
-    set:
-      cribl.leader: 1
     asserts:
       - hasDocuments:
           count: 0
 
   - it: Creates a service with the default port
     set:
-      cribl.leader: 1
       service.enable: true
     asserts:
       - hasDocuments:
@@ -31,7 +28,6 @@ tests:
 
   - it: Uses custom ports
     set:
-      cribl.leader: 1
       service:
         enable: true
         type: LoadBalancer

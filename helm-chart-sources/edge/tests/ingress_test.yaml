@@ -3,15 +3,12 @@ templates:
   - networking/ingress.yaml
 tests:
   - it: Doesn't create an Ingress by default
-    set:
-      cribl.leader: 1
     asserts:
       - hasDocuments:
           count: 0
 
   - it: Creates a single Ingress
     set:
-      cribl.leader: 1
       ingress:
         enable: true
         ingress:

@@ -4,8 +4,6 @@ templates:
   - rbac/clusterrole.yaml
 tests:
   - it: Creates a ServiceAccount
-    set:
-      cribl.leader: 1
     template: rbac/serviceaccount.yaml
     asserts:
       - isKind:
@@ -15,7 +13,6 @@ tests:
 
   - it: Doesn't create a ServiceAccount
     set:
-      cribl.leader: 1
       serviceAccount.create: false
     template: rbac/serviceaccount.yaml
     asserts:
@@ -24,7 +21,6 @@ tests:
 
   - it: Adds annotations to the ServiceAccount
     set:
-      cribl.leader: 1
       serviceAccount.annotations:
         foo: first
         bar: second
@@ -37,8 +33,6 @@ tests:
             bar: second
 
   - it: Creates a ClusterRole
-    set:
-      cribl.leader: 1
     template: rbac/clusterrole.yaml
     asserts:
       - isKind:
@@ -47,8 +41,6 @@ tests:
           of: rbac.authorization.k8s.io/v1
 
   - it: Defines ClusterRole Rules (defaults)
-    set:
-      cribl.leader: 1
     template: rbac/clusterrole.yaml
     asserts:
       - contains:

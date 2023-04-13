@@ -2,6 +2,20 @@ Thank you for installing {{ .Chart.Name }}.
 
 Your release is named {{ .Release.Name }}.
 
-Please label namespace with "scope=enabled" to automatically instruments newly-launched containers in specified namespace.
+Please label the namespace with 'scope=enabled' to automatically instrument newly-launched containers in the specified namespace.
 
-e.g.: kubectl label namespace default scope=enabled
+The following example label the default namespace: kubectl label namespace default scope=enabled
+
+Data destination:
+
+{{- if .Values.config.criblDestination }}
+Events and metrics will be send to {{ .Values.config.criblDestination }}
+{{- end }}
+
+{{- if .Values.config.eventDestination }}
+Events will be send to {{ .Values.config.eventDestination }}
+{{- end }}
+
+{{- if .Values.config.metricDestination }}
+Metrics will be send to {{ .Values.config.metricDestination }}
+{{- end }}

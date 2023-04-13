@@ -1,11 +1,12 @@
 suite: Extras
 templates:
   - extras.yaml
+values:
+  - ./values/leader.yaml
 tests:
   - it: Creates something extra
     template: extras.yaml
-    values:
-      - ./values/values.yaml
+
     set:
       extraObjects:
         - |
@@ -26,8 +27,6 @@ tests:
 
   - it: Creates from object
     template: extras.yaml
-    values:
-      - ./values/values.yaml
     set:
       extraObjects:
         - apiVersion: v1

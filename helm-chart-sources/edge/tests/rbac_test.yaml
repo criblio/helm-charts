@@ -2,6 +2,8 @@ suite: RBAC
 templates:
   - rbac/serviceaccount.yaml
   - rbac/clusterrole.yaml
+values:
+  - ./values/leader.yaml
 tests:
   - it: Creates a ServiceAccount
     template: rbac/serviceaccount.yaml

@@ -1,0 +1,24 @@
+Thank you for installing {{ .Chart.Name }}.
+
+Your release is named {{ .Release.Name }}.
+
+Please label namespace with "scope=enabled" to automatically instruments newly-launched containers in specified namespace.
+
+e.g.
+```
+kubectl label namespace default scope=enabled
+```
+
+The data will be send to:
+
+{{- if .Values.config.criblDestination }}
+  echo Events and metrics will be send to {{ .Values.config.criblDestination }}
+{{- end }}
+
+{{- if .Values.config.eventDestination }}
+  echo Events will be send to {{ .Values.config.eventDestination }}
+{{- end }}
+
+{{- if .Values.config.metricDestination }}
+  echo Metrics will be send to {{ .Values.config.metricDestination }}
+{{- end }}

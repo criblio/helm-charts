@@ -1,0 +1,3 @@
+config:
+  metricDestination: "file:///tmp/test_metrics.log"
+  eventDestination: "udp://cribl-test:9999"

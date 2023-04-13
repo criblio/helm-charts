@@ -1,0 +1,30 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "appscope.fullname" . }}-webhook-cert-setup
+  labels:
+  {{- include "appscope.labels" . | nindent 4 }}
+spec:
+  backoffLimit: 3
+  template:
+    spec:
+      containers:
+      - args:
+        - --service
+        - scope
+        - --webhook
+        - scope.{{ .Values.config.namespace }}.appscope.io
+        - --secret
+        - scope-secret
+        - --namespace
+        - {{ .Values.config.namespace }}
+        command:
+        - ./generate_certificate.sh
+        env:
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: "cribl/k8s-webhook-cert-manager:1.0.0"
+        name: webhook-cert-setup
+        resources: {}
+      restartPolicy: OnFailure
+      serviceAccountName: {{ include "appscope.fullname" . }}-webhook-cert-sa

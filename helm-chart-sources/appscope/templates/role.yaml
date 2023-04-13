@@ -1,0 +1,24 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "appscope.fullname" . }}-cluster-role
+  labels:
+  {{- include "appscope.labels" . | nindent 4 }}
+rules:
+- apiGroups:
+  - ""
+  resourceNames:
+  - scope
+  resources:
+  - configmaps
+  verbs:
+  - get
+  - patch
+  - put
+  - update
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  verbs:
+  - create

@@ -1,0 +1,26 @@
+kubernetesClusterDomain: cluster.local
+
+image:
+  repository: cribl/scope
+  pullPolicy: Always
+  tag: 1.3.2
+
+imagePullSecrets: []
+
+service:
+  type: ClusterIP
+  ports:
+  - name: 4443-tcp
+    port: 443
+    protocol: TCP
+    targetPort: 4443
+
+# appscope configuration 
+config:
+  criblDestination:
+  metricDestination:
+  eventDestination:
+  token:
+  metricFormat: "ndjson"
+  namespace: "default"
+  debug: false

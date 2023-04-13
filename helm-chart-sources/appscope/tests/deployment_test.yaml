@@ -1,0 +1,20 @@
+suite: Deployment
+templates:
+  - deployment.yaml
+values:
+  - ./values/scope_events_metrics.yaml
+tests:
+  - it: Creates a Deployment
+    asserts:
+      - isKind:
+          of: Deployment
+      - isAPIVersion:
+          of: apps/v1
+          
+  - it: Contains the events and metrics destination
+    asserts:
+      - isNotNull:
+          path: spec.template.spec.containers[0].args[1]
+      - equal:
+          path: spec.template.spec.containers[0].args[1]
+          value: "/usr/local/bin/scope k8s --metricdest file:///tmp/test_metrics.log --metricformat ndjson --eventdest udp://cribl-test:9999 --app scope --namespace default --server || sleep 1000"

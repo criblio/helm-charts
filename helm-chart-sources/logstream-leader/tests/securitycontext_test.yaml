@@ -1,0 +1,34 @@
+suite: Deployment Security Context
+templates:
+  - deployment.yaml
+tests:
+  - it: Should not set securitycontext by default
+    asserts:
+      - isNull:
+          path: spec.template.spec.securityContext
+
+  - it: Should set correct command
+    set:
+      securityContext:
+        runAsGroup: "1000"
+        runAsUser: "1000"
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].command
+          value:
+            - bash
+            - -c
+            - "set -x \napt update; apt-get install -y gosu\nuseradd -d /opt/cribl -g \"1000\" -u \"1000\" cribl\nchown  -R   \"1000:1000\" /opt/cribl\ngosu \"1000:1000\" /sbin/entrypoint.sh cribl\n"
+
+  - it: Should handle big numbers
+    set:
+      securityContext:
+        runAsGroup: "1000620000"
+        runAsUser: "1000620000"
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].command
+          value:
+            - bash
+            - -c
+            - "set -x \napt update; apt-get install -y gosu\nuseradd -d /opt/cribl -g \"1000620000\" -u \"1000620000\" cribl\nchown  -R   \"1000620000:1000620000\" /opt/cribl\ngosu \"1000620000:1000620000\" /sbin/entrypoint.sh cribl\n"

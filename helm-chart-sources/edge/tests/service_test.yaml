@@ -1,6 +1,8 @@
 suite: Service
 templates:
   - networking/service.yaml
+values:
+  - ./values/leader.yaml
 tests:
   - it: Doesn't create a Service by default
     asserts:
@@ -63,7 +65,7 @@ tests:
         enable: true
         type: ClusterIP # redundant
         loadBalancerIP: 1.2.3.4
-    assert:
+    asserts:
       - isNull:
           path: spec.loadBalancerIP
 
@@ -72,7 +74,7 @@ tests:
       service:
         enable: true
         externalTrafficPolicy: Local
-    assert:
+    asserts:
       - equal:
           path: spec.externalTrafficPolicy
           value: Local

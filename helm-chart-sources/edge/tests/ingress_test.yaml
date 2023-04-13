@@ -1,6 +1,8 @@
 suite: Ingress
 templates:
   - networking/ingress.yaml
+values:
+  - ./values/leader.yaml
 tests:
   - it: Doesn't create an Ingress by default
     asserts:

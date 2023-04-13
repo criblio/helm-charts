@@ -1,0 +1,16 @@
+cribl:
+  leader: "for-UTs"
+
+extraObjects:
+  - apiVersion: v1
+    kind: foo
+  - apiVersion: v1
+    kind: foo
+    extra:
+      test:
+        deep:
+          value: 1
+  - |
+    apiVersion: v1
+    foo: 1
+    asdf: asdfas

@@ -1,6 +1,8 @@
 suite: DaemonSet
 templates:
   - daemonset.yaml
+values:
+  - ./values/leader.yaml
 tests:
   - it: Creates a DaemonSet
     asserts:

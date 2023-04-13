@@ -12,13 +12,13 @@ jobs:
       - name: Install Helm
         uses: azure/setup-helm@v3
         with:
-          version: 3.9.4
+          version: 3.11.3
 
       - name: Install unittest plugin
-        run: helm plugin install https://github.com/quintush/helm-unittest
+        run: helm plugin install https://github.com/helm-unittest/helm-unittest --version 0.3.1
 
       - name: helm lint
         run: helm lint helm-chart-sources/*
 
       - name: helm unittest
-        run: helm unittest -3 helm-chart-sources/*
+        run: helm unittest helm-chart-sources/*

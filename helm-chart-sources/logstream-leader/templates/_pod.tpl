@@ -9,6 +9,9 @@ containers:
     image: "{{ .Values.criblImage.repository }}:{{ .Values.criblImage.tag | default .Chart.AppVersion }}"
     imagePullPolicy: {{ .Values.criblImage.pullPolicy }}
     {{- if .Values.securityContext }}
+    {{- if or (ne (typeOf .Values.securityContext.runAsUser) "string") (ne (typeOf .Values.securityContext.runAsGroup) "string")}}
+        {{- fail "runAsUser and runAsGroup must be string type. Please enclose values in quotes."}}
+    {{- end }}
     command: 
     - bash
     - -c 

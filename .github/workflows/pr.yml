@@ -21,4 +21,4 @@ jobs:
         run: helm lint helm-chart-sources/*
 
       - name: helm unittest
-        run: helm unittest -3 helm-chart-sources/*
+        run: helm unittest helm-chart-sources/*

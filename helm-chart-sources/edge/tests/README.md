@@ -10,5 +10,5 @@ helm plugin install https://github.com/quintush/helm-unittest
 ## Run Tests
 ```bash
 cd $(git rev-parse --show-toplevel)
-helm unittest -3 helm-chart-sources/edge
+helm unittest helm-chart-sources/edge
 ```

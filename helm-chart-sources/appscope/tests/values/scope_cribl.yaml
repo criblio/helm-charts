@@ -1,2 +1,3 @@
-config:
-  criblDestination: "tcp://cribl-test:9999"
+appscope:
+  destinations:
+    cribl: "tcp://cribl-test:9999"

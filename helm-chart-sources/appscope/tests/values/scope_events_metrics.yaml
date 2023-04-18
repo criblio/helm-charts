@@ -1,3 +1,4 @@
-config:
-  metricDestination: "file:///tmp/test_metrics.log"
-  eventDestination: "udp://cribl-test:9999"
+appscope:
+  destinations:
+    metrics: "file:///tmp/test_metrics.log"
+    events: "udp://cribl-test:9999"

@@ -17,4 +17,4 @@ tests:
           path: spec.template.spec.containers[0].args[1]
       - equal:
           path: spec.template.spec.containers[0].args[1]
-          value: "/usr/local/bin/scope k8s --metricdest file:///tmp/test_metrics.log --metricformat ndjson --eventdest udp://cribl-test:9999 --app scope --namespace default --server || sleep 1000"
+          value: "/usr/local/bin/scope k8s --metricdest file:///tmp/test_metrics.log --metricformat ndjson --eventdest udp://cribl-test:9999 --app scope --namespace NAMESPACE --server || sleep 1000"

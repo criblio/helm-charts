@@ -3,40 +3,40 @@ kind: Deployment
 metadata:
   name: appscope
   labels:
-    app: scope
+    app: appscope
   {{- include "appscope.labels" . | nindent 4 }}
 spec:
   selector:
     matchLabels:
-      app: scope
+      app: appscope
     {{- include "appscope.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        app: scope
+        app: appscope
       {{- include "appscope.selectorLabels" . | nindent 8 }}
     spec:
       containers:
       - args:
         - -c
         - /usr/local/bin/scope k8s
-          {{- if .Values.config.criblDestination }}
-          --cribldest {{ .Values.config.criblDestination }}
+          {{- if .Values.appscope.destinations.cribl }}
+          --cribldest {{ .Values.appscope.destinations.cribl }}
           {{- end }}
-          {{- if .Values.config.metricDestination }}
-          --metricdest {{ .Values.config.metricDestination }}
-          --metricformat {{ .Values.config.metricFormat }}
+          {{- if .Values.appscope.destinations.metrics }}
+          --metricdest {{ .Values.appscope.destinations.metrics }}
+          --metricformat {{ .Values.appscope.destinations.format }}
           {{- end }}
-          {{- if .Values.config.eventDestination }}
-          --eventdest {{ .Values.config.eventDestination }}
+          {{- if .Values.appscope.destinations.events }}
+          --eventdest {{ .Values.appscope.destinations.events }}
           {{- end }}
           --app scope
-          --namespace {{ .Values.config.namespace }}
-          {{- if .Values.config.debug }}
+          --namespace {{ .Release.Namespace }}
+          {{- if .Values.appscope.debug }}
           --debug
           {{- end }}
-          {{- if .Values.config.token }}
-          --authtoken {{ .Values.config.token }}
+          {{- if .Values.appscope.token }}
+          --authtoken {{ .Values.appscope.token }}
           {{- end }}
           --server || sleep 1000
         command:

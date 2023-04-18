@@ -7,6 +7,16 @@ image:
 
 imagePullSecrets: []
 
+# Appscope configuration 
+appscope:
+  destinations:
+    cribl:
+    metrics:
+    events:
+    format: "ndjson"
+  token:
+  debug: false
+
 service:
   type: ClusterIP
   ports:
@@ -14,13 +24,3 @@ service:
     port: 443
     protocol: TCP
     targetPort: 4443
-
-# appscope configuration 
-config:
-  criblDestination:
-  metricDestination:
-  eventDestination:
-  token:
-  metricFormat: "ndjson"
-  namespace: "default"
-  debug: false

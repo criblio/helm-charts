@@ -13,11 +13,11 @@ spec:
         - --service
         - scope
         - --webhook
-        - scope.{{ .Values.config.namespace }}.appscope.io
+        - scope.{{ .Release.Namespace }}.appscope.io
         - --secret
         - scope-secret
         - --namespace
-        - {{ .Values.config.namespace }}
+        - {{ .Release.Namespace }}
         command:
         - ./generate_certificate.sh
         env:

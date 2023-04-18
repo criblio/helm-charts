@@ -15,27 +15,27 @@ This Helm chart deploys [Appscope](https://appscope.dev/) in a Kubernetes Cluste
 
 As built, this chart will deploy to a Kubernetes cluster an AppScope Deployment, Service, Mutating Webhook Admission Controller, Service Account, Cluster Role, Cluster Role Binding, and Secret for setting the AppScope configuration. 
 
-The required options to deploy this chart is the `criblDestination` when sending to a Cribl destination, or `metricDestination` and `eventDestination` when sending to non Cribl destinations.
+The required options to deploy this chart is the `cribl` when sending to a Cribl destination, or `metrics` and `events` when sending to non Cribl destinations.
 
 For all the available command line options, see [Values to Override](#values-to-override). 
 
 ## Basic Configuration for Cribl Stream 
 
-To define a TCP-based connection to Cribl Stream on Cribl.Cloud, install the chart with the with the `criblDestination` config value defined as: `in.main-default-<organization>.cribl.cloud:10091`:
+To define a TCP-based connection to Cribl Stream on Cribl.Cloud, install the chart with the with the `cribl` config value defined as: `in.main-default-<organization>.cribl.cloud:10091`:
 
- `helm install appscope cribl/appscope --set config.criblDestination="tcp://in.main-default-<your-organization>.cribl.cloud:10091"`
+ `helm install appscope cribl/appscope --set appscope.destination.cribl="tcp://in.main-default-<your-organization>.cribl.cloud:10091"`
 
 By default, Cribl.Cloud-managed instances of Cribl Stream have port `10091` configured to use TCP, and a built-in AppScope Source to receive data from AppScope. 
 
-To send metrics & events to a local [Stream](https://cribl.io/stream/) instance, deploy with chart with the `criblDestination` config value defined as: `cribl-internal:10090`:
+To send metrics & events to a local [Stream](https://cribl.io/stream/) instance, deploy with chart with the `cribl` config value defined as: `cribl-internal:10090`:
 
- `helm install appscope cribl/appscope --set config.criblDestination="tcp://cribl-internal:10090"`
+ `helm install appscope cribl/appscope --set appscope.destination.cribl="tcp://cribl-internal:10090"`
 
 ## Basic Configuration for Cribl Edge 
 
 * To install the chart with the release name "appscope" and send metrics & events to [Cribl Stream](https://cribl.io/stream/) defined as: `cribl-internal:10090`:
 
- `helm install appscope cribl/appscope --set config.criblDestination="tcp://cribl-internal:10090"`
+ `helm install appscope cribl/appscope --set appscope.destination.cribl="tcp://cribl-internal:10090"`
 
 ## Basic Configuration for Statsd Prometheus Exporter
 
@@ -43,9 +43,10 @@ To send `statsd` metrics to a local Statsd Exporter deployment, use the followin
 
 ```yaml
 # Appscope configuration 
-config:
-  metricDestination: <prometheus-statsd-exporter-name>.<namespace>:9125
-  metricFormat: "statsd"
+appscope:
+  destination: 
+    metrics: <prometheus-statsd-exporter-name>.<namespace>:9125
+  format: "statsd"
 ```
 
 # Support/Feedback
@@ -60,17 +61,15 @@ For additional documentation about the values used in this chart, see the [Cribl
 
 This section covers the most likely values to override. To see the full scope of values available, run `helm show values cribl/appscope`.
 
-| Key                                                                            | Default Value     | Description                                                                         |
+| Key                                                                            | Default Value     | Description                                        |
 |--------------------------------------------------------------------------------|-------------------|----------------------------------------------------|
 | image.repository                                                               | `cribl/scope`     | Docker image repository to pull images             |
 | image.pullPolicy                                                               | `Always`          | When will the Node pull the image                  |
 | image.tag                                                                      | `1.3.2`           | The Version of Appscope to deploy                  |
 | imagePullSecrets                                                               | `[]`              | Credentials to pull container images               |
-| config.criblDestination                                                         |                   | Cribl Stream destination for metrics & events      |
-| config.metricDestination                                                        |                   | Destination for Metrics                            |
-| config.eventDestination                                                         |                   | Destination for Events                             |
-| config.token                                                                    |                   | AuthToken for Cribl Stream                         |
-| config.metricFormat                                                             | `ndjson`          | Format of metrics output (statsd|ndjson)           |
-| config.namespace                                                                | `default`         | Name of the namespace in which to install          |
-| config.debug                                                                    | `false`           | Enable logging in the scope webhook container      |
-
+| appscope.destination.cribl                                                     |                   | Cribl Stream destination for metrics & events      |
+| appscope.destination.metrics                                                   |                   | Destination for Metrics                            |
+| appscope.destination.events                                                    |                   | Destination for Events                             |
+| appscope.token                                                                 |                   | AuthToken for Cribl Stream                         |
+| appscope.destination.format                                                    | `ndjson`          | Format of metrics output (statsd|ndjson)           |
+| appscope.debug                                                                 | `false`           | Enable logging in the scope webhook container      |

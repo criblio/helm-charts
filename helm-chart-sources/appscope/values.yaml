@@ -24,3 +24,18 @@ service:
     port: 443
     protocol: TCP
     targetPort: 4443
+
+nodeSelector: {}
+
+## Node tolerations for server scheduling to nodes with taints
+## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/
+##
+tolerations: []
+# - key: null
+#   operator: Exists
+#   effect: "NoSchedule"
+
+## Affinity and anti-affinity
+## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+##
+affinity: {}

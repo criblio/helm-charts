@@ -9,13 +9,13 @@ The following example label the 'default' namespace: kubectl label namespace def
 Data destination:
 
 {{- if .Values.appscope.destinations.cribl }}
-Events and metrics will be send to {{ .Values.appscope.destinations.cribl }}
+Events and metrics will be sent to {{ .Values.appscope.destinations.cribl }}
 {{- end }}
 
 {{- if .Values.appscope.destinations.event }}
-Events will be send to {{ .Values.appscope.destinations.events }}
+Events will be sent to {{ .Values.appscope.destinations.events }}
 {{- end }}
 
 {{- if .Values.appscope.destinations.metrics }}
-Metrics will be send to {{ .Values.appscope.destinations.metrics }}
+Metrics will be sent to {{ .Values.appscope.destinations.metrics }}
 {{- end }}

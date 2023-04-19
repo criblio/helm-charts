@@ -40,7 +40,7 @@ To send `statsd` metrics to a local Statsd Exporter deployment, use the followin
 appscope:
   destinations: 
     metrics: <prometheus-statsd-exporter-name>.<namespace>:9125
-  format: "statsd"
+    format: "statsd"
 ```
 
 # Support/Feedback

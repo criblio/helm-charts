@@ -69,10 +69,22 @@ tests:
       - isNull:
           path: spec.loadBalancerIP
 
-  - it: Should use the externalTrafficPolicy
+  - it: Should use the externalTrafficPolicy when set to type LoadBalancer
     set:
       service:
         enable: true
+        type: LoadBalancer
+        externalTrafficPolicy: Local
+    asserts:
+      - equal:
+          path: spec.externalTrafficPolicy
+          value: Local
+
+  - it: Should use the externalTrafficPolicy when set to type NodePort
+    set:
+      service:
+        enable: true
+        type: NodePort
         externalTrafficPolicy: Local
     asserts:
       - equal:

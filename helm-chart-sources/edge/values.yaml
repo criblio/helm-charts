@@ -184,7 +184,7 @@ priorityClassName: ""
 service:
   enable: false
   type: ClusterIP
-  externalTrafficPolicy: Cluster
+  # externalTrafficPolicy: Cluster
   annotations: {}
   ports:
     - name: edge-api

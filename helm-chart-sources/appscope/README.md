@@ -31,12 +31,6 @@ To send metrics & events to a [Stream](https://cribl.io/stream/) instance in the
 
  `helm install appscope cribl/appscope --set appscope.destinations.cribl="tcp://cribl-internal:10090"`
 
-## Basic Configuration for Cribl Edge
-
-* To install the chart with the release name "appscope" and send metrics & events to [Cribl Stream](https://cribl.io/stream/) defined as: `cribl-internal:10090`:
-
- `helm install appscope cribl/appscope --set appscope.destinations.cribl="tcp://cribl-internal:10090"`
-
 ## Basic Configuration for Statsd Prometheus Exporter
 
 To send `statsd` metrics to a local Statsd Exporter deployment, use the following configuration:

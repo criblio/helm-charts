@@ -17,35 +17,28 @@ rules:
   - certificates.k8s.io
   resources:
   - certificatesigningrequests
-  verbs:
-  - create
-  - get
-  - delete
+  verbs: ['create', 'get', 'delete']
 - apiGroups:
   - certificates.k8s.io
   resources:
   - certificatesigningrequests/approval
-  verbs:
-  - update
+  verbs: ['update']
 - apiGroups:
   - ""
   resources:
   - secrets
-  verbs:
-  - create
-  - get
-  - patch
+  resourceNames: 
+    - "scope-secret"
+  verbs:  ['create', 'get', 'patch']
 - apiGroups:
   - ""
   resources:
   - configmaps
-  verbs:
-  - get
+  verbs: ['get']
 - apiGroups:
   - certificates.k8s.io
   resourceNames:
   - kubernetes.io/kubelet-serving
   resources:
   - signers
-  verbs:
-  - approve
+  verbs: ['approve']

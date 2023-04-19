@@ -1,31 +1,33 @@
+# -- @ignore
 kubernetesClusterDomain: cluster.local
 
 image:
-  # image.repository -- Docker image repository to pull images
+  # -- Docker image repository to pull images
   repository: cribl/scope
-  # image.pullPolicy -- When will the Node pull the image
+  # -- When will the Node pull the image
   pullPolicy: Always
-  # image.pullPolicy -- When will the Node pull the image
+  # -- When will the Node pull the image
   tag: 1.3.2
 
-# imagePullSecrets -- Credentials to pull container images
+# -- Credentials to pull container images
 imagePullSecrets: []
 
 appscope:
   destinations:
-    # appscope.destinations.cribl -- Cribl Stream destination for metrics & events
+    # -- Destination to send metrics & events to Cribl Stream  
     cribl:
-    # appscope.destinations.metrics -- Destination for Metrics
+    # -- Destination for Metrics
     metrics:
-    # appscope.destinations.events -- Destination for Events
+    # -- Destination for Events
     events:
-    # appscope.destinations.format -- Format of metrics output (statsd|ndjson
+    # -- Format of metrics output (statsd|ndjson)
     format: "ndjson"
-  # appscope.token  -- AuthToken for Cribl Stream
+  # -- Authentaction Token for use with Cribl Stream
   token:
-  # appscope.debug --Enable logging in the scope webhook container
+  # -- Enable debug logging in the AppScope Webhook Admissions Controller
   debug: false
 
+# -- Kubernetes service for the AppScope Webhook Admissions Controller
 service:
   type: ClusterIP
   ports:

@@ -1,0 +1,23 @@
+suite: ConfigMap
+templates:
+  - configmap.yaml
+values:
+  - ./values/scope_cribl.yaml
+tests:
+  - it: Creates a Configmap
+    asserts:
+      - isKind:
+          of: ConfigMap
+      - isAPIVersion:
+          of: v1
+
+  - it: Contains the events and metrics destination
+    asserts:
+      - isNotNull:
+          path: data["scope.yml"]
+      - matchRegex:
+          path: data["scope.yml"]
+          pattern: "host: cribl-test"
+      - matchRegex:
+          path: data["scope.yml"]
+          pattern: "port: 9999"

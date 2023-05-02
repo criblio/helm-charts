@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: appscope
+  labels:
+    app: appscope
+  {{- include "appscope.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app: appscope
+    {{- include "appscope.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: appscope
+      {{- include "appscope.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - args:
+        - -c
+        - /usr/local/bin/scope k8s
+          {{- if .Values.appscope.destinations.cribl }}
+          --cribldest {{ .Values.appscope.destinations.cribl }}
+          {{- end }}
+          {{- if .Values.appscope.destinations.metrics }}
+          --metricdest {{ .Values.appscope.destinations.metrics }}
+          --metricformat {{ .Values.appscope.destinations.format }}
+          {{- end }}
+          {{- if .Values.appscope.destinations.events }}
+          --eventdest {{ .Values.appscope.destinations.events }}
+          {{- end }}
+          --app scope
+          --namespace {{ .Release.Namespace }}
+          {{- if .Values.appscope.debug }}
+          --debug
+          {{- end }}
+          {{- if .Values.appscope.token }}
+          --authtoken {{ .Values.appscope.token }}
+          {{- end }}
+          --server || sleep 1000
+        command:
+        - /bin/bash
+        env:
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        name: scope
+        ports:
+        {{-  range .Values.service.ports }}
+        - containerPort: {{ .targetPort }}
+          protocol: {{ .protocol }}
+        {{- end }}
+        resources: {}
+        volumeMounts:
+        - mountPath: /etc/certs
+          name: certs
+          readOnly: true
+      serviceAccountName: {{ include "appscope.fullname" . }}-cert-sa
+      volumes:
+      - name: certs
+        secret:
+          secretName: scope-secret
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

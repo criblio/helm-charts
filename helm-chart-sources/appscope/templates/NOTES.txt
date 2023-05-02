@@ -1,0 +1,21 @@
+Thank you for installing {{ .Chart.Name }}.
+
+Your release is named {{ .Release.Name }}.
+
+To add AppScope to newly-launched containers in a specified namespace, apply the label 'scope=enabled' to your namespace(s) to enable automatic instrumentation.
+
+The following example label the 'default' namespace: kubectl label namespace default scope=enabled
+
+Data destination:
+
+{{- if .Values.appscope.destinations.cribl }}
+Events and metrics will be sent to {{ .Values.appscope.destinations.cribl }}
+{{- end }}
+
+{{- if .Values.appscope.destinations.event }}
+Events will be sent to {{ .Values.appscope.destinations.events }}
+{{- end }}
+
+{{- if .Values.appscope.destinations.metrics }}
+Metrics will be sent to {{ .Values.appscope.destinations.metrics }}
+{{- end }}

@@ -1,0 +1,3 @@
+appscope:
+  destinations:
+    cribl: "tcp://cribl-test:9999"

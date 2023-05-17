@@ -18,6 +18,8 @@ spec:
         - scope-secret
         - --namespace
         - {{ .Release.Namespace }}
+        - --signer-name
+        - {{ .Values.cert.signername }}
         command:
         - ./generate_certificate.sh
         env:

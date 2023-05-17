@@ -12,6 +12,10 @@ image:
 # -- Credentials to pull container images
 imagePullSecrets: []
 
+# -- Name of the signer used for certificate request
+cert:
+  signername: "kubernetes.io/kubelet-serving"
+
 appscope:
   destinations:
     # -- Destination to send metrics & events to Cribl Stream  

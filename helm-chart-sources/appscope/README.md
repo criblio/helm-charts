@@ -59,7 +59,7 @@ This section covers the most likely values to override. To see the full scope of
 |--------------------------------------------------------------------------------|-------------------|----------------------------------------------------|
 | image.repository                                                               | `cribl/scope`     | Docker image repository to pull images             |
 | image.pullPolicy                                                               | `Always`          | When will the Node pull the image                  |
-| image.tag                                                                      | `1.3.2`           | The Version of Appscope to deploy                  |
+| image.tag                                                                      | `1.3.3`           | The Version of Appscope to deploy                  |
 | imagePullSecrets                                                               | `[]`              | Credentials to pull container images               |
 | appscope.destinations.cribl                                                    |                   | Cribl Stream destination for metrics & events      |
 | appscope.destinations.metrics                                                  |                   | Destination for Metrics                            |

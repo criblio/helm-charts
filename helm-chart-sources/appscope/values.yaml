@@ -7,10 +7,14 @@ image:
   # -- When will the Node pull the image
   pullPolicy: Always
   # -- When will the Node pull the image
-  tag: 1.3.2
+  tag: 1.3.3
 
 # -- Credentials to pull container images
 imagePullSecrets: []
+
+# -- Name of the signer used for certificate request
+cert:
+  signername: "kubernetes.io/kubelet-serving"
 
 appscope:
   destinations:

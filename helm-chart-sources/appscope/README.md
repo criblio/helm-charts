@@ -21,7 +21,7 @@ For all the available command line options, see [Values to Override](#values-to-
 
 ## Basic Configuration for Cribl Stream
 
-To define a TCP-based connection to Cribl Stream on Cribl.Cloud, install the chart with the with the `cribl` config value defined as: `in.main-default-<organization>.cribl.cloud:10091`:
+To define a TCP-based connection to Cribl Stream on Cribl.Cloud, install the chart with the `cribl` config value defined as: `in.main-default-<organization>.cribl.cloud:10091`:
 
  `helm install appscope cribl/appscope --set appscope.destinations.cribl="tcp://in.main-default-<your-organization>.cribl.cloud:10091"`
 
@@ -30,6 +30,15 @@ By default, Cribl.Cloud-managed instances of Cribl Stream have port `10091` conf
 To send metrics & events to a [Stream](https://cribl.io/stream/) instance in the same Kubernetes cluster, deploy with chart with the `cribl` config value defined as: `cribl-internal:10090`:
 
  `helm install appscope cribl/appscope --set appscope.destinations.cribl="tcp://cribl-internal:10090"`
+
+## Certificate signing Amazon EKS
+
+By default AppScope helm chart in certification process uses `kubernetes.io/kubelet-serving` as a `signerName`.
+By [design](https://docs.aws.amazon.com/eks/latest/userguide/cert-signing.html) EKS does not issue certificates for CertificateSigningRequests with `signerName` `kubernetes.io/kubelet-serving`
+
+To define a `signerName` supported by Amazon EKS, install the chart with the `signername` config value defined as: `beta.eks.amazonaws.com/app-serving`.
+
+ `helm install appscope cribl/appscope --set appscope.destinations.cribl="tcp://cribl-internal:10090" --set cert.signername="beta.eks.amazonaws.com/app-serving"`
 
 ## Basic Configuration for Statsd Prometheus Exporter
 
@@ -55,15 +64,16 @@ For additional documentation about the values used in this chart, see the [Cribl
 
 This section covers the most likely values to override. To see the full scope of values available, run `helm show values cribl/appscope`.
 
-| Key                                                                            | Default Value     | Description                                        |
-|--------------------------------------------------------------------------------|-------------------|----------------------------------------------------|
-| image.repository                                                               | `cribl/scope`     | Docker image repository to pull images             |
-| image.pullPolicy                                                               | `Always`          | When will the Node pull the image                  |
-| image.tag                                                                      | `1.3.2`           | The Version of Appscope to deploy                  |
-| imagePullSecrets                                                               | `[]`              | Credentials to pull container images               |
-| appscope.destinations.cribl                                                    |                   | Cribl Stream destination for metrics & events      |
-| appscope.destinations.metrics                                                  |                   | Destination for Metrics                            |
-| appscope.destinations.events                                                   |                   | Destination for Events                             |
-| appscope.token                                                                 |                   | AuthToken for Cribl Stream                         |
-| appscope.destinations.format                                                   | `ndjson`          | Format of metrics output (statsd|ndjson)           |
-| appscope.debug                                                                 | `false`           | Enable logging in the scope webhook container      |
+| Key                                                                            | Default Value                       | Description                                        |
+|--------------------------------------------------------------------------------|-------------------------------------|----------------------------------------------------|
+| image.repository                                                               | `cribl/scope`                       | Docker image repository to pull images             |
+| image.pullPolicy                                                               | `Always`                            | When will the Node pull the image                  |
+| image.tag                                                                      | `1.3.3`                             | The Version of Appscope to deploy                  |
+| imagePullSecrets                                                               | `[]`                                | Credentials to pull container images               |
+| appscope.destinations.cribl                                                    |                                     | Cribl Stream destination for metrics & events      |
+| appscope.destinations.metrics                                                  |                                     | Destination for Metrics                            |
+| appscope.destinations.events                                                   |                                     | Destination for Events                             |
+| appscope.token                                                                 |                                     | AuthToken for Cribl Stream                         |
+| appscope.destinations.format                                                   | `ndjson`                            | Format of metrics output (statsd|ndjson)           |
+| appscope.debug                                                                 | `false`                             | Enable logging in the scope webhook container      |
+| cert.signername                                                                | `kubernetes.io/kubelet-serving`     | Name of the signer used for certificate request    |

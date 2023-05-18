@@ -18,12 +18,14 @@ spec:
         - scope-secret
         - --namespace
         - {{ .Release.Namespace }}
+        - --signer-name
+        - {{ .Values.cert.signername }}
         command:
         - ./generate_certificate.sh
         env:
         - name: KUBERNETES_CLUSTER_DOMAIN
           value: {{ quote .Values.kubernetesClusterDomain }}
-        image: "cribl/k8s-webhook-cert-manager:1.0.0"
+        image: "cribl/k8s-webhook-cert-manager:1.0.1"
         name: webhook-cert-setup
         resources: {}
       restartPolicy: OnFailure

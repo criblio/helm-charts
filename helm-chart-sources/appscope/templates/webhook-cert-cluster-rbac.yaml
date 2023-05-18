@@ -27,8 +27,6 @@ rules:
   - ""
   resources:
   - secrets
-  resourceNames: 
-    - "scope-secret"
   verbs:  ['create', 'get', 'patch']
 - apiGroups:
   - ""

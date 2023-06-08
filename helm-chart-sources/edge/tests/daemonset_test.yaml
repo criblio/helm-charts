@@ -148,3 +148,33 @@ tests:
       - equal:
           path: spec.template.spec.priorityClassName
           value: gotta-goat-fast
+
+  - it: Should correctly set the nodeSelector
+    set:
+      nodeSelector:
+        goat: true
+        kubernetes.io/os: linux
+    asserts:
+      - isNotNull:
+          path: spec.template.spec.nodeSelector
+      - equal:
+          path: spec.template.spec.nodeSelector
+          value:
+            goat: true
+            kubernetes.io/os: linux
+
+  - it: Should correctly set the tolerations
+    set:
+      tolerations:
+        - key: "goat"
+          operator: "Exists"
+          effect: "NoSchedule"
+    asserts:
+      - isNotNull:
+          path: spec.template.spec.tolerations
+      - equal:
+          path: spec.template.spec.tolerations
+          value:
+            - key: "goat"
+              operator: "Exists"
+              effect: "NoSchedule"

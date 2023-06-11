@@ -52,6 +52,7 @@ containers:
       {{-  range .Values.service.ports }}
       - name: {{ .name }}
         containerPort: {{ .port }}
+        protocol: {{ .protocol | default "TCP" }}
       {{- end }}
     {{- if .Values.config.probes }}
     {{- with .Values.config.livenessProbe }}

@@ -47,3 +47,32 @@ tests:
           path: spec.template.spec.containers[0].livenessProbe
           value:
             foo: bar
+
+  - it: Should define TCP as the default protocol for a port
+    set:
+      service:
+        ports:
+          - name: foo
+            port: 420
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].ports
+          value:
+            - name: foo
+              containerPort: 420
+              protocol: TCP
+
+  - it: Should define UDP as the protocol for a port
+    set:
+      service:
+        ports:
+          - name: foo
+            port: 420
+            protocol: UDP
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].ports
+          value:
+            - name: foo
+              containerPort: 420
+              protocol: UDP

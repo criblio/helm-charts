@@ -56,3 +56,38 @@ tests:
           path: spec.template.spec.containers[0].livenessProbe
           value:
             foo: bar
+
+  - it: Should not have a strategy by default
+    asserts:
+      - isNull:
+          path: spec.strategy
+      - isNull:
+          path: spec.updateStrategy
+
+  - it: Should have a custom strategy
+    set:
+      strategy:
+        type: RollingUpdate
+        rollingUpdate:
+          maxUnavailable: 1
+          maxSurge: 1
+    asserts:
+      - isNotNull:
+          path: spec.template.spec.strategy
+      - isNull:
+          path: spec.template.spec.updateStrategy
+      - equal:
+          path: spec.template.spec.strategy
+          value:
+            type: RollingUpdate
+            rollingUpdate:
+              maxUnavailable: 1
+              maxSurge: 1
+
+  - it: Should fail on bad strategy
+    set:
+      strategy:
+        type: GOAT
+    asserts:
+      - failedTemplate:
+          errorMessage: Not a valid strategy type for Deployment (GOAT)

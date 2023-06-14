@@ -114,6 +114,12 @@ resources:
     cpu: 1250m
     memory: 256Mi
 
+# Replacement Strategy
+#strategy:
+#  type: RollingUpdate
+#  rollingUpdate:
+#    maxSurge: 25%
+#    maxUnavailable: 25%
 
 autoscaling:
   enabled: true

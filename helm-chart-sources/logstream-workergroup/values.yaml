@@ -32,6 +32,7 @@ config:
   host: logstream-leader-internal
   group: kubernetes
   token: criblleader
+  useExistingSecret: false
   rejectSelfSignedCerts: 0
   probes: true
   livenessProbe:

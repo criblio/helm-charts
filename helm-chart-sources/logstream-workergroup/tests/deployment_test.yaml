@@ -112,3 +112,21 @@ tests:
           path: spec.template.spec.topologySpreadConstraints
           value:
             - goat: true
+
+  - it: Should set tolerations
+    set:
+      tolerations:
+        - key: "key1"
+          operator: "Equal"
+          value: "value1"
+          effect: "NoSchedule"
+    asserts:
+      - isNotNull:
+          path: spec.template.spec.tolerations
+      - equal:
+          path: spec.template.spec.tolerations
+          value:
+            - key: "key1"
+              operator: "Equal"
+              value: "value1"
+              effect: "NoSchedule"

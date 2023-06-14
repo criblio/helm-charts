@@ -112,7 +112,11 @@ nodeSelector:
 
 {{- with .Values.tolerations }}
 tolerations:
-  {{- toYaml . | nindent 8 }}
+  {{- toYaml . | nindent 2 }}
+{{- end }}
+
+{{- with .Values.extraPodConfigs }}
+{{ toYaml . }}
 {{- end }}
 
 volumes: 

@@ -57,6 +57,114 @@ tests:
           value:
             foo: bar
 
+  - it: Should not have a strategy by default
+    asserts:
+      - isNull:
+          path: spec.strategy
+      - isNull:
+          path: spec.updateStrategy
+
+  - it: Should have a custom strategy
+    set:
+      strategy:
+        type: RollingUpdate
+        rollingUpdate:
+          maxUnavailable: 1
+          maxSurge: 1
+    asserts:
+      - isNotNull:
+          path: spec.template.spec.strategy
+      - isNull:
+          path: spec.template.spec.updateStrategy
+      - equal:
+          path: spec.template.spec.strategy
+          value:
+            type: RollingUpdate
+            rollingUpdate:
+              maxUnavailable: 1
+              maxSurge: 1
+
+  - it: Should fail on bad strategy
+    set:
+      strategy:
+        type: GOAT
+    asserts:
+      - failedTemplate:
+          errorMessage: Not a valid strategy type for Deployment (GOAT)
+
+  - it: Should set extraPodConfigs
+    set:
+      extraPodConfigs:
+        foo:
+          - goat: true
+        topologySpreadConstraints:
+          - goat: true
+    asserts:
+      - isNotNull:
+          path: spec.template.spec.foo
+      - isNotNull:
+          path: spec.template.spec.topologySpreadConstraints
+      - equal:
+          path: spec.template.spec.foo
+          value:
+            - goat: true
+      - equal:
+          path: spec.template.spec.topologySpreadConstraints
+          value:
+            - goat: true
+
+  - it: Should set tolerations
+    set:
+      tolerations:
+        - key: "key1"
+          operator: "Equal"
+          value: "value1"
+          effect: "NoSchedule"
+    asserts:
+      - isNotNull:
+          path: spec.template.spec.tolerations
+      - equal:
+          path: spec.template.spec.tolerations
+          value:
+            - key: "key1"
+              operator: "Equal"
+              value: "value1"
+              effect: "NoSchedule"
+
+  - it: Should not define a CRIBL_DIST_MASTER_URL env
+    set:
+      config:
+        useExistingSecret: true
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CRIBL_DIST_MASTER_URL
+          any: true
+        not: true
+
+  - it: Should include the extraEnvFrom for CRIBL_DIST_MASTER_URL
+    set:
+      config:
+        useExistingSecret: true
+      envValueFrom:
+        - name: CRIBL_DIST_MASTER_URL
+          valueFrom:
+            secretKeyRef:
+              name: <secretName>
+              key: <secretKey>
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CRIBL_DIST_MASTER_URL
+            valueFrom:
+              secretKeyRef:
+                name: <secretName>
+                key: <secretKey>
+          any: true
+          count: 1
+
   - it: Should define TCP as the default protocol for a port
     set:
       service:

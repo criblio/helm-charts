@@ -34,6 +34,7 @@ This section covers the most likely values to override. To see the full scope of
 |config.tag|deprecated|This option is deprecated, but still supported for backward compatibility. |
 |config.token|"criblleader"|The authentication token for your Cribl Stream leader. |
 |config.host|"logstream-leader"|The resolvable hostname of your Cribl Stream leader. |
+|config.useExistingSecret|`false`|Setting this value to `true` disables the creation of a `CRIBL_DIST_MASTER_URL` string. You are responsible for attaching it using the `envValueFrom` config. See below for an example.|
 |config.rejectSelfSignedCerts|0| One of: `0` – allow self-signed certs; or `1` – deny self-signed certs. |
 |config.tlsLeader.enable|false|Enable TLS connectivity from the workergroup to its leader node |
 |config.hostNetwork|false|configures the workergroup to use the K8s host network instead of the container network.|
@@ -61,6 +62,7 @@ This section covers the most likely values to override. To see the full scope of
 |serviceAccount.create|true|Create a ServiceAccount used by the Pods.|
 |serviceAccount.name|`undefined`|The ServiceAccount name. If `serviceAccount.create` is true, the ServiceAccount is named this value. If false, the ServiceAccount must already exist.|
 |nodeSelector|{}|Add nodeSelector values to define which nodes the pods are scheduled on - see [k8s Documentation](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/) for details and allowed values. |
+|strategy|see `values.yaml`|Add strategy values to define how Pods are upgraded - see k8s Documentation [Deployment](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy) and [DaemonSet](https://kubernetes.io/docs/tasks/manage-daemon/update-daemon-set/) for details and allowed values.|
 |__Extra Configuration Options__|
 |[extraVolumeMounts](../../common_docs/EXTRA_EXAMPLES.md#extraVolumeMounts)|{}|Additional Volumes to mount in the container.|
 |[extraSecretMounts](../../common_docs/EXTRA_EXAMPLES.md#extraSecretMounts)|[]|Pre-existing secrets to mount within the container. |
@@ -158,6 +160,22 @@ With the addition of the `extraVolumeMounts` capability, it is now feasible to u
 1. Use a shared-storage-volume mechanism. We've worked with the EFS CSI driver for AWS, and it works fairly well (though it can be a little tedious to configure).
 2. Understand your Kubernetes networking topology, and how it interacts with your persistent storage driver. (For example, if you're in AWS, ensure that your volumes are available in all Availability Zones that your nodes might run in.) 
 3. Monitor the workergroup pods for volume issues. The faster you can see such issues and react, the more likely that you'll be able to resolve them.
+
+# Using an Existing Secret
+
+To use an existing secret in your Kubernetes deployment, setting the `config.useExistingSecret` value to `true` disables automatic creation of a `CRIBL_DIST_MASTER_URL` string. You are responsible for generating this Environment Variable by yourself and attaching it using the `envValueFrom` setting. See the Cribl Docs for more details on [how to construct this URL](https://docs.cribl.io/stream/environment-variables/#format).
+
+```yaml
+config:
+  useExistingSecret: true
+
+envValueFrom:
+  - name: CRIBL_DIST_MASTER_URL
+    valueFrom:
+      secretKeyRef:
+        name: <secretName>
+        key: <secretKey>
+```
 
 # Known Issues
 

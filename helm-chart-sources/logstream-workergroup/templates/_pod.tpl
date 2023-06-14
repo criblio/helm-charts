@@ -40,11 +40,13 @@ containers:
     {{- end }}
     {{- end }}
     env:
+      {{- if not .Values.config.useExistingSecret }}
       - name: CRIBL_DIST_MASTER_URL
         valueFrom:
           secretKeyRef:
             name: logstream-config-{{ include "logstream-workergroup.fullname" . }}
             key: url-master
+      {{- end }}
       # Self-Signed Certs
       - name: NODE_TLS_REJECT_UNAUTHORIZED
         value: "{{ .Values.config.rejectSelfSignedCerts }}"
@@ -90,6 +92,21 @@ containers:
   {{- toYaml . | nindent 2 }}
 {{- end }}
 
+{{- if (and (eq .Values.deployment "daemonset") (.Values.strategy)) }}
+{{- if and (ne .Values.strategy.type "Recreate") (ne .Values.strategy.type "RollingUpdate") }}
+    {{- fail (printf "Not a valid strategy type for DaemonSet (%s)" .Values.strategy.type) }}
+{{- end }}
+updateStrategy:
+  {{- toYaml .Values.strategy | nindent 2 }}
+{{- end }}
+
+{{- if (and (eq .Values.deployment "deployment") (.Values.strategy)) }}
+{{- if and (ne .Values.strategy.type "Recreate") (ne .Values.strategy.type "RollingUpdate") }}
+    {{- fail (printf "Not a valid strategy type for Deployment (%s)" .Values.strategy.type) }}
+{{- end }}
+strategy:
+  {{- toYaml .Values.strategy | nindent 2 }}
+{{- end }}
 
 {{- with .Values.nodeSelector }}
 nodeSelector:
@@ -98,7 +115,11 @@ nodeSelector:
 
 {{- with .Values.tolerations }}
 tolerations:
-  {{- toYaml . | nindent 8 }}
+  {{- toYaml . | nindent 2 }}
+{{- end }}
+
+{{- with .Values.extraPodConfigs }}
+{{ toYaml . }}
 {{- end }}
 
 volumes: 

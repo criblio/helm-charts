@@ -130,3 +130,37 @@ tests:
               operator: "Equal"
               value: "value1"
               effect: "NoSchedule"
+
+  - it: Should not define a CRIBL_DIST_MASTER_URL env
+    set:
+      config:
+        useExistingSecret: true
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CRIBL_DIST_MASTER_URL
+          any: true
+        not: true
+
+  - it: Should include the extraEnvFrom for CRIBL_DIST_MASTER_URL
+    set:
+      config:
+        useExistingSecret: true
+      envValueFrom:
+        - name: CRIBL_DIST_MASTER_URL
+          valueFrom:
+            secretKeyRef:
+              name: <secretName>
+              key: <secretKey>
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CRIBL_DIST_MASTER_URL
+            valueFrom:
+              secretKeyRef:
+                name: <secretName>
+                key: <secretKey>
+          any: true
+          count: 1

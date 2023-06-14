@@ -40,11 +40,13 @@ containers:
     {{- end }}
     {{- end }}
     env:
+      {{- if not .Values.config.useExistingSecret }}
       - name: CRIBL_DIST_MASTER_URL
         valueFrom:
           secretKeyRef:
             name: logstream-config-{{ include "logstream-workergroup.fullname" . }}
             key: url-master
+      {{- end }}
       # Self-Signed Certs
       - name: NODE_TLS_REJECT_UNAUTHORIZED
         value: "{{ .Values.config.rejectSelfSignedCerts }}"

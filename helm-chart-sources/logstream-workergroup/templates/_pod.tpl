@@ -81,6 +81,7 @@ containers:
       {{-  range .Values.service.ports }}
       - name: {{ .name }}
         containerPort: {{ .port }}
+        protocol: {{ .protocol | default "TCP" }}
       {{- end }}
     resources:
       {{- toYaml .Values.resources | nindent 12 }}

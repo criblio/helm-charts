@@ -91,3 +91,24 @@ tests:
     asserts:
       - failedTemplate:
           errorMessage: Not a valid strategy type for Deployment (GOAT)
+
+  - it: Should set extraPodConfigs
+    set:
+      extraPodConfigs:
+        foo:
+          - goat: true
+        topologySpreadConstraints:
+          - goat: true
+    asserts:
+      - isNotNull:
+          path: spec.template.spec.foo
+      - isNotNull:
+          path: spec.template.spec.topologySpreadConstraints
+      - equal:
+          path: spec.template.spec.foo
+          value:
+            - goat: true
+      - equal:
+          path: spec.template.spec.topologySpreadConstraints
+          value:
+            - goat: true

@@ -115,6 +115,10 @@ tolerations:
   {{- toYaml . | nindent 8 }}
 {{- end }}
 
+{{- with .Values.extraPodConfigs }}
+{{ toYaml . }}
+{{- end }}
+
 volumes: 
   {{- range .Values.extraVolumeMounts }}
   - name: {{ .name }}

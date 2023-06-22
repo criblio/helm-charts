@@ -22,3 +22,13 @@ jobs:
 
       - name: helm unittest
         run: helm unittest helm-chart-sources/*
+
+      - uses: actions/setup-go@v4
+        with:
+          go-version: '>=1.19.0'
+
+      - name: Install kubeconform
+        run: go install github.com/yannh/kubeconform/cmd/kubeconform@v0.6.2
+
+      - name: kubeconform
+        run: ./scripts/kubeconform.sh

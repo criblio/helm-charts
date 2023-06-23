@@ -2,6 +2,8 @@ suite: RBAC
 templates:
   - rbac/serviceaccount.yaml
   - rbac/clusterrole.yaml
+  - rbac/role.yaml
+  - rbac/rolebinding.yaml
 values:
   - ./values/leader.yaml
 tests:
@@ -54,3 +56,28 @@ tests:
               - deployments
               - replicasets
               - statefulsets
+
+  - it: Creates a Role
+    template: rbac/role.yaml
+    asserts:
+      - containsDocument:
+          kind: Role
+          apiVersion: rbac.authorization.k8s.io/v1
+
+  - it: Defines Role Rules
+    template: rbac/role.yaml
+    asserts:
+      - contains:
+          path: rules
+          any: true
+          content:
+            resources:
+              - pods
+
+  - it: Creates a RoleBinding
+    template: rbac/rolebinding.yaml
+    asserts:
+      - isKind:
+          of: RoleBinding
+      - isAPIVersion:
+          of: rbac.authorization.k8s.io/v1

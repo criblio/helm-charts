@@ -119,7 +119,7 @@ rbac:
         - nodes/proxy
         - nodes/spec
         - nodes/stats
-        - pods/logs
+        - pods/log
       verbs: ['get', 'list', 'watch']
     - apiGroups:
         - ""

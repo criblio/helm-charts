@@ -12,7 +12,7 @@ metadata:
   {{- end }}
 rules:
   {{- toYaml .Values.rbac.rules | nindent 2}}
-  {{- range .Values.rbac.extraRules }}
+  {{- with .Values.rbac.extraRules }}
     {{- toYaml . | nindent 2 }}
   {{- end }}
 {{- end }}

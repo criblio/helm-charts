@@ -21,11 +21,11 @@ tests:
           maxSurge: 1
     asserts:
       - isNotNull:
-          path: spec.template.spec.updateStrategy
+          path: spec.updateStrategy
       - isNull:
-          path: spec.template.spec.strategy
+          path: spec.strategy
       - equal:
-          path: spec.template.spec.updateStrategy
+          path: spec.updateStrategy
           value:
             type: RollingUpdate
             rollingUpdate:

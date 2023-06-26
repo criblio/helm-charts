@@ -98,3 +98,8 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+# Applies extra labels to all resources deployed with this chart
+extraLabels: {}
+# key: value
+# key2: value2

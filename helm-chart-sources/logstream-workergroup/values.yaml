@@ -184,3 +184,8 @@ ingress:
 #        - paths:
 #            - path: /*
 #              port: 8088
+
+# Applies extra labels to all resources deployed with this chart
+extraLabels: {}
+# key: value
+# key2: value2

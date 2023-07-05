@@ -83,6 +83,27 @@ serviceAccount:
 rbac:
   create: true
   annotations: {}
+  # Required namespace-scoped resources
+  roleRules:
+    - apiGroups:
+        - ""
+      resources:
+        - pods
+      verbs: ['get']
+    - apiGroups:
+        - "apps"
+      resources:
+        - daemonsets
+      verbs:
+        - get
+  # Extra namespace-scoped resources
+  extraRoleRules: []
+  # - apiGroups: []
+  #   resources: []
+  #   resourceNames: []
+  #   verbs: []
+
+  # ClusterRole Rules
   rules:
     - apiGroups:
         - "events.k8s.io"
@@ -92,23 +113,28 @@ rbac:
     - apiGroups:
         - ""
       resources:
+        - nodes
+        - nodes/log
+        - nodes/metrics
+        - nodes/proxy
+        - nodes/spec
+        - nodes/stats
+        - pods/log
+      verbs: ['get', 'list', 'watch']
+    - apiGroups:
+        - ""
+      resources:
         - configmaps
         - endpoints
         - limitranges
         - namespaces
-        - nodes
         - persistentvolumeclaims
         - pods
         - replicationcontrollers
         - secrets
         - services
         - strategicMergePatches
-        - nodes/log
-        - nodes/metrics
-        - nodes/proxy
-        - nodes/spec
-        - nodes/stats
-      verbs: ['get', 'list', 'watch']
+      verbs: ['list', 'watch']
     - apiGroups:
         - "apps"
       resources:
@@ -116,46 +142,46 @@ rbac:
         - deployments
         - replicasets
         - statefulsets
-      verbs: ['get', 'list', 'watch']
+      verbs: ['list', 'watch']
     - apiGroups:
         - "batch"
       resources:
         - cronjobs
         - jobs
-      verbs: ['get', 'list', 'watch']
+      verbs: ['list', 'watch']
     - apiGroups:
         - "autoscaling"
       resources:
         - horizontalpodautoscalers
-      verbs: ['get', 'list', 'watch']
+      verbs: ['list', 'watch']
     - apiGroups:
         - "policy"
       resources:
         - poddisruptionbudgets
-      verbs: ['get', 'list', 'watch']
+      verbs: ['list', 'watch']
     - apiGroups:
         - "networking.k8s.io"
       resources:
         - ingresses
         - networkpolicies
-      verbs: ['get', 'list', 'watch']
+      verbs: ['list', 'watch']
     - apiGroups:
         - "admissionregistration.k8s.io"
       resources:
         - mutatingwebhookconfigurations
         - validatingwebhookconfigurations
-      verbs: ['get', 'list', 'watch']
+      verbs: ['list', 'watch']
     - apiGroups:
         - "certificates.k8s.io"
       resources:
         - certificatesigningrequests
-      verbs: ['get', 'list', 'watch']
+      verbs: ['list', 'watch']
     - apiGroups:
         - "storage.k8s.io"
       resources:
         - storageclasses
         - volumeattachments
-      verbs: ['get', 'list', 'watch']
+      verbs: ['list', 'watch']
   extraRules: []
   # - apiGroups: []
   #   resources: []

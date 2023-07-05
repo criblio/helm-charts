@@ -81,3 +81,34 @@ tests:
           of: RoleBinding
       - isAPIVersion:
           of: rbac.authorization.k8s.io/v1
+
+  - it: Correctly includes extraRules
+    template: rbac/clusterrole.yaml
+    set:
+      rbac:
+        extraRules:
+          - apiGroup:
+              - ""
+            resources:
+              - foo
+              - goat
+            verbs:
+              - awesome
+          - fake: true
+    asserts:
+      - contains:
+          path: rules
+          any: true
+          content:
+            apiGroup:
+              - ""
+            resources:
+              - foo
+              - goat
+            verbs:
+              - awesome
+      - contains:
+          path: rules
+          any: true
+          content:
+            fake: true

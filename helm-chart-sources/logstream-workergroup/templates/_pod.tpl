@@ -92,22 +92,6 @@ containers:
   {{- toYaml . | nindent 2 }}
 {{- end }}
 
-{{- if (and (eq .Values.deployment "daemonset") (.Values.strategy)) }}
-{{- if and (ne .Values.strategy.type "Recreate") (ne .Values.strategy.type "RollingUpdate") }}
-    {{- fail (printf "Not a valid strategy type for DaemonSet (%s)" .Values.strategy.type) }}
-{{- end }}
-updateStrategy:
-  {{- toYaml .Values.strategy | nindent 2 }}
-{{- end }}
-
-{{- if (and (eq .Values.deployment "deployment") (.Values.strategy)) }}
-{{- if and (ne .Values.strategy.type "Recreate") (ne .Values.strategy.type "RollingUpdate") }}
-    {{- fail (printf "Not a valid strategy type for Deployment (%s)" .Values.strategy.type) }}
-{{- end }}
-strategy:
-  {{- toYaml .Values.strategy | nindent 2 }}
-{{- end }}
-
 {{- with .Values.nodeSelector }}
 nodeSelector:
   {{- toYaml .  | nindent 2 }}

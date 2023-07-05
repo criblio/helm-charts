@@ -256,6 +256,7 @@ resources:
   limits:
    cpu: 2
    memory: 4096Mi
+   ephemeral-storage: 10Gi
   requests:
    cpu: .25
    memory: 1024Mi
@@ -267,3 +268,8 @@ tolerations:
   - operator: Exists
 
 extraObjects: {}
+
+# Applies extra labels to all resources deployed with this chart
+extraLabels: {}
+# key: value
+# key2: value2

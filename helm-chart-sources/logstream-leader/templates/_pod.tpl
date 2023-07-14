@@ -1,26 +1,31 @@
 {{- define "leader.pod" -}}
-
 {{- with .Values.imagePullSecrets }}
 imagePullSecrets:
   {{- toYaml . | nindent 8 }}
+{{- end }}
+{{- if .Values.podSecurityContext }}
+securityContext:
+{{- range $key, $value := .Values.podSecurityContext }}
+{{- if or (eq $key "runAsUser") (eq $key "runAsGroup") (eq $key "fsGroup")}}
+  {{ $key }}: {{ $value | int }}
+{{- else }}
+  {{ $key }}: {{ $value }}
+{{- end }}
+{{- end }}
 {{- end }}
 containers:
   - name: {{ .Chart.Name }}
     image: "{{ .Values.criblImage.repository }}:{{ .Values.criblImage.tag | default .Chart.AppVersion }}"
     imagePullPolicy: {{ .Values.criblImage.pullPolicy }}
     {{- if .Values.securityContext }}
-    {{- if or (ne (typeOf .Values.securityContext.runAsUser) "string") (ne (typeOf .Values.securityContext.runAsGroup) "string")}}
-        {{- fail "runAsUser and runAsGroup must be string type. Please enclose values in quotes."}}
+    securityContext:
+    {{- range $key, $value := .Values.securityContext }}
+    {{- if or (eq $key "runAsUser") (eq $key "runAsGroup") (eq $key "fsGroup")}}
+      {{ $key }}: {{ $value | int }}
+    {{- else }}
+      {{ $key }}: {{ $value }}
     {{- end }}
-    command: 
-    - bash
-    - -c 
-    - |
-      set -x 
-      apt update; apt-get install -y gosu
-      useradd -d /opt/cribl -g "{{- .Values.securityContext.runAsGroup }}" -u "{{- .Values.securityContext.runAsUser }}" cribl
-      chown  -R   "{{- .Values.securityContext.runAsUser }}:{{- .Values.securityContext.runAsGroup }}" /opt/cribl
-      gosu "{{- .Values.securityContext.runAsUser }}:{{- .Values.securityContext.runAsGroup }}" /sbin/entrypoint.sh cribl
+    {{- end }}
     {{- end }}
     volumeMounts:
     - name: config-storage
@@ -28,6 +33,11 @@ containers:
     {{- if  or .Values.config.license ( or .Values.config.adminPassword .Values.config.groups ) }}
     - name: initial-config
       mountPath: /var/tmp/config_bits
+    {{- end }}
+    {{- if or .Values.securityContext .Values.podSecurityContext }}
+    - name: gitconfig
+      mountPath: /.gitconfig
+      subPath: .gitconfig
     {{- end }}
     {{- range .Values.extraConfigmapMounts }}
     - name: {{ .name }}
@@ -65,7 +75,7 @@ containers:
     {{- end }}
     {{- end }}
     resources:
-      {{- toYaml .Values.resources | nindent 12 }}
+      {{- toYaml .Values.resources | nindent 6 }}
     env:
       # Self-Signed Certs
       - name: NODE_TLS_REJECT_UNAUTHORIZED
@@ -101,7 +111,6 @@ containers:
         value: "if [ ! -e $CRIBL_VOLUME_DIR/local/cribl/mappings.yml ]; then mkdir -p $CRIBL_VOLUME_DIR/local/cribl;  cp /var/tmp/config_bits/groups.yml $CRIBL_VOLUME_DIR/local/cribl/groups.yml; cp /var/tmp/config_bits/mappings.yml $CRIBL_VOLUME_DIR/local/cribl/mappings.yml; fi"
         {{- $b_iter = add $b_iter 1 }}
       {{- end }}
-
      {{- $a_iter := 1 -}} 
      {{- if .Values.config.adminPassword }}
       - name: CRIBL_AFTER_START_CMD_{{ $a_iter }}
@@ -111,10 +120,10 @@ containers:
 {{- with .Values.extraContainers }}
   {{- toYaml . | nindent 2 }}
 {{- end }}
-
+{{- if or .Values.extraInitContainers .Values.consolidate_volumes }}
 initContainers:
 {{- with .Values.extraInitContainers }}
-  {{- toYaml . | nindent 8 }}
+  {{- toYaml . | nindent 2 }}
 {{- end }}
 {{- if  (and .Release.IsUpgrade .Values.consolidate_volumes)  }}
   - name: pre-upgrade-volume-coalescence
@@ -138,10 +147,6 @@ initContainers:
       - name: groups-storage
         mountPath: {{ .Values.config.criblHome }}/group
 {{- end }}
-
-{{- with .Values.nodeSelector }}
-nodeSelector:
-  {{- toYaml .  | nindent 2 }}
 {{- end }}
 volumes:
   {{- if  or .Values.config.license ( or .Values.config.adminPassword .Values.config.groups ) }}
@@ -178,6 +183,14 @@ volumes:
     persistentVolumeClaim:
       claimName: groups-claim
 {{- end }}
+{{- if or .Values.securityContext .Values.podSecurityContext }}
+  - name: gitconfig
+    configMap:
+      name: {{ include "logstream-leader.fullname" . }}-gitconfig
+      items:
+        - key: .gitconfig
+          path: .gitconfig
+{{- end }}
 {{- range .Values.extraConfigmapMounts }}
   - name: {{ .name }}
     configMap:
@@ -197,18 +210,16 @@ volumes:
     csi: {{- toYaml .csi | nindent 6 }}
 {{- end }}
 {{- end }}
-
-
 {{- with .Values.nodeSelector }}
 nodeSelector:
-  {{- toYaml . | nindent 8 }}
+  {{- toYaml . | nindent 2 }}
 {{- end }}
 {{- with .Values.affinity }}
 affinity:
-  {{- toYaml . | nindent 8 }}
+  {{- toYaml . | nindent 2 }}
 {{- end }}
 {{- with .Values.tolerations }}
 tolerations:
-  {{- toYaml . | nindent 8 }}
+  {{- toYaml . | nindent 2 }}
 {{- end }}
 {{- end }}

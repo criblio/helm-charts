@@ -186,6 +186,9 @@ ingress:
 #            - path: /*
 #              port: 8088
 
+# Extra manifests to be deployed
+extraObjects: {}
+
 # Applies extra labels to all resources deployed with this chart
 extraLabels: {}
 # key: value

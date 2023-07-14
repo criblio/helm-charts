@@ -1,0 +1,11 @@
+securityContext:
+  runAsUser: 1000620000
+  runAsGroup: 1000620000
+  fsGroupChangePolicy: Always
+  runAsNonRoot: true
+
+podSecurityContext:
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroupChangePolicy: Always
+  runAsNonRoot: true

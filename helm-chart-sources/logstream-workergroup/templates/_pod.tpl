@@ -20,7 +20,7 @@ securityContext:
 {{- if or (eq $key "runAsUser") (eq $key "runAsGroup") (eq $key "fsGroup")}}
   {{ $key }}: {{ $value | int }}
 {{- else }}
-  {{ $key }}: {{ $value | int }}
+  {{ $key }}: {{ $value }}
 {{- end }}
 {{- end }}
 {{- end }}
@@ -34,7 +34,7 @@ containers:
     {{- if or (eq $key "runAsUser") (eq $key "runAsGroup") (eq $key "fsGroup")}}
       {{ $key }}: {{ $value | int }}
     {{- else }}
-      {{ $key }}: {{ $value | int }}
+      {{ $key }}: {{ $value }}
     {{- end }}
     {{- end }}
     {{- end }}

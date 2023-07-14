@@ -14,20 +14,29 @@ initContainers:
 {{- if .Values.config.hostNetwork }}
 hostNetwork: true
 {{- end }}
+{{- if .Values.podSecurityContext }}
+securityContext:
+{{- range $key, $value := .Values.podSecurityContext }}
+{{- if or (eq $key "runAsUser") (eq $key "runAsGroup") (eq $key "fsGroup")}}
+  {{ $key }}: {{ $value | int }}
+{{- else }}
+  {{ $key }}: {{ $value | int }}
+{{- end }}
+{{- end }}
+{{- end }}
 containers:
   - name: {{ .Chart.Name }}
     image: "{{ .Values.criblImage.repository }}:{{ .Values.criblImage.tag | default .Chart.AppVersion }}"
     imagePullPolicy: {{ .Values.criblImage.pullPolicy }}
     {{- if .Values.securityContext }}
-    command: 
-    - bash
-    - -c 
-    - |
-      set -x 
-      apt update; apt-get install -y gosu
-      useradd -d /opt/cribl -g "{{- .Values.securityContext.runAsGroup }}" -u "{{- .Values.securityContext.runAsUser }}" cribl
-      chown  -R   "{{- .Values.securityContext.runAsUser }}:{{- .Values.securityContext.runAsGroup }}" /opt/cribl
-      gosu "{{- .Values.securityContext.runAsUser }}:{{- .Values.securityContext.runAsGroup }}" /sbin/entrypoint.sh cribl
+    securityContext:
+    {{- range $key, $value := .Values.securityContext }}
+    {{- if or (eq $key "runAsUser") (eq $key "runAsGroup") (eq $key "fsGroup")}}
+      {{ $key }}: {{ $value | int }}
+    {{- else }}
+      {{ $key }}: {{ $value | int }}
+    {{- end }}
+    {{- end }}
     {{- end }}
     {{- if .Values.config.probes }}
     {{- with .Values.config.livenessProbe }}

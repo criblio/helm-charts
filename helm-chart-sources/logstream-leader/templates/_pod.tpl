@@ -75,7 +75,7 @@ containers:
     {{- end }}
     {{- end }}
     resources:
-      {{- toYaml .Values.resources | nindent 12 }}
+      {{- toYaml .Values.resources | nindent 6 }}
     env:
       # Self-Signed Certs
       - name: NODE_TLS_REJECT_UNAUTHORIZED
@@ -111,7 +111,6 @@ containers:
         value: "if [ ! -e $CRIBL_VOLUME_DIR/local/cribl/mappings.yml ]; then mkdir -p $CRIBL_VOLUME_DIR/local/cribl;  cp /var/tmp/config_bits/groups.yml $CRIBL_VOLUME_DIR/local/cribl/groups.yml; cp /var/tmp/config_bits/mappings.yml $CRIBL_VOLUME_DIR/local/cribl/mappings.yml; fi"
         {{- $b_iter = add $b_iter 1 }}
       {{- end }}
-
      {{- $a_iter := 1 -}} 
      {{- if .Values.config.adminPassword }}
       - name: CRIBL_AFTER_START_CMD_{{ $a_iter }}
@@ -121,10 +120,10 @@ containers:
 {{- with .Values.extraContainers }}
   {{- toYaml . | nindent 2 }}
 {{- end }}
-
+{{- if or .Values.extraInitContainers .Values.consolidate_volumes }}
 initContainers:
 {{- with .Values.extraInitContainers }}
-  {{- toYaml . | nindent 8 }}
+  {{- toYaml . | nindent 2 }}
 {{- end }}
 {{- if  (and .Release.IsUpgrade .Values.consolidate_volumes)  }}
   - name: pre-upgrade-volume-coalescence
@@ -148,10 +147,6 @@ initContainers:
       - name: groups-storage
         mountPath: {{ .Values.config.criblHome }}/group
 {{- end }}
-
-{{- with .Values.nodeSelector }}
-nodeSelector:
-  {{- toYaml .  | nindent 2 }}
 {{- end }}
 volumes:
   {{- if  or .Values.config.license ( or .Values.config.adminPassword .Values.config.groups ) }}
@@ -215,18 +210,16 @@ volumes:
     csi: {{- toYaml .csi | nindent 6 }}
 {{- end }}
 {{- end }}
-
-
 {{- with .Values.nodeSelector }}
 nodeSelector:
-  {{- toYaml . | nindent 8 }}
+  {{- toYaml . | nindent 2 }}
 {{- end }}
 {{- with .Values.affinity }}
 affinity:
-  {{- toYaml . | nindent 8 }}
+  {{- toYaml . | nindent 2 }}
 {{- end }}
 {{- with .Values.tolerations }}
 tolerations:
-  {{- toYaml . | nindent 8 }}
+  {{- toYaml . | nindent 2 }}
 {{- end }}
 {{- end }}

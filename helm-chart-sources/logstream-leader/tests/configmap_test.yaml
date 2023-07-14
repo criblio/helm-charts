@@ -1,0 +1,19 @@
+suite: ConfigMap
+templates:
+  - configmap.yaml
+tests:
+  - it: Should not exist by default
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should create a configmap
+    set:
+      securityContext:
+        runAsUser: 1000
+    asserts:
+      - hasDocuments:
+          count: 1
+      - containsDocument:
+          kind: ConfigMap
+          apiVersion: v1

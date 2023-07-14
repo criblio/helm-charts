@@ -1,0 +1,7 @@
+securityContext:
+  runAsUser: 1000620000
+  runAsGroup: 1000620000
+
+podSecurityContext:
+  runAsUser: 1000
+  runAsGroup: 1000

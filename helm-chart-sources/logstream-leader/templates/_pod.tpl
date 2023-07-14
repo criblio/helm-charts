@@ -1,26 +1,31 @@
 {{- define "leader.pod" -}}
-
 {{- with .Values.imagePullSecrets }}
 imagePullSecrets:
   {{- toYaml . | nindent 8 }}
+{{- end }}
+{{- if .Values.podSecurityContext }}
+securityContext:
+{{- range $key, $value := .Values.podSecurityContext }}
+{{- if or (eq $key "runAsUser") (eq $key "runAsGroup") (eq $key "fsGroup")}}
+  {{ $key }}: {{ $value | int }}
+{{- else }}
+  {{ $key }}: {{ $value | int }}
+{{- end }}
+{{- end }}
 {{- end }}
 containers:
   - name: {{ .Chart.Name }}
     image: "{{ .Values.criblImage.repository }}:{{ .Values.criblImage.tag | default .Chart.AppVersion }}"
     imagePullPolicy: {{ .Values.criblImage.pullPolicy }}
     {{- if .Values.securityContext }}
-    {{- if or (ne (typeOf .Values.securityContext.runAsUser) "string") (ne (typeOf .Values.securityContext.runAsGroup) "string")}}
-        {{- fail "runAsUser and runAsGroup must be string type. Please enclose values in quotes."}}
+    securityContext:
+    {{- range $key, $value := .Values.securityContext }}
+    {{- if or (eq $key "runAsUser") (eq $key "runAsGroup") (eq $key "fsGroup")}}
+      {{ $key }}: {{ $value | int }}
+    {{- else }}
+      {{ $key }}: {{ $value | int }}
     {{- end }}
-    command: 
-    - bash
-    - -c 
-    - |
-      set -x 
-      apt update; apt-get install -y gosu
-      useradd -d /opt/cribl -g "{{- .Values.securityContext.runAsGroup }}" -u "{{- .Values.securityContext.runAsUser }}" cribl
-      chown  -R   "{{- .Values.securityContext.runAsUser }}:{{- .Values.securityContext.runAsGroup }}" /opt/cribl
-      gosu "{{- .Values.securityContext.runAsUser }}:{{- .Values.securityContext.runAsGroup }}" /sbin/entrypoint.sh cribl
+    {{- end }}
     {{- end }}
     volumeMounts:
     - name: config-storage
@@ -28,6 +33,11 @@ containers:
     {{- if  or .Values.config.license ( or .Values.config.adminPassword .Values.config.groups ) }}
     - name: initial-config
       mountPath: /var/tmp/config_bits
+    {{- end }}
+    {{- if or .Values.securityContext .Values.podSecurityContext }}
+    - name: gitconfig
+      mountPath: /.gitconfig
+      subPath: .gitconfig
     {{- end }}
     {{- range .Values.extraConfigmapMounts }}
     - name: {{ .name }}
@@ -177,6 +187,14 @@ volumes:
   - name: groups-storage
     persistentVolumeClaim:
       claimName: groups-claim
+{{- end }}
+{{- if or .Values.securityContext .Values.podSecurityContext }}
+  - name: gitconfig
+    configMap:
+      name: {{ include "logstream-leader.fullname" . }}-gitconfig
+      items:
+        - key: .gitconfig
+          path: .gitconfig
 {{- end }}
 {{- range .Values.extraConfigmapMounts }}
   - name: {{ .name }}

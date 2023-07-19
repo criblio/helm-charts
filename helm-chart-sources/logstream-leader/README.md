@@ -11,7 +11,7 @@ If you're migrating from the deprecated `logstream‑master` chart, please see t
 
 # New Capabilities
 
-* Support for the 4.1.3 version of Cribl Stream (default version)
+* Support for the 4.2.0 version of Cribl Stream (default version)
 
 # Deployment
 

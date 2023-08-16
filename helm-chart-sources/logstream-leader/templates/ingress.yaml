@@ -18,7 +18,7 @@ spec:
   - http:
       paths:
       - path: {{ .Values.ingress.prefix }}
-        pathType: Prefix
+        pathType: {{ .Values.ingress.pathType }}
         backend:
           service:
             name: {{ include "logstream-leader.fullname" . }}

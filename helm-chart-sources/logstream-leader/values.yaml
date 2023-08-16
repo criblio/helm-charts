@@ -82,6 +82,7 @@ ingress:
 #        - cribl.example.com
 #      secretName: cribl-example-com-tls
   prefix: /*
+  pathType: Prefix
   ingressClassName:
   host:
 

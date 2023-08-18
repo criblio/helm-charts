@@ -28,7 +28,7 @@ jobs:
           go-version: '>=1.19.0'
 
       - name: Install kubeconform
-        run: go install github.com/yannh/kubeconform/cmd/kubeconform@v0.6.2
+        run: go install github.com/yannh/kubeconform/cmd/kubeconform@v0.6.3
 
       - name: kubeconform
         run: ./scripts/kubeconform.sh

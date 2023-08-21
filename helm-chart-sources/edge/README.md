@@ -16,7 +16,7 @@ When deploying this chart, you must change the Fleet API host from binding on `1
 
 1. Helm v3 installed – instructions are [here](https://helm.sh/docs/intro/install/).
 2. Cribl helm repo configured. To do this:
-    `helm repo add cribl https://criblio.github.io/helm-charts/`
+    `helm repo add cribl https://michalbiesek.github.io/helm-charts/`
 
 # Known Issues
 

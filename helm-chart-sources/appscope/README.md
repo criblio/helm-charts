@@ -8,7 +8,7 @@ This Helm chart deploys [Appscope](https://appscope.dev/) in a Kubernetes Cluste
 
 1. Helm v3 installed – instructions are [here](https://helm.sh/docs/intro/install/).
 2. Cribl Helm repo configured. App the repo locally with the following command:
-    `helm repo add cribl https://criblio.github.io/helm-charts/`
+    `helm repo add cribl https://michalbiesek.github.io/helm-charts/`
 
 
 # Configuration

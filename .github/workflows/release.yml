@@ -53,6 +53,7 @@ jobs:
         with:
           charts_dir: ${{ env.GITHUB_REF_SLUG }}
           version: v1.6.0
+          config: cr.yaml
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 

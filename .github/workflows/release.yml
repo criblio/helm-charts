@@ -48,10 +48,17 @@ jobs:
           git config user.name "Github Release Bot"
           git config user.email "<>"
 
-      - name: Push commit
-        run: |
-          git fetch
-          git checkout master
-          git add index.yaml
-          git commit -m "Release ${{ env.GITHUB_REF_SLUG }}"
-          git push origin master
+      - name: Run chart-releaser
+        uses: helm/chart-releaser-action@v1.5.0
+        with:
+          charts_dir: ${{ env.GITHUB_REF_SLUG }}
+        env:
+          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+
+      # - name: Push commit
+      #   run: |
+      #     git fetch
+      #     git checkout master
+      #     git add index.yaml
+      #     git commit -m "Release ${{ env.GITHUB_REF_SLUG }}"
+      #     git push origin master

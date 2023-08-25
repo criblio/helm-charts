@@ -116,6 +116,7 @@ tolerations:
 {{- end }}
 
 volumes: 
+  {{- if (ne .Values.deployment "statefulset") -}}
   {{- range .Values.extraVolumeMounts }}
   - name: {{ .name }}
     {{- if .existingClaim }}
@@ -127,6 +128,7 @@ volumes:
     {{- else }}
     emptyDir: {}
     {{- end }}
+  {{- end }}
   {{- end }}
   {{- range .Values.extraConfigmapMounts }}
   - name: {{ .name }}

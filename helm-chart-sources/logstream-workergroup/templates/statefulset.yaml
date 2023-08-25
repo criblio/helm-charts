@@ -1,0 +1,37 @@
+{{- if (eq .Values.deployment "statefulset") -}}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "logstream-workergroup.fullname" . }}
+  labels:
+    {{- include "logstream-workergroup.labels" . | nindent 4 }}
+spec:
+  serviceName: {{ include "logstream-workergroup.fullname" . }}
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "logstream-workergroup.selectorLabels" . | nindent 6 }}
+  {{- if (.Values.strategy) }}
+  {{- if (ne .Values.strategy.type "RollingUpdate") }}
+      {{- fail (printf "Not a valid strategy type for StatefulSet (%s)" .Values.strategy.type) }}
+  {{- end }}
+  updateStrategy:
+    {{- toYaml .Values.strategy | nindent 4 }}
+  {{- end }}
+  template:
+    metadata:
+    {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      labels:
+        {{- include "logstream-workergroup.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- include "workergroup.pod" . | nindent 8 }}
+  volumeClaimTemplates:  
+    {{- range .Values.extraVolumeMounts }}
+    {{- if .claimTemplate }}
+    - {{ .claimTemplate | toYaml | indent 6 | trim }}
+    {{- end }}
+    {{- end }}
+{{- end }}

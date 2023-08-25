@@ -193,3 +193,10 @@ extraObjects: {}
 extraLabels: {}
 # key: value
 # key2: value2
+
+# Extra volumes to mount into each pod
+extraVolumeMounts: {}
+# - name: test-volume
+#   mountPath: /var/tmp/test-volume
+#   readOnly: false
+#   existingClaim: test-volume

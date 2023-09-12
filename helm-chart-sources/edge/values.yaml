@@ -182,6 +182,12 @@ rbac:
         - storageclasses
         - volumeattachments
       verbs: ['list', 'watch']
+    - apiGroups:
+        - ""
+      resources:
+        - namespaces
+        - resourcequotas
+      verbs: ['get', 'list']
   extraRules: []
   # - apiGroups: []
   #   resources: []

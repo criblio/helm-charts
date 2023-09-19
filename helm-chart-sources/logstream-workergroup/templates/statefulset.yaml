@@ -12,7 +12,7 @@ spec:
     matchLabels:
       {{- include "logstream-workergroup.selectorLabels" . | nindent 6 }}
   {{- if (.Values.strategy) }}
-  {{- if (ne .Values.strategy.type "RollingUpdate") }}
+  {{- if and (ne .Values.strategy.type "OnDelete") (ne .Values.strategy.type "RollingUpdate") }}
       {{- fail (printf "Not a valid strategy type for StatefulSet (%s)" .Values.strategy.type) }}
   {{- end }}
   updateStrategy:
@@ -30,8 +30,12 @@ spec:
       {{- include "workergroup.pod" . | nindent 8 }}
   volumeClaimTemplates:  
     {{- range .Values.extraVolumeMounts }}
-    {{- if .claimTemplate }}
-    - {{ .claimTemplate | toYaml | indent 6 | trim }}
+    {{- if .existingClaim }}
+      {{- fail (printf "Cannot use existing volume claim in extra volume mount for Statefulset (%s)" .name) }}
     {{- end }}
+    {{- if empty .claimTemplate }}
+      {{- fail (printf "Missing volume claim template in extra volume mount for Statefulset (%s) " .name) }}
+    {{- end }}
+    - {{ .claimTemplate | toYaml | indent 6 | trim }}
     {{- end }}
 {{- end }}

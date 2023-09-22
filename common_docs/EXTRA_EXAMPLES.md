@@ -81,7 +81,11 @@ extraSecretMounts:
 ## Using extraVolumeMounts <a name="extraVolumeMounts"></a>
 _Availability: logstream-workergroup and logstream-leader_
 
-Use  `extraVolumeMounts` to mount multiple volume types within a pod. If you specify an `existingClaim` attribute, it will mount the specified Persistent Volume Claim (PVC) as a [Persistent Volume](https://kubernetes.io/docs/concepts/storage/persistent-volumes/). If you instead specify a `hostPath` attribute, it will mount that path from the host node into the Pod as a [hostPath](https://kubernetes.io/docs/concepts/storage/volumes/#hostpath) volume. If you include neither, `extraVolumeMounts` will treat the definition as an [emptyDir](https://kubernetes.io/docs/concepts/storage/volumes/#emptydir) mount.
+Use  `extraVolumeMounts` to mount multiple volume types within a pod. If you specify an `existingClaim` attribute, it will mount the specified Persistent Volume Claim (PVC) as a [Persistent Volume](https://kubernetes.io/docs/concepts/storage/persistent-volumes/). If you instead specify a `hostPath` attribute, it will mount that path from the host node into the Pod as a [hostPath](https://kubernetes.io/docs/concepts/storage/volumes/#hostpath) volume. If you include none of the above, `extraVolumeMounts` will treat the definition as an [emptyDir](https://kubernetes.io/docs/concepts/storage/volumes/#emptydir) mount.
+
+_logstream-workergroup only_
+
+If you specify a `extraVolumeMounts.claimTemplate` attribute (and you have specified a `statefulset` deployment), it will create a [new PVC for each Pod in the set](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/) based on the object provided.  
 
 <dl>
 <dt>name</dt>
@@ -98,8 +102,8 @@ Use  `extraVolumeMounts` to mount multiple volume types within a pod. If you spe
 <dd>This performs the same function as <code>subPath</code>, but allows you to define that subpath using environment variables. This is useful on shared storage (like EFS, for example), where you might want each pod to mount a subdirectory that is named after the pod. 
 <dt>readOnly</dt>
 <dd>Whether to mount the volume read-only or read/write – default is read/write. </dd>
-
-
+<dt>claimTemplate</dt>
+<dd>If this is set, it decribes the PVC that will be created for each pod. <em>Statefulset deployment only.</em></dd>
 </dl>
 
 ### Example

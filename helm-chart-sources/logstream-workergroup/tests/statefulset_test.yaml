@@ -1,0 +1,100 @@
+suite: Deployment
+templates:
+  - statefulset.yaml
+
+tests:
+  - it: Should not have a strategy by default
+    set:
+      deployment: statefulset
+    asserts:
+      - isNull:
+          path: spec.strategy
+      - isNull:
+          path: spec.updateStrategy
+
+  - it: Should have a custom strategy
+    set:
+      deployment: statefulset
+      strategy:
+        type: RollingUpdate
+        rollingUpdate:
+          maxUnavailable: 1
+          maxSurge: 1
+    asserts:
+      - isNull:
+          path: spec.strategy
+      - isNotNull:
+          path: spec.updateStrategy
+      - equal:
+          path: spec.updateStrategy
+          value:
+            type: RollingUpdate
+            rollingUpdate:
+              maxUnavailable: 1
+              maxSurge: 1
+
+  - it: Should fail on bad strategy
+    set:
+      deployment: statefulset
+      strategy:
+        type: GOAT
+    asserts:
+      - failedTemplate:
+          errorMessage: Not a valid strategy type for StatefulSet (GOAT)
+
+  - it: Should have no volume claim templates by default
+    set:
+      deployment: statefulset
+    asserts:
+      - isNull:
+          path: spec.volumeClaimTemplates
+
+  - it: Should fail on missing claim template
+    set:
+      deployment: statefulset
+      extraVolumeMounts:
+        - name: test
+    asserts:
+      - failedTemplate:
+          errorMessage: Missing volume claim template in extra volume mount for Statefulset (test)
+
+  - it: Should fail on existing claim
+    set:
+      deployment: statefulset
+      extraVolumeMounts:
+        - name: test
+          existingClaim: invalid
+    asserts:
+      - failedTemplate:
+          errorMessage: Cannot use existing volume claim in extra volume mount for Statefulset (test)
+
+  - it: Should have persistent volume claim templates
+    set:
+      deployment: statefulset
+      extraVolumeMounts:
+        - name: persistent-queue
+          claimTemplate:
+            metadata:
+              name: persistent-queue
+            spec:
+              accessModes: ["ReadWriteOnce"]
+              storageClassName: static-cribl-wg-pq
+              resources:
+                requests:
+                  storage: 20Gi
+    asserts:
+      - isNotNull:
+          path: spec.volumeClaimTemplates
+      - hasDocuments:
+          count: 1
+      - contains:
+          path: spec.volumeClaimTemplates
+          content: 
+            metadata:
+              name: persistent-queue
+            spec:
+              accessModes: ["ReadWriteOnce"]
+              storageClassName: static-cribl-wg-pq
+              resources:
+                requests:
+                  storage: 20Gi

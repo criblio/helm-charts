@@ -193,3 +193,24 @@ extraObjects: {}
 extraLabels: {}
 # key: value
 # key2: value2
+
+# Extra volumes to mount into each pod
+extraVolumeMounts: {}
+# For deployments and daemonsets use `existingClaim`
+# - name: test-volume
+#   mountPath: /var/tmp/test-volume
+#   readOnly: false
+#   existingClaim: test-volume-claim
+
+# For statefulsets use `claimTemplate`
+# - name: test-volume
+#   mountPath: /var/tmp/test-volume
+#   readOnly: false
+#   claimTemplate: 
+#     metadata:
+#       name: test-volume
+#     spec:
+#       accessModes: [ "ReadWriteOnce" ]
+#       resources:
+#         requests:
+#           storage: 1Gi

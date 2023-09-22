@@ -1,4 +1,4 @@
-{{- if .Values.autoscaling.enabled }}
+{{- if (and .Values.autoscaling.enabled (or (eq .Values.deployment "deployment") (eq .Values.deployment "statefulset"))) }}
 {{- if .Capabilities.APIVersions.Has "autoscaling/v2" }}
 apiVersion: autoscaling/v2
 {{- else }}
@@ -17,7 +17,7 @@ metadata:
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
-    kind: Deployment
+    kind: {{ if (eq .Values.deployment "deployment") }}Deployment{{- else }}StatefulSet{{- end }}
     name: {{ include "logstream-workergroup.fullname" . }}
   minReplicas: {{ .Values.autoscaling.minReplicas }}
   maxReplicas: {{ .Values.autoscaling.maxReplicas }}

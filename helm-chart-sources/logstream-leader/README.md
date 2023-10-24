@@ -330,6 +330,10 @@ Once you run `helm install` with this in the `values.yaml` file, you can do `kub
 
 * [EKS-Specific Issues](../../common_docs/EKS_SPECIFICS.md).
 
+# More Info
+
+For additional documentation on this chart, see the [Cribl Docs](https://docs.cribl.io/stream/deploy-kubernetes-leader) page about it.
+
 # Feedback/Support
 
 If you use this Helm chart, we'd love to hear any feedback you might have. Join us on our [Slack Community](https://cribl.io/community) and navigate to the `#kubernetes` channel.

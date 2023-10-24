@@ -185,7 +185,7 @@ envValueFrom:
 
 # More Info
 
-For additional documentation on this chart, see the [Cribl Docs](https://docs.cribl.io/stream/deploy-kubernetes-helm) page about it.
+For additional documentation on this chart, see the [Cribl Docs](https://docs.cribl.io/stream/deploy-kubernetes) page about it.
 
 # Support/Feedback
 

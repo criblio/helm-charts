@@ -1,0 +1,5 @@
+serviceAccount:
+  create: true
+rbac:
+  create: true
+  name: foo-bar_baz

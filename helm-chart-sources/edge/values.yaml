@@ -82,6 +82,7 @@ serviceAccount:
 # Cluster Roles
 rbac:
   create: true
+  # name:
   annotations: {}
   # Required namespace-scoped resources
   roleRules:

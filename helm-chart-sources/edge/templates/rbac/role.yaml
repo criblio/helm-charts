@@ -3,7 +3,7 @@
 kind: Role
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: {{ include "common.fullname" . }}:{{ include "common.name" . }}:{{ .Release.Namespace }}
+  name: {{ include "common.rbacName" . }}
   labels:
     {{- include "common.labels" . | nindent 4 }}
   {{- with .Values.rbac.annotations }}

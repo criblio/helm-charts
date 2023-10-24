@@ -1,0 +1,48 @@
+suite: RBAC
+templates:
+  - role.yaml
+  - rolebinding.yaml
+tests:
+  - it: Correctly uses default rbac name
+    templates:
+      - role.yaml
+    asserts:
+      - equal:
+          path: metadata.name
+          value: RELEASE-NAME-logstream-workergroup:logstream-workergroup:NAMESPACE
+
+  - it: Correctly uses default rbac name for bindings
+    templates:
+      - rolebinding.yaml
+    asserts:
+      - equal:
+          path: metadata.name
+          value: RELEASE-NAME-logstream-workergroup:logstream-workergroup:NAMESPACE
+      - equal:
+          path: roleRef.name
+          value: RELEASE-NAME-logstream-workergroup:logstream-workergroup:NAMESPACE
+
+  - it: Correctly uses overridden rbac name
+    templates:
+      - role.yaml
+    set:
+      rbac:
+        name: goaty-mcgoatface
+    asserts:
+      - equal:
+          path: metadata.name
+          value: goaty-mcgoatface
+
+  - it: Correctly uses overridden rbac name for bindings
+    templates:
+      - rolebinding.yaml
+    set:
+      rbac:
+        name: goaty-mcgoatface
+    asserts:
+      - equal:
+          path: metadata.name
+          value: goaty-mcgoatface
+      - equal:
+          path: roleRef.name
+          value: goaty-mcgoatface

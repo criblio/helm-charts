@@ -64,3 +64,15 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+
+{{/*
+Allows for overriding the default RBAC naming scheme
+*/}}
+{{- define "common.rbacName" }}
+{{- if .Values.rbac.name }}
+{{- .Values.rbac.name | quote }}
+{{- else }}
+{{- printf "%s:%s:%s" (include "common.fullname" .) (include "common.name" .) .Release.Namespace | quote }}
+{{- end }}
+{{- end }}

@@ -4,6 +4,7 @@ templates:
   - rbac/clusterrole.yaml
   - rbac/role.yaml
   - rbac/rolebinding.yaml
+  - rbac/clusterrolebinding.yaml
 values:
   - ./values/leader.yaml
 tests:
@@ -112,3 +113,51 @@ tests:
           any: true
           content:
             fake: true
+
+  - it: Correctly uses default rbac name
+    templates:
+      - rbac/role.yaml
+      - rbac/clusterrole.yaml
+    asserts:
+      - equal:
+          path: metadata.name
+          value: RELEASE-NAME-edge:edge:NAMESPACE
+
+  - it: Correctly uses default rbac name for bindings
+    templates:
+      - rbac/rolebinding.yaml
+      - rbac/clusterrolebinding.yaml
+    asserts:
+      - equal:
+          path: metadata.name
+          value: RELEASE-NAME-edge:edge:NAMESPACE
+      - equal:
+          path: roleRef.name
+          value: RELEASE-NAME-edge:edge:NAMESPACE
+
+  - it: Correctly uses overridden rbac name
+    templates:
+      - rbac/role.yaml
+      - rbac/clusterrole.yaml
+    set:
+      rbac:
+        name: goaty-mcgoatface
+    asserts:
+      - equal:
+          path: metadata.name
+          value: goaty-mcgoatface
+
+  - it: Correctly uses overridden rbac name for bindings
+    templates:
+      - rbac/rolebinding.yaml
+      - rbac/clusterrolebinding.yaml
+    set:
+      rbac:
+        name: goaty-mcgoatface
+    asserts:
+      - equal:
+          path: metadata.name
+          value: goaty-mcgoatface
+      - equal:
+          path: roleRef.name
+          value: goaty-mcgoatface

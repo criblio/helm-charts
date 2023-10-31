@@ -34,7 +34,7 @@ spec:
       {{- fail (printf "Cannot use existing volume claim in extra volume mount for Statefulset (%s)" .name) }}
     {{- end }}
     {{- if empty .claimTemplate }}
-      {{- fail (printf "Missing volume claim template in extra volume mount for Statefulset (%s) " .name) }}
+      {{- fail (printf "Missing volume claim template in extra volume mount for Statefulset (%s)" .name) }}
     {{- end }}
     - {{ .claimTemplate | toYaml | indent 6 | trim }}
     {{- end }}

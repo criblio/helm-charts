@@ -24,7 +24,7 @@ tests:
       - containsDocument:
           kind: Ingress
           apiVersion: networking.k8s.io/v1
-      - isNotNullOrEmpty:
+      - exists:
           path: spec.rules[0]
       - equal:
           path: spec.rules[0].http.paths[0].path
@@ -49,7 +49,7 @@ tests:
 
     asserts:
       - notFailedTemplate: {}
-      - isNotNullOrEmpty:
+      - exists:
           path: metadata.annotations
       - equal:
           path: metadata.annotations
@@ -73,7 +73,7 @@ tests:
 
     asserts:
       - notFailedTemplate: {}
-      - isNotNullOrEmpty:
+      - exists:
           path: metadata.annotations
       - equal:
           path: metadata.annotations
@@ -100,7 +100,7 @@ tests:
 
     asserts:
       - notFailedTemplate: { }
-      - isNotNullOrEmpty:
+      - exists:
           path: metadata.annotations
       - equal:
           path: metadata.annotations

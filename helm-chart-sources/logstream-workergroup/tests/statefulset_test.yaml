@@ -46,7 +46,7 @@ tests:
     set:
       deployment: statefulset
     asserts:
-      - isNull:
+      - isNullOrEmpty:
           path: spec.volumeClaimTemplates
 
   - it: Should fail on missing claim template
@@ -83,7 +83,7 @@ tests:
                 requests:
                   storage: 20Gi
     asserts:
-      - isNotNull:
+      - exists:
           path: spec.volumeClaimTemplates
       - hasDocuments:
           count: 1

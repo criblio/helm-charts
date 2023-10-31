@@ -8,7 +8,7 @@ This chart deploys a Cribl Stream worker group.
 Versions starting with 3.4.0 include a change to the syntax for RBAC values. Before you upgrade the chart from pre-3.4.0 versions, please see the [table below](#values) for current options for the `rbac.apiGroups`, `rbac.verbs`, and `rbac.resources` values.
 
 # New Capabilities
-* Support for the 4.2.1 version of Cribl Stream (default version)
+* Support for the 4.3.1 version of Cribl Stream (default version)
 
 # Deployment
 
@@ -185,7 +185,7 @@ envValueFrom:
 
 # More Info
 
-For additional documentation on this chart, see the [Cribl Docs](https://docs.cribl.io/stream/deploy-kubernetes-helm) page about it.
+For additional documentation on this chart, see the [Cribl Docs](https://docs.cribl.io/stream/deploy-kubernetes) page about it.
 
 # Support/Feedback
 

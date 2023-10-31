@@ -64,3 +64,24 @@ tests:
       - equal:
           path: spec.ingressClassName
           value: "foo"
+
+  - it: Should set Prefix to pathType by default
+    set:
+      ingress:
+        enable: true
+    template: ingress.yaml
+    asserts:
+      - equal:
+          path: spec.rules[0].http.paths[0].pathType
+          value: "Prefix"
+
+  - it: Should set a custom Prefix
+    set:
+      ingress:
+        enable: true
+        pathType: goat-power
+    template: ingress.yaml
+    asserts:
+      - equal:
+          path: spec.rules[0].http.paths[0].pathType
+          value: "goat-power"

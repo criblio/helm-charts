@@ -1,0 +1,14 @@
+deployment: statefulset
+
+extraVolumeMounts:
+ - name: test-volume
+   mountPath: /var/tmp/test-volume
+   readOnly: false
+   claimTemplate:
+     metadata:
+       name: test-volume
+     spec:
+       accessModes: [ "ReadWriteOnce" ]
+       resources:
+         requests:
+           storage: 1Gi

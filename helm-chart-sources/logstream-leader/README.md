@@ -11,7 +11,7 @@ If you're migrating from the deprecated `logstream‑master` chart, please see t
 
 # New Capabilities
 
-* Support for the 4.2.1 version of Cribl Stream (default version)
+* Support for the 4.3.1 version of Cribl Stream (default version)
 
 # Deployment
 
@@ -329,6 +329,10 @@ Once you run `helm install` with this in the `values.yaml` file, you can do `kub
 # Caveats/Known Issues
 
 * [EKS-Specific Issues](../../common_docs/EKS_SPECIFICS.md).
+
+# More Info
+
+For additional documentation on this chart, see the [Cribl Docs](https://docs.cribl.io/stream/deploy-kubernetes-leader) page about it.
 
 # Feedback/Support
 

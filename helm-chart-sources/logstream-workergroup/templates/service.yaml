@@ -15,7 +15,9 @@ spec:
         targetPort: {{ .port }}
         protocol: {{ .protocol }}
         name: {{ .name }}
+        {{- if .nodePort }}
         nodePort: {{ .nodePort }}
+        {{- end }}
       {{- end }}
   selector:
     {{- include "logstream-workergroup.selectorLabels" . | nindent 4 }}

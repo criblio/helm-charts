@@ -1,0 +1,10 @@
+ingress:
+  enable: true
+  annotations:
+    foo: bar
+  ingress:
+    - name: goat
+      rules:
+        - paths:
+          - path: /
+            port: 8000

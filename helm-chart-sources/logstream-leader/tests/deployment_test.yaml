@@ -4,18 +4,18 @@ templates:
 tests:
   - it: Should have health checks by default
     asserts:
-      - isNotNull:
+      - exists:
           path: spec.template.spec.containers[0].readinessProbe
-      - isNotNull:
+      - exists:
           path: spec.template.spec.containers[0].livenessProbe
 
   - it: Should disable health checks
     set:
       config.probes: false
     asserts:
-      - isNull:
+      - notExists:
           path: spec.template.spec.containers[0].readinessProbe
-      - isNull:
+      - notExists:
           path: spec.template.spec.containers[0].livenessProbe
 
   - it: Should customize health checks

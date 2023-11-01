@@ -6,7 +6,7 @@ kind: Ingress
 metadata:
   name: {{ include "logstream-workergroup.fullname" $ }}-{{ .name }}
   annotations:
-    {{- $annotations := merge .annotations $.Values.ingress.annotations }}
+    {{- $annotations := merge (.annotations | default dict) $.Values.ingress.annotations }}
     {{- toYaml $annotations | nindent 4 }}
 spec:
   {{- with .tls }}

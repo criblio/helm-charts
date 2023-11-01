@@ -1,0 +1,110 @@
+suite: Ingress
+templates:
+  - ingress.yaml
+tests:
+  - it: Should not create an ingress resource by default
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: Should create an ingress resource when enabled
+    set:
+      ingress:
+        enable: true
+        ingress:
+          - name: goat
+            rules:
+              - paths:
+                - path: /
+                  port: 8001
+
+    asserts:
+      - hasDocuments:
+          count: 1
+      - containsDocument:
+          kind: Ingress
+          apiVersion: networking.k8s.io/v1
+      - exists:
+          path: spec.rules[0]
+      - equal:
+          path: spec.rules[0].http.paths[0].path
+          value: /
+      - equal:
+          path: spec.rules[0].http.paths[0].backend.service.port.number
+          value: 8001
+
+  - it: Should use "global" annotations
+    set:
+      ingress:
+        enable: true
+        annotations:
+          foo: bar
+          goat: true
+        ingress:
+          - name: goat
+            rules:
+              - paths:
+                  - path: /
+                    port: 8001
+
+    asserts:
+      - notFailedTemplate: {}
+      - exists:
+          path: metadata.annotations
+      - equal:
+          path: metadata.annotations
+          value:
+            foo: bar
+            goat: true
+
+  - it: Should use "local" annotations
+    set:
+      ingress:
+        enable: true
+        ingress:
+          - name: goat
+            annotations:
+              foo: bar
+              goat: true
+            rules:
+              - paths:
+                  - path: /
+                    port: 8001
+
+    asserts:
+      - notFailedTemplate: {}
+      - exists:
+          path: metadata.annotations
+      - equal:
+          path: metadata.annotations
+          value:
+            foo: bar
+            goat: true
+
+  - it: Should merge annotations
+    set:
+      ingress:
+        enable: true
+        annotations:
+          top: gun
+          override: me
+        ingress:
+          - name: goat
+            annotations:
+              need: speed
+              override: yes
+            rules:
+              - paths:
+                  - path: /
+                    port: 8001
+
+    asserts:
+      - notFailedTemplate: { }
+      - exists:
+          path: metadata.annotations
+      - equal:
+          path: metadata.annotations
+          value:
+            top: gun
+            need: speed
+            override: yes

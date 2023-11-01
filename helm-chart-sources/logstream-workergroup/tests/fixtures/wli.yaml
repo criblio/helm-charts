@@ -1,0 +1,15 @@
+env:
+  AWS_ROLE_ARN: goat
+  AWS_WEB_IDENTITY_TOKEN_FILE: /var/run/secrets/aws-iam-token/serviceaccount/token
+  AWS_REGION: us-west-2
+extraSecretMounts:
+  - name: aws-iam-token
+    mountPath: /var/run/secrets/aws-iam-token/serviceaccount
+    readOnly: true
+    projected:
+      defaultMode: 420
+      sources:
+        - serviceAccountToken:
+            audience: sts.amazonaws.com
+            expirationSeconds: 86400
+            path: token

@@ -4,7 +4,7 @@ templates:
 tests:
   - it: Should not configure the externalTrafficPolicy with default values
     asserts:
-      - isNull:
+      - notExists:
           path: spec.externalTrafficPolicy
 
   - it: Should not configure the externalTrafficPolicy when type is Cluster IP
@@ -13,7 +13,7 @@ tests:
         type: ClusterIP
         externalTrafficPolicy: Local
     asserts:
-      - isNull:
+      - notExists:
           path: spec.externalTrafficPolicy
 
   - it: Should configure the externalTrafficPolicy when type is LoadBalancer
@@ -38,7 +38,7 @@ tests:
 
   - it: Should not configure the loadBalancerSourceRanges by default
     asserts:
-      - isNull:
+      - notExists:
           path: spec.loadBalancerSourceRanges
 
   - it: Should configure the loadBalancerSourceRanges
@@ -48,7 +48,7 @@ tests:
         - "192.168.1.0/24"
         - "172.16.0.0/16"
     asserts:
-      - isNotNull:
+      - exists:
           path: spec.loadBalancerSourceRanges
       - equal:
           path: spec.loadBalancerSourceRanges
@@ -59,7 +59,7 @@ tests:
 
   - it: No default set for nodePort
     asserts:
-      - isNull:
+      - notExists:
           path: spec.ports[0].nodePort
 
   - it: Default values set for nodePort

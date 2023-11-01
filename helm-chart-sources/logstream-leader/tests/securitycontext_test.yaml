@@ -4,7 +4,7 @@ templates:
 tests:
   - it: Should not set securitycontext by default
     asserts:
-      - isNull:
+      - notExists:
           path: spec.template.spec.securityContext
 
   - it: Should set correct command
@@ -36,12 +36,12 @@ tests:
       securityContext:
         runAsUser: 1000
     asserts:
-      - isNotNull:
+      - exists:
           path: spec.template.spec.containers[0].volumeMounts[1]
       - equal:
           path: spec.template.spec.containers[0].volumeMounts[1].name
           value: gitconfig
-      - isNotNull:
+      - exists:
           path: spec.template.spec.volumes[1]
       - equal:
           path: spec.template.spec.volumes[1].name

@@ -13,7 +13,7 @@ tests:
           
   - it: Contains the events and metrics destination
     asserts:
-      - isNotNull:
+      - exists:
           path: spec.template.spec.containers[0].args[1]
       - equal:
           path: spec.template.spec.containers[0].args[1]

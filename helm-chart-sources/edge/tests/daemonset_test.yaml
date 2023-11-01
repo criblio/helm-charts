@@ -51,7 +51,7 @@ tests:
 
   - it: Doesn't set a default priorityClassName
     asserts:
-      - isNull:
+      - notExists:
           path: spec.template.spec.priorityClassName
 
   - it: Should set extraEnvFrom
@@ -63,7 +63,7 @@ tests:
             fieldRef:
               fieldPath: metadata.name
     asserts:
-      - isNotNull:
+      - exists:
           path: spec.template.spec.containers[0].env
       - contains:
           path: spec.template.spec.containers[0].env
@@ -82,7 +82,7 @@ tests:
         - name: ENV2
           value: test
     asserts:
-      - isNotNull:
+      - exists:
           path: spec.template.spec.containers[0].env
       - contains:
           path: spec.template.spec.containers[0].env
@@ -108,7 +108,7 @@ tests:
             fieldRef:
               fieldPath: metadata.name
     asserts:
-      - isNotNull:
+      - exists:
           path: spec.template.spec.containers[0].env
       - contains:
           path: spec.template.spec.containers[0].env
@@ -131,7 +131,7 @@ tests:
       extraEnv:
         EEEEE: "ABC"
     asserts:
-      - isNotNull:
+      - exists:
           path: spec.template.spec.containers[0].env
       - contains:
           path: spec.template.spec.containers[0].env
@@ -143,7 +143,7 @@ tests:
     set:
       priorityClassName: gotta-goat-fast
     asserts:
-      - isNotNull:
+      - exists:
           path: spec.template.spec.priorityClassName
       - equal:
           path: spec.template.spec.priorityClassName
@@ -155,7 +155,7 @@ tests:
         goat: true
         kubernetes.io/os: linux
     asserts:
-      - isNotNull:
+      - exists:
           path: spec.template.spec.nodeSelector
       - equal:
           path: spec.template.spec.nodeSelector
@@ -170,7 +170,7 @@ tests:
           operator: "Exists"
           effect: "NoSchedule"
     asserts:
-      - isNotNull:
+      - exists:
           path: spec.template.spec.tolerations
       - equal:
           path: spec.template.spec.tolerations

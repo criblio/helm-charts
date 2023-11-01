@@ -6,9 +6,9 @@ tests:
     set:
       deployment: daemonset
     asserts:
-      - isNull:
+      - notExists:
           path: spec.strategy
-      - isNull:
+      - notExists:
           path: spec.updateStrategy
 
   - it: Should have a custom strategy
@@ -20,9 +20,9 @@ tests:
           maxUnavailable: 1
           maxSurge: 1
     asserts:
-      - isNotNull:
+      - exists:
           path: spec.updateStrategy
-      - isNull:
+      - notExists:
           path: spec.strategy
       - equal:
           path: spec.updateStrategy

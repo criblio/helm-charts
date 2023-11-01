@@ -25,7 +25,7 @@ tests:
               targetPort: 9420
               protocol: TCP
               name: edge-api
-      - isNull:
+      - notExists:
           path: spec.loadBalancerIP
 
   - it: Uses custom ports
@@ -66,7 +66,7 @@ tests:
         type: ClusterIP # redundant
         loadBalancerIP: 1.2.3.4
     asserts:
-      - isNull:
+      - notExists:
           path: spec.loadBalancerIP
 
   - it: Should use the externalTrafficPolicy when set to type LoadBalancer

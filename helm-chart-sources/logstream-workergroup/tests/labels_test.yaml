@@ -7,9 +7,9 @@ tests:
         key: value
         key2: value2
     asserts:
-      - isNotNull:
+      - exists:
           path: metadata.labels.key
-      - isNotNull:
+      - exists:
           path: metadata.labels.key2
       - equal:
           path: metadata.labels.key
@@ -26,9 +26,9 @@ tests:
         key: value
         key2: value2
     asserts:
-      - isNotNull:
+      - exists:
           path: metadata.labels.key
-      - isNotNull:
+      - exists:
           path: metadata.labels.key2
       - equal:
           path: metadata.labels.key

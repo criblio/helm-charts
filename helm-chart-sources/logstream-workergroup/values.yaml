@@ -158,7 +158,7 @@ ingress:
   ingressClassName:
   # Array of ingresses (each entry will become an Ingress resource)
   # You must define your ingress resources!
-  ingress: {}
+  ingress: []
 #    - name: ingress-example
 #      # TLS secrets for this ingress
 #      tls: {}

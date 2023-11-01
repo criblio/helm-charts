@@ -13,7 +13,7 @@ tests:
 
   - it: Contains the events and metrics destination
     asserts:
-      - isNotNull:
+      - exists:
           path: data["scope.yml"]
       - matchRegex:
           path: data["scope.yml"]

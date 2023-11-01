@@ -4,27 +4,27 @@ templates:
 tests:
   - it: Should have health checks by default
     asserts:
-      - isNotNull:
+      - exists:
           path: spec.template.spec.containers[0].readinessProbe
-      - isNotNull:
+      - exists:
           path: spec.template.spec.containers[0].livenessProbe
 
   - it: Should disable health checks
     set:
       config.probes: false
     asserts:
-      - isNull:
+      - notExists:
           path: spec.template.spec.containers[0].readinessProbe
-      - isNull:
+      - notExists:
           path: spec.template.spec.containers[0].livenessProbe
 
   - it: Should disable one health check
     set:
       config.readinessProbe: null
     asserts:
-      - isNull:
+      - notExists:
           path: spec.template.spec.containers[0].readinessProbe
-      - isNotNull:
+      - exists:
           path: spec.template.spec.containers[0].livenessProbe
 
   - it: Should customize health checks
@@ -59,9 +59,9 @@ tests:
 
   - it: Should not have a strategy by default
     asserts:
-      - isNull:
+      - notExists:
           path: spec.strategy
-      - isNull:
+      - notExists:
           path: spec.updateStrategy
 
   - it: Should have a custom strategy
@@ -72,9 +72,9 @@ tests:
           maxUnavailable: 1
           maxSurge: 1
     asserts:
-      - isNotNull:
+      - exists:
           path: spec.strategy
-      - isNull:
+      - notExists:
           path: spec.updateStrategy
       - equal:
           path: spec.strategy
@@ -100,9 +100,9 @@ tests:
         topologySpreadConstraints:
           - goat: true
     asserts:
-      - isNotNull:
+      - exists:
           path: spec.template.spec.foo
-      - isNotNull:
+      - exists:
           path: spec.template.spec.topologySpreadConstraints
       - equal:
           path: spec.template.spec.foo
@@ -121,7 +121,7 @@ tests:
           value: "value1"
           effect: "NoSchedule"
     asserts:
-      - isNotNull:
+      - exists:
           path: spec.template.spec.tolerations
       - equal:
           path: spec.template.spec.tolerations

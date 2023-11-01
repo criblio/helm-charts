@@ -6,6 +6,7 @@ replicaCount: 1
 
 rbac:
   create: true
+  # name:
   apiGroups: 
   - core
   resources:

@@ -11,6 +11,8 @@ for chart in $DIR/helm-chart-sources/*; do
 
   for values in $chart/tests/fixtures/*; do
     TEST=$(basename $values)
+    echo "** Linting chart"
+    helm lint -f $values $chart
     echo "** Evaluating fixture $TEST"
     helm template -f $values $chart | kubeconform -summary
   done

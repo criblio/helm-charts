@@ -1,5 +1,5 @@
 {{- define "workergroup.pod" -}}
-{{- if .Values.rbac.create }}
+{{- if .Values.serviceAccount.create }}
 serviceAccountName: {{ include "logstream-workergroup.serviceAccountName" . }}
 {{- end }}
 

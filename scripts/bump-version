@@ -22,4 +22,4 @@ perl -i -pe "s/^\W image.tag\W+\K[\d\.]+/$tag/" helm-chart-sources/{logstream-{l
 
 git commit -am "Bump version to $tag"
 git tag -am "Released version $tag" v$tag
-git push origin master v$tag
+git push ${BRANCH:-origin} master v$tag

@@ -38,7 +38,7 @@ This section covers the most likely values to override. To see the full scope of
 |--------------------------------------------------------------------------------|-------------------|-------------------------------------------------------------------------------------|
 | image.repository                                                               | `cribl/cribl`     | Docker image repository to pull images                                              |
 | image.pullPolicy                                                               | `Always`          | When will the Node pull the image                                                   |
-| image.tag                                                                      | `4.4.2`           | The Version of Cribl to deploy                                                      |
+| image.tag                                                                      | `4.4.3`           | The Version of Cribl to deploy                                                      |
 | imagePullSecrets                                                               | `[]`              | Credentials to pull container images                                                |
 | nameOverride                                                                   |                   | Overrides the chart name                                                            |
 | fullNameOverride                                                               |                   | Overrides the Helm deployment name                                                  |

@@ -8,7 +8,7 @@ This chart deploys a Cribl Stream worker group.
 Versions starting with 3.4.0 include a change to the syntax for RBAC values. Before you upgrade the chart from pre-3.4.0 versions, please see the [table below](#values) for current options for the `rbac.apiGroups`, `rbac.verbs`, and `rbac.resources` values.
 
 # New Capabilities
-* Support for the 4.4.2 version of Cribl Stream (default version)
+* Support for the 4.4.3 version of Cribl Stream (default version)
 
 # Deployment
 

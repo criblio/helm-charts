@@ -2,8 +2,8 @@ apiVersion: v2
 name: edge
 description: A Helm chart for Kubernetes
 type: application
-version: 4.4.2
-appVersion: 4.4.2
+version: 4.4.3
+appVersion: 4.4.3
 icon: https://criblio.github.io/helm-charts/images/Cribl_Logo_Color_TM.png
 
 #dependencies:

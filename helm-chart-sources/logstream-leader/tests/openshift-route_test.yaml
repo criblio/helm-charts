@@ -1,9 +1,9 @@
 suite: OpenShift Route
 templates:
-  - openshift-route.yaml
+  - openshift/route.yaml
 tests:
   - it: Does not create an OpenShift Route by default
-    template: openshift-route.yaml
+    template: openshift/route.yaml
     asserts:
       - hasDocuments:
           count: 0
@@ -11,7 +11,7 @@ tests:
   - it: Creates an OpenShift Route resource
     set:
       openshift.enable: true
-    template: openshift-route.yaml
+    template: openshift/route.yaml
     asserts:
       - containsDocument:
           kind: Route
@@ -21,7 +21,7 @@ tests:
     set:
       openshift.enable: true
       openshift.route.enable: false
-    template: openshift-route.yaml
+    template: openshift/route.yaml
     asserts:
       - hasDocuments:
           count: 0
@@ -31,7 +31,7 @@ tests:
       openshift.enable: true
       openshift.route.labels:
         foo: bar
-    template: openshift-route.yaml
+    template: openshift/route.yaml
     asserts:
       - equal:
           path: metadata.labels.foo
@@ -42,7 +42,7 @@ tests:
       openshift.enable: true
       openshift.route.annotations:
         fizz: buzz
-    template: openshift-route.yaml
+    template: openshift/route.yaml
     asserts:
       - equal:
           path: metadata.annotations.fizz
@@ -52,7 +52,7 @@ tests:
     set:
       openshift.enable: true
       openshift.route.host: cribl.example.com
-    template: openshift-route.yaml
+    template: openshift/route.yaml
     asserts:
       - equal:
           path: spec.host
@@ -61,7 +61,7 @@ tests:
   - it: Check the default TLS Termination type of Edge and insecureEdgeTerminationPolicy of Redirect
     set:
       openshift.enable: true
-    template: openshift-route.yaml
+    template: openshift/route.yaml
     asserts:
       - equal:
           path: spec.tls.termination
@@ -74,7 +74,7 @@ tests:
     set:
       openshift.enable: true
       openshift.route.tls.termination: passthrough
-    template: openshift-route.yaml
+    template: openshift/route.yaml
     asserts:
       - equal:
           path: spec.tls.termination
@@ -83,7 +83,7 @@ tests:
   - it: Check the default WildcardPolicy of None
     set:
       openshift.enable: true
-    template: openshift-route.yaml
+    template: openshift/route.yaml
     asserts:
       - equal:
           path: spec.wildcardPolicy
@@ -93,7 +93,7 @@ tests:
     set:
       openshift.enable: true
       openshift.route.wildcardPolicy: Subdomain
-    template: openshift-route.yaml
+    template: openshift/route.yaml
     asserts:
       - equal:
           path: spec.wildcardPolicy

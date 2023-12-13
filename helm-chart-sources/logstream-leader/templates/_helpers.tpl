@@ -64,3 +64,17 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+  Join annotations passed in from values.yaml for Services
+*/}}
+{{- define "logstream-leader.service.annotations" -}}
+{{- if eq .templateType "internal" }}
+{{- $intAnnotations := (merge .Values.service.annotations .Values.service.internalAnnotations) -}}
+{{ toYaml $intAnnotations }}
+{{- end }}
+{{- if eq .templateType "external" }}
+{{- $extAnnotations := (merge .Values.service.annotations .Values.service.externalAnnotations) -}}
+{{ toYaml $extAnnotations }}
+{{- end }}
+{{- end }}

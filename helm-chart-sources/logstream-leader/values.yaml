@@ -51,7 +51,8 @@ env: {}
 service:
   internalType: ClusterIP
   externalType: LoadBalancer
-  annotations: {}
+  internalAnnotations: {}
+  externalAnnotations: {}
   ports:
     - name: api
       port: 9000

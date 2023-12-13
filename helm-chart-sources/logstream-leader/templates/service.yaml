@@ -6,7 +6,7 @@ metadata:
   labels:
     {{- include "logstream-leader.labels" . | nindent 4 }}
   annotations:
-    {{- toYaml .Values.service.annotations  | nindent 4 }}
+    {{- toYaml .Values.service.externalAnnotations  | nindent 4 }}
 
 spec:
   type: {{- if (eq $.Values.ingress.enable true) }} NodePort {{- else }} {{ .Values.service.externalType }} {{- end }}

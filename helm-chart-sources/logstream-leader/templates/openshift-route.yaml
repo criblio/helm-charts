@@ -1,0 +1,28 @@
+{{- if .Values.openshift.enable }}
+{{- if .Values.openshift.route.enable -}}
+{{- $serviceName := include "logstream-leader.fullname" . -}}
+---
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: {{ template "logstream-leader.fullname" . }}
+  labels:
+    {{- include "logstream-leader.labels" . | nindent 4 }}
+    {{- with .Values.openshift.route.labels }}
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+  annotations:
+    {{ toYaml .Values.openshift.route.annotations | }}
+spec:
+  host: {{ .Values.openshift.route.host }}
+  to:
+    kind: Service
+    name: {{ $serviceName }}
+    weight: 100
+  port:
+    targetPort: api
+  tls:
+    {{- toYaml .Values.openshift.route.tls | nindent  4 }}
+  wildcardPolicy: {{ .Values.openshift.route.wildcardPolicy }}
+{{- end }}
+{{- end }}

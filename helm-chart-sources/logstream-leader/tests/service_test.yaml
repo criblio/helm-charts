@@ -1,0 +1,94 @@
+suite: Service
+templates:
+  - service.yaml
+  - service-internal.yaml
+tests:
+  - it: Should not set annotations by default to the external service
+    template: service.yaml
+    asserts:
+      - equal:
+          path: metadata.annotations
+          value: {}
+
+  - it: Should not set annotations to the internal service
+    template: service-internal.yaml
+    asserts:
+      - equal:
+          path: metadata.annotations
+          value: {}
+
+  - it: Applies an annotation to the internal service that would be shared with the external service
+    template: service-internal.yaml
+    set:
+      service:
+        annotations:
+          foo: bar
+    asserts:
+      - equal:
+          path: metadata.annotations.foo
+          value: "bar"
+
+  - it: Applies an annotation to the external service that would be shared with the internal service
+    template: service.yaml
+    set:
+      service:
+        annotations:
+          foo: bar
+    asserts:
+      - equal:
+          path: metadata.annotations.foo
+          value: "bar"
+
+  - it: Applies an annotation to the internal service only
+    template: service-internal.yaml
+    set:
+      service:
+        internalAnnotations:
+          fizz: buzz
+    asserts:
+      - equal:
+          path: metadata.annotations.fizz
+          value: "buzz"
+
+  - it: Applies an annotation to the external service only
+    template: service.yaml
+    set:
+      service:
+        externalAnnotations:
+          fizz: buzz
+    asserts:
+      - equal:
+          path: metadata.annotations.fizz
+          value: "buzz"
+
+  - it: Applies an annotation to the external service only and also a shared annotation
+    template: service.yaml
+    set:
+      service:
+        annotations:
+          foo: 'bar'
+        externalAnnotations:
+          fizz: 'buzz'
+    asserts:
+      - equal:
+          path: metadata.annotations.foo
+          value: "bar"
+      - equal:
+          path: metadata.annotations.fizz
+          value: "buzz"
+
+  - it: Applies an annotation to the external service only and also a shared annotation
+    template: service-internal.yaml
+    set:
+      service:
+        annotations:
+          bar: 'foo'
+        internalAnnotations:
+          buzz: 'fizz'
+    asserts:
+      - equal:
+          path: metadata.annotations.bar
+          value: "foo"
+      - equal:
+          path: metadata.annotations.buzz
+          value: "fizz"

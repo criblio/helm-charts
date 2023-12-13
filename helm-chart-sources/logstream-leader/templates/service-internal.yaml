@@ -6,8 +6,7 @@ metadata:
   labels:
     {{- include "logstream-leader.labels" . | nindent 4 }}
   annotations:
-    {{- toYaml .Values.service.annotations  | nindent 4 }}
-
+    {{- include "logstream-leader.service.annotations" (merge (dict "templateType" "internal") .) | nindent 4 }}
 spec:
   type: {{ .Values.service.internalType }}
   ports:

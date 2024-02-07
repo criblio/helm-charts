@@ -69,3 +69,12 @@ tests:
       - equal:
           path: spec.ports[0].nodePort
           value: 30000
+  - it: Should not configure the service when service.enable is set to false
+    set:
+      service:
+        enable: false
+    asserts:
+      - notExists:
+          path: kind
+          value: Service
+

@@ -176,7 +176,7 @@ rbac:
         - "coordination.k8s.io"
       resources:
         - leases
-      verbs: ['get', 'list', 'watch']
+      verbs: ['get']
     - apiGroups:
         - "certificates.k8s.io"
       resources:

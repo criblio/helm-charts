@@ -173,6 +173,11 @@ rbac:
         - validatingwebhookconfigurations
       verbs: ['list', 'watch']
     - apiGroups:
+        - "coordination.k8s.io"
+      resources:
+        - leases
+      verbs: ['get']
+    - apiGroups:
         - "certificates.k8s.io"
       resources:
         - certificatesigningrequests

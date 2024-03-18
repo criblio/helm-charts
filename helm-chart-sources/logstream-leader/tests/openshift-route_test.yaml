@@ -1,0 +1,100 @@
+suite: OpenShift Route
+templates:
+  - openshift/route.yaml
+tests:
+  - it: Does not create an OpenShift Route by default
+    template: openshift/route.yaml
+    asserts:
+      - hasDocuments:
+          count: 0
+  
+  - it: Creates an OpenShift Route resource
+    set:
+      openshift.enable: true
+    template: openshift/route.yaml
+    asserts:
+      - containsDocument:
+          kind: Route
+          apiVersion: route.openshift.io/v1
+
+  - it: Does not creates an OpenShift Route resource if OpenShift is enabled but the route is disabled, eg for use with other Ingresses
+    set:
+      openshift.enable: true
+      openshift.route.enable: false
+    template: openshift/route.yaml
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: Creates an OpenShift Route with additional labels
+    set:
+      openshift.enable: true
+      openshift.route.labels:
+        foo: bar
+    template: openshift/route.yaml
+    asserts:
+      - equal:
+          path: metadata.labels.foo
+          value: bar
+
+  - it: Creates an OpenShift Route with additional annotations
+    set:
+      openshift.enable: true
+      openshift.route.annotations:
+        fizz: buzz
+    template: openshift/route.yaml
+    asserts:
+      - equal:
+          path: metadata.annotations.fizz
+          value: buzz
+
+  - it: Set a host for the Route
+    set:
+      openshift.enable: true
+      openshift.route.host: cribl.example.com
+    template: openshift/route.yaml
+    asserts:
+      - equal:
+          path: spec.host
+          value: cribl.example.com
+
+  - it: Check the default TLS Termination type of Edge and insecureEdgeTerminationPolicy of Redirect
+    set:
+      openshift.enable: true
+    template: openshift/route.yaml
+    asserts:
+      - equal:
+          path: spec.tls.termination
+          value: edge
+      - equal:
+          path: spec.tls.insecureEdgeTerminationPolicy
+          value: Redirect
+
+  - it: Set the TLS Termination type to passthrough
+    set:
+      openshift.enable: true
+      openshift.route.tls.termination: passthrough
+    template: openshift/route.yaml
+    asserts:
+      - equal:
+          path: spec.tls.termination
+          value: passthrough
+
+  - it: Check the default WildcardPolicy of None
+    set:
+      openshift.enable: true
+    template: openshift/route.yaml
+    asserts:
+      - equal:
+          path: spec.wildcardPolicy
+          value: None
+
+  - it: Set the WildcardPolicy to Subdomain
+    set:
+      openshift.enable: true
+      openshift.route.wildcardPolicy: Subdomain
+    template: openshift/route.yaml
+    asserts:
+      - equal:
+          path: spec.wildcardPolicy
+          value: Subdomain

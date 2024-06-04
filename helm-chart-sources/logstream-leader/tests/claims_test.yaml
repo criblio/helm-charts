@@ -1,0 +1,162 @@
+suite: Persistent Volume Claims
+templates:
+  - claims.yaml
+  - deployment.yaml
+tests:
+  - it: Should have a claim by default
+    template: claims.yaml
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: PersistentVolumeClaim
+
+  - it: Uses the legacy claim name
+    template: claims.yaml
+    asserts:
+      - equal:
+          path: metadata.name
+          value: leader-config-claim
+
+  - it: Uses the dynamic claim name
+    template: claims.yaml
+    release:
+      name: cribl-leader-goat
+    set:
+      persistence:
+        claimName:
+    asserts:
+      - notEqual:
+          path: metadata.name
+          value: leader-config-claim
+      - equal:
+          path: metadata.name
+          value: cribl-leader-goat
+
+  - it: Uses the dynamic claim name
+    template: deployment.yaml
+    set:
+      persistence:
+        claimName:
+    release:
+      name: cribl-leader-goat
+    asserts:
+      - equal:
+          path: spec.template.spec.volumes[?(@.name == 'config-storage')].persistentVolumeClaim.claimName
+          value: cribl-leader-goat
+
+  - it: Sets the annotations
+    template: claims.yaml
+    set:
+      persistence:
+        annotations:
+          foo: bar
+          goat: 🐐
+    asserts:
+      - exists:
+          path: metadata.annotations
+      - equal:
+          path: metadata.annotations
+          value:
+            foo: bar
+            goat: 🐐
+
+  - it: Sets the accessModes array
+    template: claims.yaml
+    set:
+      persistence:
+        accessModes:
+          - foo
+          - bar
+          - baz
+    asserts:
+      - equal:
+          path: spec.accessModes
+          value:
+            - foo
+            - bar
+            - baz
+
+  - it: Sets the storage size
+    template: claims.yaml
+    set:
+      persistence:
+        size: 100Gi
+    asserts:
+      - equal:
+          path: spec.resources.requests.storage
+          value: 100Gi
+
+  - it: Should disable the claim
+    template: claims.yaml
+    set:
+      persistence:
+        enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: Uses an empty dir when claim disabled
+    template: deployment.yaml
+    set:
+      persistence:
+        enabled: false
+    asserts:
+      - equal:
+          path: spec.template.spec.volumes[?(@.name == 'config-storage')]
+          value:
+            name: config-storage
+            emptyDir: {}
+
+  - it: Should coalesce the storageClassName setting (1)
+    template: claims.yaml
+    set:
+      persistence:
+        storageClassName: foo
+      config:
+        scName: bar
+    asserts:
+      - equal:
+          path: spec.storageClassName
+          value: foo
+
+  - it: Should coalesce the storageClassName setting (2)
+    template: claims.yaml
+    set:
+      config:
+        scName: bar
+    asserts:
+      - equal:
+          path: spec.storageClassName
+          value: bar
+
+  - it: Should not set the storageClassName setting
+    template: claims.yaml
+    asserts:
+      - notExists:
+          path: spec.storageClassName
+
+  - it: Should add extra spec
+    template: claims.yaml
+    set:
+      persistence:
+        extraSpec:
+          foo: bar
+          goat:
+            - 1
+            - 2
+            - 3
+    asserts:
+      - exists:
+          path: spec.foo
+      - equal:
+          path: spec.foo
+          value: bar
+      - exists:
+          path: spec.goat
+      - equal:
+          path: spec.goat
+          value:
+            - 1
+            - 2
+            - 3

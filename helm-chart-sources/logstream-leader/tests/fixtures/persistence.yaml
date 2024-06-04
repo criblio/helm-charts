@@ -1,0 +1,10 @@
+persistence:
+  claimName: goat-powered
+  storageClassName: goatspeed
+  accessModes:
+    - ReadWriteMany
+  size: 30Gi
+  annotations:
+    cribl.io/name: goaty
+  extraSpec:
+    volumeName: super-goat

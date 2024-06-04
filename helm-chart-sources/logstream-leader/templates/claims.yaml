@@ -1,14 +1,23 @@
+{{- if .Values.persistence.enabled }}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: leader-config-claim
+  name: {{ coalesce .Values.persistence.claimName (include "logstream-leader.fullname" .) }}
+  labels:
+    {{- include "logstream-leader.labels" . | nindent 4 }}
+  {{- with .Values.persistence.annotations }}
+  annotations: {{- . | toYaml | nindent 4 }}
+  {{- end }}
 spec:
-  accessModes:
-    - ReadWriteOnce
-  {{- if .Values.config.scName }}
-  storageClassName:   {{ .Values.config.scName }}
+  accessModes: {{ .Values.persistence.accessModes | toYaml | nindent 4 }}
+  {{- with coalesce .Values.persistence.storageClassName .Values.config.scName }}
+  storageClassName: {{ . }}
   {{- end }}
   resources:
     requests:
-      storage: 20Gi
+      storage: {{ .Values.persistence.size | default "20Gi" }}
+{{- with .Values.persistence.extraSpec }}
+  {{- . | toYaml | nindent 2 }}
+{{- end }}
+{{- end }}

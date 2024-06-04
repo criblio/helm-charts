@@ -1,3 +1,24 @@
+# Extra Examples
+This document contains examples of how to configure various scenarios in the Helm Charts.
+
+## Persistence
+_Availability: logstream-leader_
+
+The `persistence` settings for the Cribl Leader Helm Chart allow you to customize the PVC settings, or disable persistence all together by settings `enabled: false` which results in the Pod using an `emptyDir` for storage.
+
+### Example
+
+This example unsets the `claimName` so that the Helm Release name will be used for the PVC name, uses `goat-speed` for the storage class, increases the PVC requested size to 30 Gi, and adds an annotation for the AWS EBS controller to use `gp3` EBS storage. 
+
+```
+persistence:
+  claimName: 
+  storageClassName: goat-speed
+  size: 30Gi
+  annotations:
+    ebs.csi.aws.com/volumeType: gp3
+```
+
 ## Using envValueFrom<a name="envValueFrom"></a>
 _Availability: logstream-workergroup and logstream-leader_
 

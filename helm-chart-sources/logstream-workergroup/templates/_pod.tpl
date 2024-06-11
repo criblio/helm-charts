@@ -63,8 +63,8 @@ containers:
       {{ toYaml .Values.envValueFrom | nindent 6  }}
       {{- end }}
       {{- range $key, $value := .Values.env }}
-      - name: {{ $key }}"
-        value: {{ $value }}
+      - name: {{ $key }}
+        value: {{ $value | quote }}
       {{- end }}
 
     volumeMounts:

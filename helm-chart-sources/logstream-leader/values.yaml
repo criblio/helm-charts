@@ -48,6 +48,25 @@ config:
 
 env: {}
 
+persistence:
+  # -- Disable this to use an emptyDir for CRIBL_VOLUME_DIR config storage
+  enabled: true
+  # -- Unset claimName to use the Helm Release name as the PVC name
+  # This is set for backwards compatability purposes
+  claimName: leader-config-claim
+  # -- Set storageClassName to use a class other than the default
+  # Will prioritize this value above the value defined in config.scName
+  storageClassName:
+  # -- Access Modes for the Cribl Leader configs
+  accessModes:
+    - ReadWriteOnce
+  # -- The size of the requested persistent volume claim
+  size: 20Gi
+  # -- Define any annotation KVs to be set on the PVC
+  annotations: {}
+  # -- extraSpec permits any custom spec values to be added to the PVC config
+  extraSpec: {}
+
 service:
   internalType: ClusterIP
   externalType: LoadBalancer

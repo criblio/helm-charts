@@ -57,7 +57,7 @@ containers:
       subPath: {{ .subPath | default "" }}
       readOnly: {{ .readOnly }}
     {{- end }}
-    
+
     ports:
       {{-  range .Values.service.ports }}
       - name: {{ .name }}
@@ -99,8 +99,8 @@ containers:
       {{- range $key, $value := .Values.env }}
       - name: {{ $key }}
         value: {{ $value | quote }}
-      {{- end }}   
-      {{- $b_iter := 1 -}} 
+      {{- end }}
+      {{- $b_iter := 1 -}}
       {{- if .Values.config.license }}
       - name: CRIBL_BEFORE_START_CMD_{{ $b_iter }}
         value: "if [ ! -e $CRIBL_VOLUME_DIR/local/cribl/licenses.yml ]; then mkdir -p $CRIBL_VOLUME_DIR/local/cribl ; cp /var/tmp/config_bits/licenses.yml $CRIBL_VOLUME_DIR/local/cribl/licenses.yml; fi"
@@ -111,11 +111,11 @@ containers:
         value: "if [ ! -e $CRIBL_VOLUME_DIR/local/cribl/mappings.yml ]; then mkdir -p $CRIBL_VOLUME_DIR/local/cribl;  cp /var/tmp/config_bits/groups.yml $CRIBL_VOLUME_DIR/local/cribl/groups.yml; cp /var/tmp/config_bits/mappings.yml $CRIBL_VOLUME_DIR/local/cribl/mappings.yml; fi"
         {{- $b_iter = add $b_iter 1 }}
       {{- end }}
-     {{- $a_iter := 1 -}} 
+     {{- $a_iter := 1 -}}
      {{- if .Values.config.adminPassword }}
       - name: CRIBL_AFTER_START_CMD_{{ $a_iter }}
         value: "[ ! -f $CRIBL_VOLUME_DIR/users_imported ] && sleep 20 && cp /var/tmp/config_bits/users.json $CRIBL_VOLUME_DIR/local/cribl/auth/users.json && touch $CRIBL_VOLUME_DIR/users_imported"
-        {{- $a_iter = add $a_iter 1 }} 
+        {{- $a_iter = add $a_iter 1 }}
      {{- end }}
 {{- with .Values.extraContainers }}
   {{- toYaml . | nindent 2 }}
@@ -131,13 +131,13 @@ initContainers:
     command: ["/bin/ash","-c"]
     args:
       - for dir in local data state groups; do
-          if [ ! -d {{ .Values.config.criblHome }}/config-volume/$dir ]; then 
-            (cd {{ .Values.config.criblHome }}; tar cf - --exclude lost+found .) | (cd {{ .Values.config.criblHome }}/config-volume; tar xf -); 
+          if [ ! -d {{ .Values.config.criblHome }}/config-volume/$dir ]; then
+            (cd {{ .Values.config.criblHome }}; tar cf - --exclude lost+found .) | (cd {{ .Values.config.criblHome }}/config-volume; tar xf -);
           fi
         done
     volumeMounts:
       - name: config-storage
-        mountPath: {{ .Values.config.criblHome }}/config-volume        
+        mountPath: {{ .Values.config.criblHome }}/config-volume
       - name: local-storage
         mountPath: {{ .Values.config.criblHome }}/local
       - name: data-storage
@@ -167,8 +167,12 @@ volumes:
     {{- end }}
     {{- end }}
   - name: config-storage
+    {{- if .Values.persistence.enabled }}
     persistentVolumeClaim:
-      claimName: leader-config-claim
+      claimName: {{ coalesce .Values.persistence.claimName (include "logstream-leader.fullname" .) }}
+    {{- else }}
+    emptyDir: {}
+    {{- end }}
   {{- if (and .Release.IsUpgrade .Values.consolidate_volumes) }}
   - name: local-storage
     persistentVolumeClaim:

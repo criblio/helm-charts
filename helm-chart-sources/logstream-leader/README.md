@@ -45,6 +45,7 @@ This section covers the most likely values to override. To see the full scope of
 |---|----|-------------|
 |config.adminPassword|String|The password you want the admin user to have set.|
 |config.token|String|The auth key you want to set up for worker access. The Cribl Stream instance is configured as a distributed leader server only if this value is set. (This can, of course, also be configured via the Cribl Stream UI.) |
+|config.leaderUrl|String|When setting config.token, the env vars CRIBL_DIST_MASTER_URL and CRIBL_DIST_LEADER_URL are set, this value allows overriding the default string. This can allow you to enforce TLS leadercoms or other settings configured with this string. |
 |config.license|String|The license for your Cribl Stream instance. If you do not set this, it will default to the "free" license. You can change this in the Cribl Stream UI as well.|
 |config.bindHost|`0.0.0.0`|IP address or DNS name to bind for API. Can set to `::1` for IPv6 environments.|
 |config.groups| [] |The group names to configure for the leader instance – this will create a mapping for each group, which looks for the tag `<groupname>`, and will create the basic structure of each group's configuration.|

@@ -23,6 +23,7 @@ config:
   scName:
   license:
   token:
+  leaderUrl:
   adminPassword:
   criblHome: /opt/cribl
   bindHost: 0.0.0.0

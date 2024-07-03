@@ -1,0 +1,53 @@
+suite: Extras
+templates:
+  - extras.yaml
+values:
+  - ./values/leader.yaml
+tests:
+  - it: Creates something extra
+    template: extras.yaml
+
+    set:
+      extraObjects:
+        - |
+          kind: Foo
+          fake2: true
+          apiVersion: cribl.io/v1
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: kind
+          value: Foo
+      - equal:
+          path: fake2
+          value: true
+      - isAPIVersion:
+          of: cribl.io/v1
+
+  - it: Creates from object
+    template: extras.yaml
+    set:
+      extraObjects:
+        - apiVersion: v1
+          kind: Pod
+        - apiVersion: v1
+          kind: Secret
+          metadata:
+            name: foo
+          fake: 1234
+    asserts:
+      - hasDocuments:
+          count: 2
+      - containsDocument:
+          apiVersion: v1
+          kind: Pod
+          any: true
+      - equal:
+          path: metadata.name
+          value: foo
+        documentIndex: 1
+      - equal:
+          path: fake
+          value: 1234
+        documentIndex: 1

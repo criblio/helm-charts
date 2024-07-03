@@ -1,0 +1,180 @@
+suite: DaemonSet
+templates:
+  - daemonset.yaml
+values:
+  - ./values/leader.yaml
+tests:
+  - it: Creates a DaemonSet
+    asserts:
+      - isKind:
+          of: DaemonSet
+      - isAPIVersion:
+          of: apps/v1
+
+  - it: Can define custom repository and tag
+    set:
+      image:
+        repository: foo/bar
+        tag: 42.0.0
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: foo/bar:42.0.0
+
+  - it: Has a ServiceAccount
+    release:
+      name: foo
+    asserts:
+      - equal:
+          path: spec.template.spec.serviceAccountName
+          value: foo-edge
+
+  - it: Sets the default CRIBL_DIST_LEADER_URL
+    set:
+      cribl.leader: foo
+    release:
+      name: foo
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].env[0].valueFrom.secretKeyRef.name
+          value: foo-edge-cribl-settings
+
+  - it: Sets the custom CRIBL_DIST_LEADER_URL
+    set:
+      cribl.existingSecretForLeader: foo
+    release:
+      name: foo
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].env[0].valueFrom.secretKeyRef.name
+          value: foo
+
+  - it: Doesn't set a default priorityClassName
+    asserts:
+      - notExists:
+          path: spec.template.spec.priorityClassName
+
+  - it: Should set extraEnvFrom
+    set:
+      cribl.leader: 1
+      extraEnvFrom:
+        - name: AABBCC
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+    asserts:
+      - exists:
+          path: spec.template.spec.containers[0].env
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: AABBCC
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+
+  - it: Should set envValueFrom
+    set:
+      cribl.leader: 1
+      extraEnvFrom:
+        - name: ENV1
+          value: test
+        - name: ENV2
+          value: test
+    asserts:
+      - exists:
+          path: spec.template.spec.containers[0].env
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: ENV1
+            value: test
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: ENV2
+            value: test
+
+  - it: Should set multiple extraEnvFrom
+    set:
+      cribl.leader: 1
+      extraEnvFrom:
+        - name: TEST
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: TEST2
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+    asserts:
+      - exists:
+          path: spec.template.spec.containers[0].env
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: TEST
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: TEST2
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+
+  - it: Should set extraEnv
+    set:
+      cribl.leader: 1
+      extraEnv:
+        EEEEE: "ABC"
+    asserts:
+      - exists:
+          path: spec.template.spec.containers[0].env
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: EEEEE
+            value: "ABC"
+
+  - it: Should set a custom priorityClassName
+    set:
+      priorityClassName: gotta-goat-fast
+    asserts:
+      - exists:
+          path: spec.template.spec.priorityClassName
+      - equal:
+          path: spec.template.spec.priorityClassName
+          value: gotta-goat-fast
+
+  - it: Should correctly set the nodeSelector
+    set:
+      nodeSelector:
+        goat: true
+        kubernetes.io/os: linux
+    asserts:
+      - exists:
+          path: spec.template.spec.nodeSelector
+      - equal:
+          path: spec.template.spec.nodeSelector
+          value:
+            goat: true
+            kubernetes.io/os: linux
+
+  - it: Should correctly set the tolerations
+    set:
+      tolerations:
+        - key: "goat"
+          operator: "Exists"
+          effect: "NoSchedule"
+    asserts:
+      - exists:
+          path: spec.template.spec.tolerations
+      - equal:
+          path: spec.template.spec.tolerations
+          value:
+            - key: "goat"
+              operator: "Exists"
+              effect: "NoSchedule"

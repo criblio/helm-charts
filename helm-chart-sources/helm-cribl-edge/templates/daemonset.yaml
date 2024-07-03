@@ -1,0 +1,167 @@
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ include "common.fullname" . }}
+  labels:
+    {{- include "common.labels" . | nindent 4 }}
+  {{- with .Values.podAnnotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "common.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+    {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      labels:
+        {{- include "common.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- if .Values.serviceAccount.automountServiceAccountToken }}
+      serviceAccountName: {{ if not .Values.serviceAccount.name }}{{ include "common.fullname" . }}{{ else }}{{ .Values.serviceAccount.name }}{{ end }}
+      {{- end }}
+      {{- if .Values.podSecurityContext }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      {{- end }}
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.extraInitContainers }}
+      initContainers:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector: {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations: {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if or .Values.extraVolumeMounts .Values.extraConfigmapMounts .Values.extraSecretMounts }}
+      volumes:
+        {{- range .Values.extraVolumeMounts }}
+        - name: {{ .name }}
+          {{- if .existingClaim }}
+          persistentVolumeClaim:
+            claimName: {{ .existingClaim }}
+          {{- else if .hostPath }}
+          hostPath:
+            path: {{ .hostPath }}
+          {{- else }}
+          emptyDir: {}
+          {{- end }}
+        {{- end }}
+        {{- range .Values.extraConfigMaps }}
+        - name: {{ .name }}
+          configMap:
+            name: {{ .configMap }}
+        {{- end }}
+        {{- range .Values.extraSecretMounts }}
+        {{- if .secretName }}
+        - name: {{ .name }}
+          secret:
+            secretName: {{ .secretName }}
+            defaultMode: {{ .defaultMode }}
+        {{- else if .projected }}
+        - name: {{ .name }}
+          projected: {{- toYaml .projected | nindent 12 }}
+        {{- else if .csi }}
+        - name: {{ .name }}
+          csi: {{- toYaml .csi | nindent 12 }}
+        {{- end }}
+        {{- end }}
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- with .Values.cribl.readinessProbe }}
+          readinessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.cribl.livenessProbe }}
+          livenessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- if .Values.securityContext }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          {{- end }}
+          env:
+            - name: CRIBL_DIST_LEADER_URL
+              valueFrom:
+                secretKeyRef:
+                  {{- if ((.Values.cribl).existingSecretForLeader) }}
+                  name: {{ .Values.cribl.existingSecretForLeader }}
+                  {{- else }}
+                  name: {{ include "common.fullname" . }}-cribl-settings
+                  {{- end }}
+                  key: CRIBL_DIST_LEADER_URL
+            - name: CRIBL_HOME
+              value: {{ .Values.cribl.home }}
+            {{- if .Values.cribl.config }}
+            - name: CRIBL_BOOTSTRAP
+              valueFrom:
+                secretKeyRef:
+                  {{- if ((.Values.cribl).existingSecretForConfig) }}
+                  name: {{ .Values.cribl.existingSecretForConfig }}
+                  {{- else }}
+                  name: {{ include "common.fullname" . }}-cribl-settings
+                  {{- end }}
+                  key: CRIBL_BOOTSTRAP
+            {{- end }}
+            {{- range $key, $value := .Values.extraEnv }}
+            - name: {{ tpl $key $ }}
+              value: "{{ tpl (print $value) $ }}"
+            {{- end }}
+            {{- if .Values.extraEnvFrom }}
+            {{- toYaml .Values.extraEnvFrom | nindent 12 }}
+            {{- end }}
+            {{- if .Values.envValueFrom }}
+            {{- toYaml .Values.envValueFrom | nindent 12 }}
+            {{- end }}
+            {{- range $key, $value := .Values.env }}
+            - name: {{ tpl $key $ }}
+              value: "{{ tpl (print $value) $ }}"
+            {{- end }}
+          {{- if or .Values.extraConfigMaps .Values.extraSecretMounts .Values.extraVolumeMounts }}
+          volumeMounts:
+            {{- range .Values.extraConfigMaps }}
+            - name: {{ .name }}
+              mountPath: {{ .mountPath }}
+              subPath: {{ .subPath | default "" }}
+              readOnly: {{ .readOnly }}
+            {{- end }}
+            {{- range .Values.extraSecretMounts }}
+            - name: {{ .name }}
+              mountPath: {{ .mountPath }}
+              subPath: {{ .subPath | default "" }}
+              readOnly: {{ .readOnly | default true }}
+            {{- end }}
+            {{- range .Values.extraVolumeMounts }}
+            - name: {{ .name }}
+              mountPath: {{ .mountPath }}
+              subPath: {{ .subPath | default "" }}
+              subPathExpr: {{ .subPathExpr | default "" }}
+              readOnly: {{ .readOnly }}
+            {{- end }}
+          {{- end }}
+          ports:
+            {{-  range .Values.service.ports }}
+            - name: {{ .name }}
+              containerPort: {{ .port }}
+            {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- if .Values.priorityClassName }}
+      priorityClassName: {{ .Values.priorityClassName }}
+      {{- end }}
+      {{- with .Values.extraContainers }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

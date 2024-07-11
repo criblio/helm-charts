@@ -1,0 +1,18 @@
+{{- if .Values.rbac.create }}
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: {{ include "common.rbacName" . }}
+  labels:
+    {{- include "common.labels" . | nindent 4 }}
+  {{- with .Values.rbac.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+rules:
+  {{- toYaml .Values.rbac.rules | nindent 2}}
+  {{- with .Values.rbac.extraRules }}
+    {{- toYaml . | nindent 2 }}
+  {{- end }}
+{{- end }}

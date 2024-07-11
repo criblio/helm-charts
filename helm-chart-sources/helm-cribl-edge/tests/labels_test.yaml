@@ -1,0 +1,21 @@
+suite: Labels
+values:
+  - ./values/leader.yaml
+tests:
+  - it: Sets an extra label
+    template: daemonset.yaml
+    set:
+      extraLabels:
+        key: value
+        key2: value2
+    asserts:
+      - exists:
+          path: metadata.labels.key
+      - exists:
+          path: metadata.labels.key2
+      - equal:
+          path: metadata.labels.key
+          value: value
+      - equal:
+          path: metadata.labels.key2
+          value: value2

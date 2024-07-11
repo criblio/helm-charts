@@ -1,0 +1,30 @@
+suite: Ingress
+templates:
+  - networking/ingress.yaml
+values:
+  - ./values/leader.yaml
+tests:
+  - it: Doesn't create an Ingress by default
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: Creates a single Ingress
+    set:
+      ingress:
+        enable: true
+        ingress:
+          - name: ingress-example
+            rules:
+              - host: foo
+                paths:
+                  - path: /
+                    port: 9420
+    release:
+      name: abc
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.rules[0].http.paths[0].backend.service.name
+          value: abc-edge

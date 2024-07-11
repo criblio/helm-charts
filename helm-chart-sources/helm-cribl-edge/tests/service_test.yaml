@@ -1,0 +1,92 @@
+suite: Service
+templates:
+  - networking/service.yaml
+values:
+  - ./values/leader.yaml
+tests:
+  - it: Doesn't create a Service by default
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: Creates a service with the default port
+    set:
+      service.enable: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.type
+          value: ClusterIP
+      - equal:
+          path: spec.ports
+          value:
+            - port: 9420
+              targetPort: 9420
+              protocol: TCP
+              name: edge-api
+      - notExists:
+          path: spec.loadBalancerIP
+
+  - it: Uses custom ports
+    set:
+      service:
+        enable: true
+        type: LoadBalancer
+        ports:
+          - port: 9999
+            targetPort: 9998
+            protocol: TCP
+          - port: 10000
+            protocol: TCP
+            name: foo
+        loadBalancerIP: 1.2.3.4
+    asserts:
+      - equal:
+          path: spec.type
+          value: LoadBalancer
+      - equal:
+          path: spec.ports
+          value:
+            - port: 9999
+              targetPort: 9998
+              protocol: TCP
+            - port: 10000
+              targetPort: 10000
+              protocol: TCP
+              name: foo
+      - equal:
+          path: spec.loadBalancerIP
+          value: 1.2.3.4
+
+  - it: Should not set loadBalancerIP if type is ClusterIP
+    set:
+      service:
+        enable: true
+        type: ClusterIP # redundant
+        loadBalancerIP: 1.2.3.4
+    asserts:
+      - notExists:
+          path: spec.loadBalancerIP
+
+  - it: Should use the externalTrafficPolicy when set to type LoadBalancer
+    set:
+      service:
+        enable: true
+        type: LoadBalancer
+        externalTrafficPolicy: Local
+    asserts:
+      - equal:
+          path: spec.externalTrafficPolicy
+          value: Local
+
+  - it: Should use the externalTrafficPolicy when set to type NodePort
+    set:
+      service:
+        enable: true
+        type: NodePort
+        externalTrafficPolicy: Local
+    asserts:
+      - equal:
+          path: spec.externalTrafficPolicy
+          value: Local

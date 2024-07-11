@@ -1,0 +1,32 @@
+{{- if eq .Values.service.enable true }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "common.fullname" . }}
+  labels:
+    {{- include "common.labels" . | nindent 4 }}
+  {{- with .Values.service.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+  {{- range .Values.service.ports }}
+  - port: {{ required "Port is required " .port }}
+    targetPort: {{ coalesce .targetPort .port }}
+    protocol: {{ required "Protocol is required" .protocol }}
+    {{- if .name }}
+    name: {{ .name }}
+    {{- end }}
+  {{- end }}
+  selector:
+    {{- include "common.selectorLabels" . | nindent 4 }}
+  {{- if (and (not (empty .Values.service.loadBalancerIP)) (eq $.Values.service.type "LoadBalancer")) }}
+  loadBalancerIP: {{ .Values.service.loadBalancerIP }}
+  {{- end }}
+  {{- if (and .Values.service.externalTrafficPolicy (or (eq $.Values.service.type "LoadBalancer") (eq $.Values.service.type "NodePort"))) }}
+  externalTrafficPolicy: {{ .Values.service.externalTrafficPolicy }}
+  {{- end -}}
+{{- end -}}

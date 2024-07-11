@@ -1,0 +1,287 @@
+# Cribl Edge Helm Chart Values
+
+image:
+  repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/cribl/cribl-edge
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: 4.7.1
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+# Default environment variables for Cribl Edge Deployment
+env:
+  CRIBL_DIST_MODE: managed-edge
+  CRIBL_EDGE: 1
+# Downward API values
+envValueFrom:
+  - name: CRIBL_K8S_POD
+    valueFrom:
+      fieldRef:
+        fieldPath: metadata.name
+# Extra environment variables
+extraEnv: {}
+# Extra environment variables (from Secrets)
+extraEnvFrom: []
+# Extra ConfigMaps
+extraConfigMaps: []
+# Extra Secrets
+extraSecretMounts: []
+# Extra Volume mounts
+extraVolumeMounts:
+  # This is needed to access host processes and metrics.
+  - name: host-root
+    mountPath: /hostfs
+    hostPath: /
+    readonly: true
+# Extra containers
+extraContainers: []
+# Extra init containers
+extraInitContainers: []
+# Additional Pod labels
+labels: {}
+
+cribl:
+  home: /opt/cribl
+  # if set, overrides cribl.leader value
+  existingSecretForLeader:
+  # CRIBL_DIST_MASTER_URL
+  leader: "tls://criblToken@myCriblCloudOrg.cribl.cloud?group=default_fleet"
+  # Bootstrap config
+  existingSecretForConfig:
+  config:
+  # cribl/local.yml:
+  #  foo: bar
+  readinessProbe:
+    httpGet:
+      path: /api/v1/health
+      port: 9420
+      scheme: HTTP
+    initialDelaySeconds: 15
+    timeoutSeconds: 1
+  livenessProbe:
+    httpGet:
+      path: /api/v1/health
+      port: 9420
+      scheme: HTTP
+    initialDelaySeconds: 15
+    timeoutSeconds: 1
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  # If create is false, and name is set, the DaemonSet attempts to use this name as the serviceAccountName
+  name: ""
+  automountServiceAccountToken: true
+
+# Cluster Roles
+rbac:
+  create: true
+  # name:
+  annotations: {}
+  # Required namespace-scoped resources
+  roleRules:
+    - apiGroups:
+        - ""
+      resources:
+        - pods
+      verbs: ['get']
+    - apiGroups:
+        - "apps"
+      resources:
+        - daemonsets
+      verbs:
+        - get
+  # Extra namespace-scoped resources
+  extraRoleRules: []
+  # - apiGroups: []
+  #   resources: []
+  #   resourceNames: []
+  #   verbs: []
+
+  # ClusterRole Rules
+  rules:
+    - apiGroups:
+        - "events.k8s.io"
+      resources:
+        - events
+      verbs: ['watch']
+    - apiGroups:
+        - ""
+      resources:
+        - nodes
+        - nodes/log
+        - nodes/metrics
+        - nodes/proxy
+        - nodes/spec
+        - nodes/stats
+        - pods/log
+      verbs: ['get', 'list', 'watch']
+    - apiGroups:
+        - ""
+      resources:
+        - configmaps
+        - endpoints
+        - limitranges
+        - namespaces
+        - persistentvolumeclaims
+        - pods
+        - replicationcontrollers
+        - secrets
+        - services
+        - strategicMergePatches
+      verbs: ['list', 'watch']
+    - apiGroups:
+        - "apps"
+      resources:
+        - daemonsets
+        - deployments
+        - replicasets
+        - statefulsets
+      verbs: ['list', 'watch']
+    - apiGroups:
+        - "batch"
+      resources:
+        - cronjobs
+        - jobs
+      verbs: ['list', 'watch']
+    - apiGroups:
+        - "autoscaling"
+      resources:
+        - horizontalpodautoscalers
+      verbs: ['list', 'watch']
+    - apiGroups:
+        - "policy"
+      resources:
+        - poddisruptionbudgets
+      verbs: ['list', 'watch']
+    - apiGroups:
+        - "networking.k8s.io"
+      resources:
+        - ingresses
+        - networkpolicies
+      verbs: ['list', 'watch']
+    - apiGroups:
+        - "admissionregistration.k8s.io"
+      resources:
+        - mutatingwebhookconfigurations
+        - validatingwebhookconfigurations
+      verbs: ['list', 'watch']
+    - apiGroups:
+        - "coordination.k8s.io"
+      resources:
+        - leases
+      verbs: ['get']
+    - apiGroups:
+        - "certificates.k8s.io"
+      resources:
+        - certificatesigningrequests
+      verbs: ['list', 'watch']
+    - apiGroups:
+        - "storage.k8s.io"
+      resources:
+        - storageclasses
+        - volumeattachments
+      verbs: ['list', 'watch']
+    - apiGroups:
+        - ""
+      resources:
+        - namespaces
+        - resourcequotas
+      verbs: ['get', 'list']
+  extraRules: []
+  # - apiGroups: []
+  #   resources: []
+  #   resourceNames: []
+  #   verbs: []
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # privileged: true
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+# Allow overriding the default kube priority class, if needed
+priorityClassName: ""
+
+# Cribl Edge in K8s does not require a Service
+# It is recommended to use a Worker Group deployment for receiving logs from network sources.
+service:
+  enable: false
+  type: ClusterIP
+  # externalTrafficPolicy: Cluster
+  annotations: {}
+  ports:
+    - name: edge-api
+      port: 9420
+      protocol: TCP
+
+ingress:
+  enable: false
+  className: ""
+#  annotations:
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+#  ingress:
+#    - name: ingress-example
+#      # TLS secrets for this ingress
+#      tls: {}
+#      # Override the ingressClassName for this ingress
+#      ingressClassName:
+#      # Annotation overrides (merged with defaults)
+#      annotations: {}
+#      # Array of Ingress rules
+#      # https://kubernetes.io/docs/concepts/services-networking/ingress/#ingress-rules
+#      rules:
+#        - host: ingress.example.com
+#          paths:
+#            - path: /*
+#              port: 8088
+#        - host: ingress2.example.com
+#          paths:
+#            - path: /exact/path/matching
+#              # Other path kinds can be specified (default is Prefix)
+#              # https://kubernetes.io/docs/concepts/services-networking/ingress/#path-types
+#              kind: Exact
+#              port: 8080
+#            - path: /*
+#              port: 8082
+#        # Example default rule without host name
+#        - paths:
+#            - path: /*
+#              port: 8088
+
+resources:
+  limits:
+   cpu: 2
+   memory: 4096Mi
+   ephemeral-storage: 10Gi
+  requests:
+   cpu: .25
+   memory: 1024Mi
+
+nodeSelector: {}
+
+# By default, allow scheduling DaemonSet on any Node in the Cluster
+tolerations:
+  - operator: Exists
+
+extraObjects: {}
+
+# Applies extra labels to all resources deployed with this chart
+extraLabels: {}
+# key: value
+# key2: value2

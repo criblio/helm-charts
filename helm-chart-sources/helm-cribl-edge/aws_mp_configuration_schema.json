@@ -1,0 +1,27 @@
+{
+    "$ref": "#/definitions/Cribl",
+    "$schema": "http://json-schema.org/draft-06/schema#",
+    "definitions": {
+      "cribl": {
+        "additionalProperties": false,
+        "properties": {
+          "leader": {
+            "type": "string",
+            "format": "uri"
+          }
+        },
+        "title": "cribl",
+        "type": "object"
+      },
+      "Cribl": {
+        "additionalProperties": false,
+        "properties": {
+          "cribl": {
+            "$ref": "#/definitions/cribl"
+          }
+        },
+        "title": "Cribl",
+        "type": "object"
+      }
+    }
+  }

@@ -161,7 +161,7 @@ ingress:
   ingress: []
 #    - name: ingress-example
 #      # TLS secrets for this ingress
-#      tls: {}
+#      tls: []
 #      # Override the ingressClassName for this ingress
 #      ingressClassName:
 #      # Annotation overrides (merged with defaults)

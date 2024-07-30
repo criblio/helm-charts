@@ -65,6 +65,7 @@ nodeSelector: {}
 #  topologySpreadConstraints: []
 
 service:
+  enable: true
   type: LoadBalancer
   annotations: {}
   # externalTrafficPolicy: Local

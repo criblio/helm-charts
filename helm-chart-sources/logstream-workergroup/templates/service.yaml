@@ -1,3 +1,4 @@
+{{- if .Values.service.enable }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -30,3 +31,4 @@ spec:
   {{- if .Values.service.loadBalancerSourceRanges }}
   loadBalancerSourceRanges: {{- toYaml .Values.service.loadBalancerSourceRanges | nindent 4 }}
   {{- end -}}
+{{- end }}

@@ -7,15 +7,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install Helm
-        uses: azure/setup-helm@v3
-        with:
-          version: 3.12.3
+        uses: azure/setup-helm@v4.2.0
 
       - name: Install unittest plugin
-        run: helm plugin install https://github.com/helm-unittest/helm-unittest --version 0.3.5
+        run: helm plugin install https://github.com/helm-unittest/helm-unittest --version 0.5.2
 
       - name: helm lint
         run: helm lint helm-chart-sources/*
@@ -23,12 +21,12 @@ jobs:
       - name: helm unittest
         run: helm unittest helm-chart-sources/*
 
-      - uses: actions/setup-go@v4
+      - uses: actions/setup-go@v5
         with:
           go-version: '>=1.19.0'
 
       - name: Install kubeconform
-        run: go install github.com/yannh/kubeconform/cmd/kubeconform@v0.6.3
+        run: go install github.com/yannh/kubeconform/cmd/kubeconform@v0.6.7
 
       - name: kubeconform
         run: ./scripts/kubeconform.sh

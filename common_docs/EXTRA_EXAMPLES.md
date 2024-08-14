@@ -124,12 +124,12 @@ If you specify a `extraVolumeMounts.claimTemplate` attribute (and you have speci
 <dt>readOnly</dt>
 <dd>Whether to mount the volume read-only or read/write – default is read/write. </dd>
 <dt>claimTemplate</dt>
-<dd>If this is set, it decribes the PVC that will be created for each pod. <em>Statefulset deployment only.</em></dd>
+<dd>If this is set, it describes the PVC that will be created for each pod. <em>Statefulset deployment only.</em></dd>
 </dl>
 
 ### Example
 This example mounts two extra directories:
-* An `emptyDir`, mounted on /var/lib/testin
+* An `emptyDir`, mounted on /var/lib/testing
 * An existing PVC, called `test-volume`, mounted on `/var/tmp/test-volume`
 
 ```

@@ -53,7 +53,7 @@ persistence:
   # -- Disable this to use an emptyDir for CRIBL_VOLUME_DIR config storage
   enabled: true
   # -- Unset claimName to use the Helm Release name as the PVC name
-  # This is set for backwards compatability purposes
+  # This is set for backwards compatibility purposes
   claimName: leader-config-claim
   # -- Set storageClassName to use a class other than the default
   # Will prioritize this value above the value defined in config.scName

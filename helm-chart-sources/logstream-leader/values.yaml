@@ -132,3 +132,16 @@ extraObjects: {}
 extraLabels: {}
 # key: value
 # key2: value2
+
+# Red Hat OpenShift specific configuration
+openshift:
+  enable: false # by default, we assume this is not an OpenShift deployment 
+  route:
+    enable: true # If this is an OpenShift deployment, create a Route for the Cribl LS Leader Service
+    annotations: {}
+    labels: {}
+    host: '' # When the host is not specified, a wildcard entry will be generated such as <service-name>-<namespace>.apps.<cluster-name>.<cluster-domain>
+    tls:
+      termination: edge # edge, passthrough, reencrypt
+      insecureEdgeTerminationPolicy: Redirect # None, Allow, Redirect
+    wildcardPolicy: None # None, Subdomain

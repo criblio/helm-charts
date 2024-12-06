@@ -150,4 +150,8 @@ volumes:
   {{- end }}
   {{- end }}
 
+{{- if .Values.terminationGracePeriodSeconds }}
+terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
+{{- end }}
+
 {{- end }}

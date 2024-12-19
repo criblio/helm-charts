@@ -114,12 +114,14 @@ rbac:
     - apiGroups:
         - ""
       resources:
+        - namespaces
         - nodes
         - nodes/log
         - nodes/metrics
         - nodes/proxy
         - nodes/spec
         - nodes/stats
+        - pods
         - pods/log
       verbs: ['get', 'list', 'watch']
     - apiGroups:
@@ -128,9 +130,7 @@ rbac:
         - configmaps
         - endpoints
         - limitranges
-        - namespaces
         - persistentvolumeclaims
-        - pods
         - replicationcontrollers
         - secrets
         - services

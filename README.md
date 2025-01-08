@@ -1,9 +1,10 @@
 ![Cribl Logo](images/Cribl_Logo_Color_TM.png)
+
 # Cribl Helm Charts
 
 This is a Helm repository for charts published by Cribl, Inc.
- 
-We now have a really fast way to deploy an entire distributed Cribl Stream environment to a Kubernetes cluster, using the workergroup and leader Helm charts. 
+
+We now have a really fast way to deploy an entire distributed Cribl Stream environment to a Kubernetes cluster, using the workergroup and leader Helm charts.
 
 # Prerequisites
 
@@ -32,7 +33,8 @@ helm repo add cribl https://criblio.github.io/helm-charts/
 ```
 
 The following example creates a distributed deployment with two auto-scaled worker groups:
-- `pcilogs` 
+
+- `pcilogs`
 - `system-metrics`
 
 In addition, the example:
@@ -66,7 +68,7 @@ helm install ls-wg-system-metrics cribl/logstream-workergroup \
 
 ## Running Distributed on a Free License
 
-To run a distributed instance without specifying a license in your install, go into Cribl Stream's user interface and accept the Free license. The Free license allows only one Worker Group. 
+To run a distributed instance without specifying a license in your install, go into Cribl Stream's user interface and accept the Free license. The Free license allows only one Worker Group.
 
 You can configure the Leader as Distributed, by specifying the `config.groups` option. If you don't specify it, the default configuration is Single Instance mode. You can later manually reconfigure it as Distributed via Cribl Stream's UI.
 
@@ -84,3 +86,25 @@ helm upgrade ls-wg-system-metrics cribl/logstream-workergroup -n cribl-stream
 # Support
 
 Our community supports all items in the Cribl Helm repository – Please join our [Slack Community](https://cribl.io/community/)!
+
+# Running unit tests
+
+Unit tests are implemented using [helm-unittest](https://github.com/helm-unittest/helm-unittest/).
+
+Using their docker image is the simplest way to run the tests. The pattern is
+
+```shell
+docker run -ti --rm -v "$(pwd):/apps" helmunittest/helm-unittest PATH_TO_CHART
+```
+
+Testing logstream-leader
+
+```shell
+docker run -ti --rm -v "$(pwd):/apps" helmunittest/helm-unittest helm-chart-sources/logstream-leader
+```
+
+Testing logstream-workergroup
+
+```shell
+docker run -ti --rm -v "$(pwd):/apps" helmunittest/helm-unittest helm-chart-sources/logstream-workergroup
+```

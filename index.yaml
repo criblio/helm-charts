@@ -3,9 +3,9 @@ entries:
   appscope:
   - apiVersion: v2
     appVersion: 1.3.4
-    created: "2025-01-29T14:14:28.143969525Z"
+    created: "2025-02-26T13:19:06.497736763Z"
     description: Cribl AppScope Helm Chart for Kubernetes.
-    digest: 21aaf6d597cd2c33d5c911b65c3a596ebce83005dc7c29817980a60bbccc8ff8
+    digest: d3304bf2aecc833f69158504f270ff2eeb359dff4103c6e40826aee3ab1fad6c
     home: https://appscope.dev/
     icon: https://criblio.github.io/helm-charts/images/Cribl_Logo_Color_TM.png
     name: appscope
@@ -13,7 +13,7 @@ entries:
     - https://github.com/criblio/appscope
     type: application
     urls:
-    - https://github.com/criblio/helm-charts/releases/download/v4.10.0/appscope-1.3.4.tgz
+    - https://github.com/criblio/helm-charts/releases/download/v4.10.1/appscope-1.3.4.tgz
     version: 1.3.4
   - apiVersion: v2
     appVersion: 1.3.3
@@ -46,9 +46,9 @@ entries:
   common:
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2025-01-29T14:14:28.144169738Z"
+    created: "2025-02-26T13:19:06.497941535Z"
     description: Common templates for Cribl Helm Charts
-    digest: 17bd7705ff402256aab027660cf2d0df8ed4ded8ddfe5839699b466c6d5dec52
+    digest: b47a9c4996e0cab6f8345ea990bd56515c06005a76e18bd7576925e4ae3fa5e3
     maintainers:
     - email: support@cribl.io
       name: Cribl, Inc.
@@ -56,9 +56,20 @@ entries:
     name: common
     type: library
     urls:
-    - https://github.com/criblio/helm-charts/releases/download/v4.10.0/common-1.0.0.tgz
+    - https://github.com/criblio/helm-charts/releases/download/v4.10.1/common-1.0.0.tgz
     version: 1.0.0
   edge:
+  - apiVersion: v2
+    appVersion: 4.10.1
+    created: "2025-02-26T13:19:06.498896403Z"
+    description: A Helm chart for Kubernetes
+    digest: 9811f085c7b962bd36a808f02f22913a8ec27abdd74b95508a963387d2b377c6
+    icon: https://criblio.github.io/helm-charts/images/Cribl_Logo_Color_TM.png
+    name: edge
+    type: application
+    urls:
+    - https://github.com/criblio/helm-charts/releases/download/v4.10.1/edge-4.10.1.tgz
+    version: 4.10.1
   - apiVersion: v2
     appVersion: 4.10.0
     created: "2025-01-29T14:14:28.14514663Z"
@@ -456,6 +467,17 @@ entries:
     - https://github.com/criblio/helm-charts/releases/download/v4.0.0/edge-4.0.0.tgz
     version: 4.0.0
   logstream-leader:
+  - apiVersion: v2
+    appVersion: 4.10.1
+    created: "2025-02-26T13:19:06.499896034Z"
+    description: Deploys a Cribl Stream Leader in K8s.
+    digest: dadd8b84e721fec11fd2b5c2e4f55f6735987ff60606616844d1875d5bd0d808
+    icon: https://criblio.github.io/helm-charts/images/Cribl_Logo_Color_TM.png
+    name: logstream-leader
+    type: application
+    urls:
+    - https://github.com/criblio/helm-charts/releases/download/v4.10.1/logstream-leader-4.10.1.tgz
+    version: 4.10.1
   - apiVersion: v2
     appVersion: 4.10.0
     created: "2025-01-29T14:14:28.14619724Z"
@@ -1064,6 +1086,17 @@ entries:
     version: 2.4.5
   logstream-workergroup:
   - apiVersion: v2
+    appVersion: 4.10.1
+    created: "2025-02-26T13:19:06.500952652Z"
+    description: Deployment of Cribl Stream Worker Group on K8s
+    digest: 2838ade18fa78605562aec0774d48773f96ba03e2a1ab236f25f1d3b9b6a5913
+    icon: https://criblio.github.io/helm-charts/images/Cribl_Logo_Color_TM.png
+    name: logstream-workergroup
+    type: application
+    urls:
+    - https://github.com/criblio/helm-charts/releases/download/v4.10.1/logstream-workergroup-4.10.1.tgz
+    version: 4.10.1
+  - apiVersion: v2
     appVersion: 4.10.0
     created: "2025-01-29T14:14:28.147273988Z"
     description: Deployment of Cribl Stream Worker Group on K8s
@@ -1649,14 +1682,14 @@ entries:
   pod-killer:
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2025-01-29T14:14:28.147643417Z"
+    created: "2025-02-26T13:19:06.501301041Z"
     description: A Simple Cron Job that deletes pods based on pod name on a schedule
       defined in annotations.
-    digest: b88687ede602e62c73d55666502ed6fbb51a51b985235e0d1dda4290d4633c85
+    digest: 750213043176c3d87de7b4840fabd29fc448be20a41f92ec9969183a890e1162
     icon: https://criblio.github.io/helm-charts/images/Cribl_Logo_Color_TM.png
     name: pod-killer
     type: application
     urls:
-    - https://github.com/criblio/helm-charts/releases/download/v4.10.0/pod-killer-1.0.0.tgz
+    - https://github.com/criblio/helm-charts/releases/download/v4.10.1/pod-killer-1.0.0.tgz
     version: 1.0.0
-generated: "2025-01-29T14:14:28.143271813Z"
+generated: "2025-02-26T13:19:06.497091341Z"

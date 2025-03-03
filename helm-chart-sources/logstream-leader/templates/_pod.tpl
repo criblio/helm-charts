@@ -93,6 +93,12 @@ containers:
       # Single Volume for persistence (CRIBL-3848)
       - name: CRIBL_VOLUME_DIR
         value: {{ .Values.config.criblHome }}/config-volume
+      # CPU Limit
+      - name: CRIBL_KUBE_CPU_LIMIT
+        valueFrom:
+          resourceFieldRef:
+            container: {{ .Chart.Name }}
+            resource: "limits.cpu"
       {{ if .Values.envValueFrom }}
       {{ toYaml .Values.envValueFrom | nindent 6  }}
       {{- end }}

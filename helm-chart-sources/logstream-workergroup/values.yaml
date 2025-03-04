@@ -24,7 +24,7 @@ criblImage:
   repository: cribl/cribl
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: 4.9.3
+  tag: 4.10.1
 
 imagePullSecrets: []
 nameOverride: ""
@@ -228,3 +228,7 @@ envValueFrom:
       resourceFieldRef:
         resource: limits.cpu
         divisor: 1m
+
+# Pods get 30s by default for orderly shutdown before they're killed but may
+# need a little more time in various scenarios. Set this to allow more time.
+# terminationGracePeriodSeconds: 60s

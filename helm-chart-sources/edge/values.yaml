@@ -4,7 +4,7 @@ image:
   repository: cribl/cribl
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: 4.9.3
+  tag: 4.10.1
 
 imagePullSecrets: []
 nameOverride: ""
@@ -119,12 +119,14 @@ rbac:
     - apiGroups:
         - ""
       resources:
+        - namespaces
         - nodes
         - nodes/log
         - nodes/metrics
         - nodes/proxy
         - nodes/spec
         - nodes/stats
+        - pods
         - pods/log
       verbs: ['get', 'list', 'watch']
     - apiGroups:
@@ -133,9 +135,7 @@ rbac:
         - configmaps
         - endpoints
         - limitranges
-        - namespaces
         - persistentvolumeclaims
-        - pods
         - replicationcontrollers
         - secrets
         - services
@@ -290,3 +290,7 @@ extraObjects: {}
 extraLabels: {}
 # key: value
 # key2: value2
+
+# Pods get 30s by default for orderly shutdown before they're killed but may
+# need a little more time in various scenarios. Set this to allow more time.
+# terminationGracePeriodSeconds: 60s

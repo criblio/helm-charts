@@ -22,6 +22,9 @@ containers:
     {{- range $key, $value := .Values.securityContext }}
     {{- if or (eq $key "runAsUser") (eq $key "runAsGroup") (eq $key "fsGroup")}}
       {{ $key }}: {{ $value | int }}
+    {{- else if kindIs "map" $value }}
+      {{ $key }}:
+        {{- toYaml $value | nindent 8 }}
     {{- else }}
       {{ $key }}: {{ $value }}
     {{- end }}
@@ -225,5 +228,8 @@ affinity:
 {{- with .Values.tolerations }}
 tolerations:
   {{- toYaml . | nindent 2 }}
+{{- end }}
+{{- if .Values.terminationGracePeriodSeconds }}
+terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
 {{- end }}
 {{- end }}

@@ -76,3 +76,30 @@ tests:
             - name: foo
               containerPort: 420
               protocol: UDP
+
+  - it: Should set envValueFrom
+    set:
+      extraEnvFrom:
+        # works with "value"
+        - name: ENV1
+          value: test
+        # works with "valueFrom" too
+        - name: ENV2
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+    asserts:
+      - exists:
+          path: spec.template.spec.containers[0].env
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: ENV1
+            value: test
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: ENV2
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name

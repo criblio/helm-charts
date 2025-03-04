@@ -105,11 +105,6 @@ spec:
                   key: CRIBL_DIST_LEADER_URL
             - name: CRIBL_HOME
               value: {{ .Values.cribl.home }}
-            - name: CRIBL_K8S_CPU_LIMIT
-              valueFrom:
-                resourceFieldRef:
-                  resource: "limits.cpu"
-                  divisor: 1m
             {{- if .Values.cribl.config }}
             - name: CRIBL_BOOTSTRAP
               valueFrom:

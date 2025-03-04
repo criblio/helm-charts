@@ -59,11 +59,6 @@ containers:
       # Self-Signed Certs
       - name: NODE_TLS_REJECT_UNAUTHORIZED
         value: "{{ .Values.config.rejectSelfSignedCerts }}"
-      - name: CRIBL_K8S_CPU_LIMIT
-        valueFrom:
-          resourceFieldRef:
-            resource: "limits.cpu"
-            divisor: "1m"
       {{ if .Values.envValueFrom }}
       {{ toYaml .Values.envValueFrom | nindent 6  }}
       {{- end }}

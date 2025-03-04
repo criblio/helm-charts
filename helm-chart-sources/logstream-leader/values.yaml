@@ -49,6 +49,18 @@ config:
 
 env: {}
 
+# Downward API values
+envValueFrom:
+  - name: CRIBL_K8S_POD
+    valueFrom:
+      fieldRef:
+        fieldPath: metadata.name
+  - name: CRIBL_K8S_CPU_LIMIT
+    valueFrom:
+      resourceFieldRef:
+        resource: limits.cpu
+        divisor: 1m
+
 persistence:
   # -- Disable this to use an emptyDir for CRIBL_VOLUME_DIR config storage
   enabled: true

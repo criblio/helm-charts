@@ -105,12 +105,11 @@ spec:
                   key: CRIBL_DIST_LEADER_URL
             - name: CRIBL_HOME
               value: {{ .Values.cribl.home }}
-            # CPU Limit
-            - name: CRIBL_KUBE_CPU_LIMIT
+            - name: CRIBL_K8S_CPU_LIMIT
               valueFrom:
                 resourceFieldRef:
-                  container: {{ .Chart.Name }}
                   resource: "limits.cpu"
+                  divisor: 1m
             {{- if .Values.cribl.config }}
             - name: CRIBL_BOOTSTRAP
               valueFrom:

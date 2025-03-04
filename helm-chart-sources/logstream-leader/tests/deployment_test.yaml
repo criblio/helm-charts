@@ -79,7 +79,7 @@ tests:
 
   - it: Should set envValueFrom
     set:
-      extraEnvFrom:
+      envValueFrom:
         # works with "value"
         - name: ENV1
           value: test

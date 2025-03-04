@@ -72,7 +72,7 @@ This section covers the most likely values to override. To see the full scope of
 |[extraContainers](../../common_docs/EXTRA_EXAMPLES.md#extraContainers)|{}|Additional containers to run as sidecars of the primary container in the pod.|
 |[securityContext.runAsUser](../../common_docs/EXTRA_EXAMPLES.md#securityContext)|"0"|User ID to run the container processes under. Must be a string.|
 |[securityContext.runAsGroup](../../common_docs/EXTRA_EXAMPLES.md#securityContext)|"0"|Group ID to run the container processes under. Must be a string.|
-|[envValueFrom](../../common_docs/EXTRA_EXAMPLES.md#extraEnvFrom)|{}|Environment variables to be exposed from the Downward API.|
+|[envValueFrom](../../common_docs/EXTRA_EXAMPLES.md#extraEnvFrom)|See `values.yaml`|Environment variables to be exposed from the Downward API.|
 |[env](../../common_docs/EXTRA_EXAMPLES.md#env)|[]|Additional static environment variables.|
 |ingress.enable|false|Enable Ingress in front of the external service. Setting this to `true` changes the external service to type `NodePort`, and creates an ingress that connects to it.|
 |ingress.annotations|{}|If `ingress.enable` is set to `true`, this is where you'll want to put annotations to configure the specific ingress controller. _*NOTE: Ingress is supported only on Kubernetes 1.19 and later clusters*_. |

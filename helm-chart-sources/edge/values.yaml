@@ -20,6 +20,11 @@ envValueFrom:
     valueFrom:
       fieldRef:
         fieldPath: metadata.name
+  - name: CRIBL_K8S_CPU_LIMIT
+    valueFrom:
+      resourceFieldRef:
+        resource: limits.cpu
+        divisor: 1m
 # Extra environment variables
 extraEnv: {}
 # Extra environment variables (from Secrets)

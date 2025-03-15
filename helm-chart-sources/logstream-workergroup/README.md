@@ -12,7 +12,7 @@ Versions starting with 3.4.0 include a change to the syntax for RBAC values. Bef
 
 # Deployment
 
-As built, this chart will deploy a simple worker group for Cribl Stream, consisting of a deployment, a service, and a horizontal pod autoscaler config, as well as a secret used for configuration.
+As built, this chart will deploy a simple worker group for Cribl Stream, consisting of a deployment, a service, and a horizontal pod autoscaler config, as well as a secret used for configuration. 
 
 This chart does **not** deploy a leader node – it depends on that node's already being present.
 
@@ -26,7 +26,7 @@ This chart does **not** deploy a leader node – it depends on that node's alrea
 
 # <span id="values"> Values to Override </span>
 
-This section covers the most likely values to override. To see the full scope of values available, run `helm show values cribl/logstream-workergroup`.
+This section covers the most likely values to override. To see the full scope of values available, run `helm show values cribl/logstream-workergroup`. 
 
 |Key|Default Value|Description|
 |---|-------------|-----------|
@@ -81,7 +81,7 @@ This section covers the most likely values to override. To see the full scope of
 
 ### A Note About Versioning
 
-We recommend that you use the same version of the Cribl Stream code on leader nodes and workergroup nodes.
+We recommend that you use the same version of the Cribl Stream code on leader nodes and workergroup nodes. 
 
 # Install
 
@@ -97,7 +97,7 @@ We recommend that you use the same version of the Cribl Stream code on leader n
 * To install the chart using the logstream leader 'logstream.lab.cribl.io' in the namespace "cribl-helm"
 
  `helm install logstream-wg cribl/logstream-workergroup --set config.host='logstream.lab.cribl.io' -n cribl-helm`
-
+ 
 # Upgrading
 
 This is done simply using the `helm upgrade` command. It's important to ensure that your Helm repository cache is up to date, so the first command is:
@@ -112,8 +112,8 @@ After this step, invoke `helm upgrade <release> -n <namespace> cribl/logstream-w
 helm upgrade logstream-wg -n cribl-helm cribl/logstream-workergroup
 ```
 
-This helm chart's upgrade is idempotent, so you can use the upgrade mechanism to upgrade, but can also use it as displayed [below](#changing) for changing its configuration.
-
+This helm chart's upgrade is idempotent, so you can use the upgrade mechanism to upgrade, but can also use it as displayed [below](#changing) for changing its configuration. 
+ 
 # Optional: Kubernetes API Access
 
 Versions 2.4.0+ include access mechanisms for worker groups to access the Kubernetes API. Four options are available in the `values.yaml` file for this:
@@ -128,7 +128,7 @@ Additionally, you may customize the ServiceAccount resource utilized by the char
 * `serviceAccount.create` - controls if a ServiceAccount resource is created during chart deployment.
 * `serviceAccount.name` - the configured name of the ServiceAccount. If `serviceAccount.create` is `true`, the ServiceAccount is named this value. If `false`, then the ServiceAccount must already exist and is mapped in the RoleBinding.
 
-For more info on the verbs and resources available, see the [Kubernetes documentation](https://kubernetes.io/docs/reference/access-authn-authz/rbac/).
+For more info on the verbs and resources available, see the [Kubernetes documentation](https://kubernetes.io/docs/reference/access-authn-authz/rbac/). 
 
 # <span id="changing"> Changing Configuration </span>
 
@@ -161,7 +161,7 @@ Remember, if you installed in a namespace, you need to include the `-n <namespac
 With the addition of the `extraVolumeMounts` capability, it is now feasible to use persistent volumes for Cribl Stream persistent queueing. However there is variability in persistent-storage implementations, and this variability can lead to problems in scaling workergroups, and we recommend only implementing this if you have confidence in your persistent storage implementations. If you choose to implement persistent volumes for queueing, please consider these suggestions:
 
 1. Use a shared-storage-volume mechanism. We've worked with the EFS CSI driver for AWS, and it works fairly well (though it can be a little tedious to configure).
-2. Understand your Kubernetes networking topology, and how it interacts with your persistent storage driver. (For example, if you're in AWS, ensure that your volumes are available in all Availability Zones that your nodes might run in.)
+2. Understand your Kubernetes networking topology, and how it interacts with your persistent storage driver. (For example, if you're in AWS, ensure that your volumes are available in all Availability Zones that your nodes might run in.) 
 3. Monitor the workergroup pods for volume issues. The faster you can see such issues and react, the more likely that you'll be able to resolve them.
 
 # Using an Existing Secret

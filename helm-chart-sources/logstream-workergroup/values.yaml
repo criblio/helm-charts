@@ -7,7 +7,7 @@ replicaCount: 1
 rbac:
   create: true
   # name:
-  apiGroups:
+  apiGroups: 
   - core
   resources:
   - pods
@@ -29,7 +29,7 @@ criblImage:
 imagePullSecrets: []
 nameOverride: ""
 
-config:
+config: 
   host: logstream-leader-internal
   group: kubernetes
   token: criblleader
@@ -118,7 +118,7 @@ service:
     protocol: TCP
     #nodePort:
 
-resources:
+resources: 
   limits:
     cpu: 2000m
     memory: 4096Mi
@@ -212,7 +212,7 @@ extraVolumeMounts: {}
 # - name: test-volume
 #   mountPath: /var/tmp/test-volume
 #   readOnly: false
-#   claimTemplate:
+#   claimTemplate: 
 #     metadata:
 #       name: test-volume
 #     spec:

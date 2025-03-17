@@ -116,9 +116,18 @@ service:
 
 resources: 
   limits:
-    cpu: 2000m
-    memory: 4096Mi
+    # The stock limits below result in Stream running 4 worker processes in the
+    # pod with 2 additional cores available for the server process and for threads
+    # handling I/O, compression, etc. Prior to the 4.11.0 release, these limits
+    # were 2000m and 4192Mi which was likely to cause degraded throughput at
+    # realistic loads.
+    cpu: 6000m
+    memory: 8192Mi
   requests:
+    # Note that these request levels are extremely low for a production
+    # deployment but changing the stock settings could break existing users
+    # so we've not adjusted them. Setting them closer to the limits above is
+    # recommended to avoid starving the pods on oversubscribed cluster nodes.
     cpu: 1250m
     memory: 256Mi
 

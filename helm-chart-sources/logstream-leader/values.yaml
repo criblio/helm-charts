@@ -99,6 +99,11 @@ service:
       protocol: TCP
       external: false
 
+serviceAccount:
+  # By default the service account is not created
+  create: false
+  # name:
+
 strategy:
   type: Recreate
   rollingUpdate:

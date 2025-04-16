@@ -102,6 +102,11 @@ service:
 serviceAccount:
   # By default the service account is not created
   create: false
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If name is not set and create is true, a default name is generated using the fullname template
+  # If create is false, and name is set, the service account must already exist
   # name:
 
 strategy:

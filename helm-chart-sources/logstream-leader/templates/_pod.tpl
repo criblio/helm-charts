@@ -1,4 +1,8 @@
 {{- define "leader.pod" -}}
+{{- if or .Values.serviceAccount.create (and (not .Values.serviceAccount.create) .Values.serviceAccount.name) }}
+serviceAccountName: {{ include "logstream-leader.serviceAccountName" . }}
+{{- end }}
+
 {{- with .Values.imagePullSecrets }}
 imagePullSecrets:
   {{- toYaml . | nindent 8 }}

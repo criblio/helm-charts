@@ -63,7 +63,7 @@ This section covers the most likely values to override. To see the full scope of
 |serviceAccount.create|true|Create a ServiceAccount used by the Pods.|
 |serviceAccount.name|`undefined`|The ServiceAccount name. If `serviceAccount.create` is true, the ServiceAccount is named this value. If false, the ServiceAccount must already exist.|
 |nodeSelector|{}|Add nodeSelector values to define which nodes the pods are scheduled on - see [k8s Documentation](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/) for details and allowed values. |
-|affinity|{}|Add affinity values to define constrain which nodes the pods are scheduled on - see [k8s Documentation](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity) for details and allowed values. |
+|affinity|{}|Add affinity values to define constraints which nodes the pods are scheduled on - see [k8s Documentation](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity) for details and allowed values. |
 |__Extra Configuration Options__|
 |strategy|see `values.yaml`|Add strategy values to define how Pods are upgraded - see k8s Documentation [Deployment](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy) and [DaemonSet](https://kubernetes.io/docs/tasks/manage-daemon/update-daemon-set/) for details and allowed values.|
 |__Extra Configuration Options__|

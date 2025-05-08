@@ -61,6 +61,8 @@ podAnnotations: {}
 nodeSelector: {}
 # tolerations: []
 
+affinity: {}
+
 #extraPodConfigs:
 #  topologySpreadConstraints: []
 

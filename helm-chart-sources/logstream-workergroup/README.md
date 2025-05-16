@@ -41,6 +41,7 @@ This section covers the most likely values to override. To see the full scope of
 |config.probes|true|enables (true) or disables (false) the liveness and readiness probes.|
 |config.livenessProbe|see `values.yaml`|[livenessProbe](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-a-liveness-http-request) configuration|
 |config.readinessProbe|see `values.yaml`|[readinessProbe](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-readiness-probes) configuration|
+|criblImage.wolfiImage|false|Cribl publishes 2 versions of the container, the default based on Ubuntu and the alternative version based on Wolfi.  This setting should only be enabled if you want to use Cribls published Wolfi container image.|
 |service.enable|true|Enable creating Service resources. This is only applicable for logstream-workergroup deployments.|
 |service.type|LoadBalancer|The type of service to create for the workergroup|
 |service.loadBalancerIP|none (IP Address)|The IP address to use for the load balancer service interface, if the type is set to LoadBalancer. Check with your Kubernetes setup to see if this is supported. |

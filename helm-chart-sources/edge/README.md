@@ -56,6 +56,7 @@ This section covers the most likely values to override. To see the full scope of
 | cribl.config                                                                   |                   | bootstrap config                                                                    |
 | cribl.readinessProbe                                                           | see `values.yaml` | readiness probe config                                                              |
 | cribl.livenessProbe                                                            | see `values.yaml` | liveness probe config                                                               |
+|image.wolfiImage|false|Cribl publishes 2 versions of the container, the default based on Ubuntu and the alternative version based on Wolfi.  This setting should only be enabled if you want to use Cribls published Wolfi container image.|
 | serviceAccount.create                                                          | `true`            | Specifies whether a service account should be created                               |
 | serviceAccount.annotations                                                     | `{}`              | Annotations to add to the service account                                           |
 | serviceAccount.name                                                            |                   | override the default generated service account name                                 |

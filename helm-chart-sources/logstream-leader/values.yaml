@@ -10,6 +10,7 @@ criblImage:
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: 4.11.1
+  wolfiImage: false
 
 imagePullSecrets: []
 nameOverride: "leader"

@@ -34,7 +34,7 @@ This section covers the most likely values to override. To see the full scope of
 |config.tag|deprecated|This option is deprecated, but still supported for backward compatibility. |
 |config.token|"criblleader"|The authentication token for your Cribl Stream leader. |
 |config.host|"logstream-leader"|The resolvable hostname of your Cribl Stream leader. |
-|config.port|"logstream-leader"|The TCP port where your Cribl Stream leader listens. |
+|config.port|4200|The TCP port where your Cribl Stream leader listens. |
 |config.useExistingSecret|`false`|Setting this value to `true` disables the creation of a `CRIBL_DIST_MASTER_URL` string. You are responsible for attaching it using the `envValueFrom` config. See below for an example.|
 |config.rejectSelfSignedCerts|0| One of: `0` – allow self-signed certs; or `1` – deny self-signed certs. |
 |config.tlsLeader.enable|false|Enable TLS connectivity from the workergroup to its leader node |

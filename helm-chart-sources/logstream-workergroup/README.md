@@ -52,6 +52,7 @@ This section covers the most likely values to override. To see the full scope of
 |ingress|see `values.yaml`|Ingress controller configuration|
 |ingress.enable|false|Enable creating Ingress resources|
 |criblImage.tag|"3.4.0"|The container image tag to pull from. By default, this will use the version equivalent to the chart's `appVersion` value. But you can override this with "latest" to get the latest release, or with a version number (e.g., "3.4.0") to pull a specific version of Cribl Stream. |
+|criblImage.wolfiImage|false|Cribl publishes 2 versions of the container, the default based on Ubuntu and the alternative version based on Wolfi.  This setting should only be enabled if you want to use Cribl's published Wolfi container image.|
 |autoscaling.minReplicas|2|The minimum number of Cribl Stream pods to run.|
 |autoscaling.maxReplicas|10|The maximum number of Cribl Stream pods to scale to run.|
 |autoscaling.targetCPUUtilizationPercentage|50|The CPU utilization percentage that triggers scaling. |

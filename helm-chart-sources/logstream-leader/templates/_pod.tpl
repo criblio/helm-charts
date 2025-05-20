@@ -19,7 +19,7 @@ securityContext:
 {{- end }}
 containers:
   - name: {{ .Chart.Name }}
-    image: "{{ .Values.criblImage.repository }}:{{ .Values.criblImage.tag | default .Chart.AppVersion }}"
+    image: "{{ .Values.criblImage.repository }}:{{ .Values.criblImage.tag | default .Chart.AppVersion }}{{ if .Values.criblImage.wolfiImage }}-wolfi{{ end }}"
     imagePullPolicy: {{ .Values.criblImage.pullPolicy }}
     {{- if .Values.securityContext }}
     securityContext:

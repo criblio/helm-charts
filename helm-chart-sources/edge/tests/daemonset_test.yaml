@@ -21,7 +21,7 @@ tests:
           path: spec.template.spec.containers[0].image
           value: foo/bar:42.0.0
           
-    - it: Appends -wolfi suffix when wolfiImage is true
+  - it: Appends -wolfi suffix when wolfiImage is true
     set:
       image:
         repository: foo/bar

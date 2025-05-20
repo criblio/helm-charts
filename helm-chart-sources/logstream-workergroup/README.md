@@ -41,7 +41,6 @@ This section covers the most likely values to override. To see the full scope of
 |config.probes|true|enables (true) or disables (false) the liveness and readiness probes.|
 |config.livenessProbe|see `values.yaml`|[livenessProbe](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-a-liveness-http-request) configuration|
 |config.readinessProbe|see `values.yaml`|[readinessProbe](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-readiness-probes) configuration|
-|criblImage.wolfiImage|false|Cribl publishes 2 versions of the container, the default based on Ubuntu and the alternative version based on Wolfi.  This setting should only be enabled if you want to use Cribls published Wolfi container image.|
 |service.enable|true|Enable creating Service resources. This is only applicable for logstream-workergroup deployments.|
 |service.type|LoadBalancer|The type of service to create for the workergroup|
 |service.loadBalancerIP|none (IP Address)|The IP address to use for the load balancer service interface, if the type is set to LoadBalancer. Check with your Kubernetes setup to see if this is supported. |
@@ -52,6 +51,7 @@ This section covers the most likely values to override. To see the full scope of
 |ingress|see `values.yaml`|Ingress controller configuration|
 |ingress.enable|false|Enable creating Ingress resources|
 |criblImage.tag|"3.4.0"|The container image tag to pull from. By default, this will use the version equivalent to the chart's `appVersion` value. But you can override this with "latest" to get the latest release, or with a version number (e.g., "3.4.0") to pull a specific version of Cribl Stream. |
+|criblImage.wolfiImage|false|Cribl publishes 2 versions of the container, the default based on Ubuntu and the alternative version based on Wolfi.  This setting should only be enabled if you want to use Cribls published Wolfi container image.|
 |autoscaling.minReplicas|2|The minimum number of Cribl Stream pods to run.|
 |autoscaling.maxReplicas|10|The maximum number of Cribl Stream pods to scale to run.|
 |autoscaling.targetCPUUtilizationPercentage|50|The CPU utilization percentage that triggers scaling. |

@@ -103,3 +103,25 @@ tests:
             valueFrom:
               fieldRef:
                 fieldPath: metadata.name
+
+  - it: Appends -wolfi suffix when wolfiImage is true
+    set:
+      criblImage:
+        repository: foo/bar
+        tag: 42.0.0
+        wolfiImage: true
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: foo/bar:42.0.0-wolfi
+
+  - it: Does not append -wolfi suffix when wolfiImage is false
+    set:
+      criblImage:
+        repository: foo/bar
+        tag: 42.0.0
+        wolfiImage: false
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: foo/bar:42.0.0

@@ -77,6 +77,8 @@ This section covers the most likely values to override. To see the full scope of
 |[envValueFrom](../../common_docs/EXTRA_EXAMPLES.md#extraEnvFrom)|See `values.yaml`|Environment variables to be exposed from the Downward API.|
 |[env](../../common_docs/EXTRA_EXAMPLES.md#env)|[]|Additional Static Environment Variables.|
 |deployment|deployment|One of: "deployment" to deploy as a Deployment Set; or "daemonset" to deploy as a DaemonSet.|
+|podAnnotations|{}|Additional annotations for the pods|
+|includeSecretConfigAnnotation|false|Add an annotation to the deployment pods that will automatically restart the pods anytime there is a change to the secret for the logstream configuration.|
 |[rbac.extraRules](../../common_docs/EXTRA_EXAMPLES.md#rbac.extraRules)|{}|Additional RBAC rules to put in place.|
 
 ### A Note About Versioning

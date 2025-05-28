@@ -60,6 +60,10 @@ deployment: deployment
 
 podAnnotations: {}
 
+# Add an annotation to the deployment pods that will automatically restart the
+# pods anytime there is a change to the secret for the logstream configuration.
+includeSecretConfigAnnotation: false
+
 nodeSelector: {}
 # tolerations: []
 

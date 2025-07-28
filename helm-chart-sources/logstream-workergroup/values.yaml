@@ -58,6 +58,11 @@ config:
 
 deployment: deployment
 
+statefulset:
+  persistentVolumeClaimRetentionPolicy: {}
+    # whenDeleted: Delete 
+    # whenScaled: Delete
+
 podAnnotations: {}
 
 # Add an annotation to the deployment pods that will automatically restart the

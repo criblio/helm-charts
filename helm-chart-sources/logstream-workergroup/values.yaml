@@ -72,6 +72,8 @@ includeSecretConfigAnnotation: false
 nodeSelector: {}
 # tolerations: []
 
+affinity: {}
+
 #extraPodConfigs:
 #  topologySpreadConstraints: []
 

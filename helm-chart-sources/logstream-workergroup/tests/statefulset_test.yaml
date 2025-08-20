@@ -111,6 +111,83 @@ tests:
           path: spec.template.spec.containers[0].image
           value: foo/bar:42.0.0-wolfi
 
+  - it: Should not have persistentVolumeClaimRetentionPolicy by default
+    set:
+      deployment: statefulset
+    asserts:
+      - isNull:
+          path: spec.persistentVolumeClaimRetentionPolicy
+
+  - it: Should have persistentVolumeClaimRetentionPolicy when configured
+    set:
+      deployment: statefulset
+      statefulset:
+        persistentVolumeClaimRetentionPolicy:
+          whenDeleted: Delete
+          whenScaled: Delete
+    asserts:
+      - exists:
+          path: spec.persistentVolumeClaimRetentionPolicy
+      - equal:
+          path: spec.persistentVolumeClaimRetentionPolicy
+          value:
+            whenDeleted: Delete
+            whenScaled: Delete
+
+  - it: Should handle persistentVolumeClaimRetentionPolicy with only whenDeleted
+    set:
+      deployment: statefulset
+      statefulset:
+        persistentVolumeClaimRetentionPolicy:
+          whenDeleted: Retain
+    asserts:
+      - exists:
+          path: spec.persistentVolumeClaimRetentionPolicy
+      - equal:
+          path: spec.persistentVolumeClaimRetentionPolicy
+          value:
+            whenDeleted: Retain
+
+  - it: Should handle persistentVolumeClaimRetentionPolicy with only whenScaled
+    set:
+      deployment: statefulset
+      statefulset:
+        persistentVolumeClaimRetentionPolicy:
+          whenScaled: Retain
+    asserts:
+      - exists:
+          path: spec.persistentVolumeClaimRetentionPolicy
+      - equal:
+          path: spec.persistentVolumeClaimRetentionPolicy
+          value:
+            whenScaled: Retain
+
+  - it: Should handle empty persistentVolumeClaimRetentionPolicy object
+    set:
+      deployment: statefulset
+      statefulset:
+        persistentVolumeClaimRetentionPolicy: {}
+    asserts:
+      - isNull:
+          path: spec.persistentVolumeClaimRetentionPolicy
+
+  - it: Should handle mixed persistentVolumeClaimRetentionPolicy configuration
+    set:
+      deployment: statefulset
+      statefulset:
+        persistentVolumeClaimRetentionPolicy:
+          whenDeleted: Delete
+          whenScaled: Retain
+    asserts:
+      - exists:
+          path: spec.persistentVolumeClaimRetentionPolicy
+      - equal:
+          path: spec.persistentVolumeClaimRetentionPolicy.whenDeleted
+          value: Delete
+      - equal:
+          path: spec.persistentVolumeClaimRetentionPolicy.whenScaled
+          value: Retain
+
   - it: Does not append -wolfi suffix when wolfiImage is false
     set:
       deployment: statefulset

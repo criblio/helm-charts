@@ -38,7 +38,7 @@ This section covers the most likely values to override. To see the full scope of
 |--------------------------------------------------------------------------------|-------------------|-------------------------------------------------------------------------------------|
 | image.repository                                                               | `cribl/cribl`     | Docker image repository to pull images                                              |
 | image.pullPolicy                                                               | `Always`          | When will the Node pull the image                                                   |
-| image.tag                                                                      | `4.13.2`           | The Version of Cribl to deploy                                                      |
+| image.tag                                                                      | `4.13.3`           | The Version of Cribl to deploy                                                      |
 |image.wolfiImage|false|Cribl publishes 2 versions of the container, the default based on Ubuntu and the alternative version based on Wolfi.  This setting should only be enabled if you want to use Cribls published Wolfi container image.|
 | imagePullSecrets                                                               | `[]`              | Credentials to pull container images                                                |
 | nameOverride                                                                   |                   | Overrides the chart name                                                            |

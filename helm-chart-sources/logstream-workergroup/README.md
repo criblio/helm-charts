@@ -83,6 +83,39 @@ This section covers the most likely values to override. To see the full scope of
 |includeSecretConfigAnnotation|false|Add an annotation to the deployment pods that will automatically restart the pods anytime there is a change to the secret for the logstream configuration.|
 |[rbac.extraRules](../../common_docs/EXTRA_EXAMPLES.md#rbac.extraRules)|{}|Additional RBAC rules to put in place.|
 
+## TLS connectivity to Leader
+
+When connecting worker groups to a TLS-enabled Leader, set `config.tlsLeader.enable: true` and optionally provide additional TLS options. The chart constructs the worker URL using the following values under `config.tlsLeader`:
+
+- `privKeyPath` → adds `tls.privKeyPath` to the URL
+- `passphrase` → adds `tls.passphrase`
+- `capath` → adds `tls.caPath`
+- `certpath` → adds `tls.certPath`
+- `rejectUnauthorized` → adds `tls.rejectUnauthorized`
+- `requestCert` → adds `tls.requestCert`
+- `commonNameRegex` → adds `tls.commonNameRegex`
+
+Example values:
+
+```yaml
+config:
+  host: logstream-leader-internal
+  port: 4200
+  group: kubernetes
+  token: criblleader
+  tlsLeader:
+    enable: true
+    capath: /etc/ssl/ca.pem
+    certpath: /etc/ssl/cert.pem
+    # privKeyPath: /etc/ssl/private/key.pem
+    # passphrase: "s3cr3t"
+    # rejectUnauthorized: 1   # 1 to reject self-signed certs; 0 to allow
+    # requestCert: 1
+    # commonNameRegex: ".*your-cn.*"
+```
+
+Note: The URL parameters that the Leader expects are camelCase (`tls.caPath`, `tls.certPath`, etc.). This chart maps the lower-case value keys (`capath`, `certpath`) to the correct camelCase parameters when building the URL.
+
 ### A Note About Versioning
 
 We recommend that you use the same version of the Cribl Stream code on leader nodes and workergroup nodes. 

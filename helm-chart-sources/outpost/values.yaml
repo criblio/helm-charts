@@ -1,0 +1,175 @@
+# Default values for outpost.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+serviceAccount:
+  create: true
+  # name:
+
+rbac:
+  create: true
+  # name:
+  annotations: {}
+  # Namespace-scoped resources
+  #   Outpost like Edge, and Stream can detect it's running in a
+  #   Kubernetes cluster and collect metadata about itself to include in the
+  #   metadata it reports to the Leader. These rules allow Outpost to get
+  #   details of the pod and deployment it's in.
+  roleRules:
+    - apiGroups:
+        - ""
+      resources:
+        - pods
+      verbs: ['get']
+    - apiGroups:
+        - "apps"
+      resources:
+        - deployments
+      verbs:
+        - get
+  # Extra namespace-scoped resources
+  extraRoleRules: []
+  # - apiGroups: []
+  #   resources: []
+  #   resourceNames: []
+  #   verbs: []
+
+criblImage:
+  repository: cribl/cribl
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: 4.14.1
+  wolfiImage: false
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+# Default environment variables for Cribl Outpost Deployment
+env: {}
+# Extra environment variables
+extraEnv: {}
+# Extra environment variables (from Secrets)
+extraEnvFrom: []
+# Extra ConfigMaps
+extraConfigMaps: []
+# Extra Secrets
+extraSecretMounts: []
+# Extra Volume mounts
+extraVolumeMounts: {}
+# Extra containers
+extraContainers: []
+# Extra init containers
+extraInitContainers: []
+# Additional Pod labels
+labels: {}
+
+cribl:
+  home: /opt/cribl
+  # if set, overrides cribl.leader value
+  existingSecretForLeader:
+  # CRIBL_DIST_MASTER_URL
+  # Format: tcp://authToken@host:port/?group=groupname&tag=tagname
+  # Example: tcp://criblleader@logstream-leader-internal:4200/?group=outpost&tag=outpost
+  leader:
+  # Bootstrap config
+  existingSecretForConfig:
+  config:
+  # cribl/local.yml:
+  #  foo: bar
+  # CRIBL_OUTPOST_LISTENER_URL configuration for the internal listener interface
+  # Format: tcp://token@host:port or tls://token@host:port?tls.certPath=/path&tls.keyPath=/path
+  # Example: tls://outposttoken@0.0.0.0:4200?tls.certPath=/etc/cribl/certs/server.crt&tls.keyPath=/etc/cribl/certs/server.key
+  listener: tcp://0.0.0.0:4200
+  # TLS configuration for the listener interface
+  # If using TLS, provide the certificate and key via an existing Kubernetes secret
+  listenerTLS:
+    # Name of existing secret containing tls.crt and tls.key
+    existingSecret:
+    # Path where the certificate will be mounted (default: /etc/cribl/certs)
+    mountPath: /etc/cribl/certs
+  rejectSelfSignedCerts: 0
+  probes: true
+  livenessProbe:
+    httpGet:
+      path: /api/v1/health
+      port: 9000
+      scheme: HTTP
+    initialDelaySeconds: 20
+    failureThreshold: 3
+  readinessProbe:
+    httpGet:
+      path: /api/v1/health
+      port: 9000
+      scheme: HTTP
+    initialDelaySeconds: 20
+    failureThreshold: 3
+
+podAnnotations: {}
+
+# Add an annotation to the deployment pods that will automatically restart the
+# pods anytime there is a change to the secret for the outpost configuration.
+includeSecretConfigAnnotation: false
+
+nodeSelector: {}
+# tolerations: []
+
+#extraPodConfigs:
+#  topologySpreadConstraints: []
+
+# Service configuration for port 4200 (similar to leader)
+service:
+  enable: true
+  type: ClusterIP
+  annotations: {}
+  ports:
+  - name: api
+    port: 9000
+    protocol: TCP
+  - name: distmgt
+    port: 4200
+    protocol: TCP
+
+resources: 
+  limits:
+    cpu: 2000m
+    memory: 4096Mi
+  requests:
+    cpu: 500m
+    memory: 1024Mi
+
+# Replacement Strategy
+#strategy:
+#  type: RollingUpdate
+#  rollingUpdate:
+#    maxSurge: 25%
+#    maxUnavailable: 25%
+
+# Extra manifests to be deployed
+extraObjects: {}
+
+# Applies extra labels to all resources deployed with this chart
+extraLabels: {}
+# key: value
+# key2: value2
+
+# Extra volumes to mount into each pod
+extraVolumeMounts: {}
+
+# Downward API values
+envValueFrom:
+  - name: CRIBL_K8S_POD
+    valueFrom:
+      fieldRef:
+        fieldPath: metadata.name
+  - name: CRIBL_K8S_CPU_LIMIT
+    valueFrom:
+      resourceFieldRef:
+        resource: limits.cpu
+        divisor: 1m
+
+# Pods get 30s by default for orderly shutdown before they're killed but may
+# need a little more time in various scenarios. Set this to allow more time.
+# terminationGracePeriodSeconds: 60s

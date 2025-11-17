@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "outpost.fullname" . }}
+  labels:
+    {{- include "outpost.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "outpost.selectorLabels" . | nindent 6 }}
+  {{- if (.Values.strategy) }}
+  {{- if and (ne .Values.strategy.type "Recreate") (ne .Values.strategy.type "RollingUpdate") }}
+      {{- fail (printf "Not a valid strategy type for Deployment (%s)" .Values.strategy.type) }}
+  {{- end }}
+  strategy:
+    {{- toYaml .Values.strategy | nindent 4 }}
+  {{- end }}
+  template:
+    metadata:
+      annotations:
+    {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- if .Values.includeSecretConfigAnnotation }}
+        checksum/config: {{ include (print .Template.BasePath "/secret.yaml") . | sha256sum }}
+    {{- end }}
+      labels:
+        {{- include "outpost.selectorLabels" . | nindent 8 }}
+    {{- with .Values.labels }}
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+
+    spec:
+      {{- include "outpost.pod" . | nindent 8 }}
+

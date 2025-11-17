@@ -1,0 +1,4 @@
+# Minimal test configuration
+cribl:
+  leader: tcp://token@leader:4200
+

@@ -1,0 +1,121 @@
+suite: Security Context
+templates:
+  - deployment.yaml
+tests:
+  - it: Should set podSecurityContext
+    set:
+      cribl.leader: tcp://token@leader:4200
+      podSecurityContext:
+        runAsUser: 1000
+        runAsGroup: 3000
+        fsGroup: 2000
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+    asserts:
+      - equal:
+          path: spec.template.spec.securityContext.runAsUser
+          value: 1000
+      - equal:
+          path: spec.template.spec.securityContext.runAsGroup
+          value: 3000
+      - equal:
+          path: spec.template.spec.securityContext.fsGroup
+          value: 2000
+      - equal:
+          path: spec.template.spec.securityContext.runAsNonRoot
+          value: true
+      - equal:
+          path: spec.template.spec.securityContext.seccompProfile.type
+          value: RuntimeDefault
+
+  - it: Should set container securityContext
+    set:
+      cribl.leader: tcp://token@leader:4200
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 3000
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: false
+        capabilities:
+          drop:
+            - ALL
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].securityContext.runAsUser
+          value: 1000
+      - equal:
+          path: spec.template.spec.containers[0].securityContext.runAsGroup
+          value: 3000
+      - equal:
+          path: spec.template.spec.containers[0].securityContext.allowPrivilegeEscalation
+          value: false
+      - equal:
+          path: spec.template.spec.containers[0].securityContext.readOnlyRootFilesystem
+          value: false
+      - contains:
+          path: spec.template.spec.containers[0].securityContext.capabilities.drop
+          content: ALL
+
+  - it: Should not set securityContext by default
+    set:
+      cribl.leader: tcp://token@leader:4200
+    asserts:
+      - notExists:
+          path: spec.template.spec.securityContext
+      - notExists:
+          path: spec.template.spec.containers[0].securityContext
+
+  - it: Should set both pod and container securityContext
+    set:
+      cribl.leader: tcp://token@leader:4200
+      podSecurityContext:
+        fsGroup: 2000
+        runAsNonRoot: true
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+            - ALL
+          add:
+            - NET_BIND_SERVICE
+    asserts:
+      - equal:
+          path: spec.template.spec.securityContext.fsGroup
+          value: 2000
+      - equal:
+          path: spec.template.spec.securityContext.runAsNonRoot
+          value: true
+      - equal:
+          path: spec.template.spec.containers[0].securityContext.allowPrivilegeEscalation
+          value: false
+      - contains:
+          path: spec.template.spec.containers[0].securityContext.capabilities.drop
+          content: ALL
+      - contains:
+          path: spec.template.spec.containers[0].securityContext.capabilities.add
+          content: NET_BIND_SERVICE
+
+  - it: Should handle complex capabilities configuration
+    set:
+      cribl.leader: tcp://token@leader:4200
+      securityContext:
+        capabilities:
+          drop:
+            - ALL
+            - NET_RAW
+          add:
+            - NET_ADMIN
+            - SYS_TIME
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].securityContext.capabilities.drop
+          value:
+            - ALL
+            - NET_RAW
+      - equal:
+          path: spec.template.spec.containers[0].securityContext.capabilities.add
+          value:
+            - NET_ADMIN
+            - SYS_TIME
+

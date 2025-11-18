@@ -1,0 +1,344 @@
+suite: Environment Variables
+templates:
+  - deployment.yaml
+tests:
+  - it: Should set default environment variables
+    set:
+      cribl.leader: tcp://token@leader:4200
+    release:
+      name: test-release
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CRIBL_DIST_LEADER_URL
+            valueFrom:
+              secretKeyRef:
+                name: test-release-outpost-cribl-settings
+                key: CRIBL_DIST_LEADER_URL
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CRIBL_HOME
+            value: /opt/cribl
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CRIBL_DIST_MODE
+            value: outpost
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: NODE_TLS_REJECT_UNAUTHORIZED
+            value: "0"
+
+  - it: Should set custom CRIBL_HOME
+    set:
+      cribl:
+        leader: tcp://token@leader:4200
+        home: /custom/cribl/home
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CRIBL_HOME
+            value: /custom/cribl/home
+
+  - it: Should set CRIBL_OUTPOST_LISTENER_URL with default value
+    set:
+      cribl:
+        leader: tcp://token@leader:4200
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CRIBL_OUTPOST_LISTENER_URL
+            value: "tcp://0.0.0.0:4200"
+
+  - it: Should set custom CRIBL_OUTPOST_LISTENER_URL
+    set:
+      cribl:
+        leader: tcp://token@leader:4200
+        listener: tcp://customtoken@0.0.0.0:9999
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CRIBL_OUTPOST_LISTENER_URL
+            value: "tcp://customtoken@0.0.0.0:9999"
+
+  - it: Should not set CRIBL_OUTPOST_LISTENER_URL when empty
+    set:
+      cribl:
+        leader: tcp://token@leader:4200
+        listener: ""
+    asserts:
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CRIBL_OUTPOST_LISTENER_URL
+
+  - it: Should set NODE_TLS_REJECT_UNAUTHORIZED to 1
+    set:
+      cribl:
+        leader: tcp://token@leader:4200
+        rejectSelfSignedCerts: 1
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: NODE_TLS_REJECT_UNAUTHORIZED
+            value: "1"
+
+  - it: Should set CRIBL_BOOTSTRAP when config is provided
+    set:
+      cribl:
+        leader: tcp://token@leader:4200
+        config: |
+          cribl/local.yml:
+            foo: bar
+    release:
+      name: test-release
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CRIBL_BOOTSTRAP
+            valueFrom:
+              secretKeyRef:
+                name: test-release-outpost-cribl-settings
+                key: CRIBL_BOOTSTRAP
+
+  - it: Should use existingSecretForConfig when provided
+    set:
+      cribl:
+        leader: tcp://token@leader:4200
+        config: |
+          cribl/local.yml:
+            foo: bar
+        existingSecretForConfig: my-config-secret
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CRIBL_BOOTSTRAP
+            valueFrom:
+              secretKeyRef:
+                name: my-config-secret
+                key: CRIBL_BOOTSTRAP
+
+  - it: Should set extraEnv variables
+    set:
+      cribl:
+        leader: tcp://token@leader:4200
+      extraEnv:
+        CUSTOM_VAR1: value1
+        CUSTOM_VAR2: value2
+        NUMERIC_VAR: "12345"
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CUSTOM_VAR1
+            value: "value1"
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CUSTOM_VAR2
+            value: "value2"
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: NUMERIC_VAR
+            value: "12345"
+
+  - it: Should set env variables
+    set:
+      cribl:
+        leader: tcp://token@leader:4200
+      env:
+        ENV_VAR1: envvalue1
+        ENV_VAR2: envvalue2
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: ENV_VAR1
+            value: "envvalue1"
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: ENV_VAR2
+            value: "envvalue2"
+
+  - it: Should support template strings in extraEnv
+    set:
+      cribl:
+        leader: tcp://token@leader:4200
+      extraEnv:
+        TEMPLATED_VAR: "{{ .Release.Name }}"
+    release:
+      name: my-release
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: TEMPLATED_VAR
+            value: "my-release"
+
+  - it: Should set envValueFrom with value
+    set:
+      cribl:
+        leader: tcp://token@leader:4200
+      envValueFrom:
+        - name: SIMPLE_VAR
+          value: simple-value
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: SIMPLE_VAR
+            value: simple-value
+
+  - it: Should set envValueFrom with valueFrom
+    set:
+      cribl:
+        leader: tcp://token@leader:4200
+      envValueFrom:
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+
+  - it: Should set default envValueFrom for downward API
+    set:
+      cribl:
+        leader: tcp://token@leader:4200
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CRIBL_K8S_POD
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CRIBL_K8S_CPU_LIMIT
+            valueFrom:
+              resourceFieldRef:
+                resource: limits.cpu
+                divisor: 1m
+
+  - it: Should set extraEnvFrom from ConfigMap
+    set:
+      cribl:
+        leader: tcp://token@leader:4200
+      extraEnvFrom:
+        - configMapRef:
+            name: my-config-map
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].envFrom
+          content:
+            configMapRef:
+              name: my-config-map
+
+  - it: Should set extraEnvFrom from Secret
+    set:
+      cribl:
+        leader: tcp://token@leader:4200
+      extraEnvFrom:
+        - secretRef:
+            name: my-secret
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].envFrom
+          content:
+            secretRef:
+              name: my-secret
+
+  - it: Should set multiple extraEnvFrom sources
+    set:
+      cribl:
+        leader: tcp://token@leader:4200
+      extraEnvFrom:
+        - configMapRef:
+            name: config-map-1
+        - configMapRef:
+            name: config-map-2
+        - secretRef:
+            name: secret-1
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].envFrom
+          content:
+            configMapRef:
+              name: config-map-1
+      - contains:
+          path: spec.template.spec.containers[0].envFrom
+          content:
+            configMapRef:
+              name: config-map-2
+      - contains:
+          path: spec.template.spec.containers[0].envFrom
+          content:
+            secretRef:
+              name: secret-1
+
+  - it: Should combine env, extraEnv, envValueFrom, and extraEnvFrom
+    set:
+      cribl:
+        leader: tcp://token@leader:4200
+      env:
+        ENV1: val1
+      extraEnv:
+        ENV2: val2
+      envValueFrom:
+        - name: ENV3
+          value: val3
+      extraEnvFrom:
+        - configMapRef:
+            name: my-config
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: ENV1
+            value: "val1"
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: ENV2
+            value: "val2"
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: ENV3
+            value: val3
+      - contains:
+          path: spec.template.spec.containers[0].envFrom
+          content:
+            configMapRef:
+              name: my-config
+

@@ -1,0 +1,63 @@
+# Comprehensive test values for production-like configuration
+replicaCount: 3
+
+cribl:
+  leader: tcp://prodtoken@logstream-leader-internal:4200/?group=production-outpost&tag=prod
+  listener: tls://outposttoken@0.0.0.0:4200?tls.certPath=/etc/cribl/certs/tls.crt&tls.keyPath=/etc/cribl/certs/tls.key
+  listenerTLS:
+    existingSecret: outpost-tls-cert
+  rejectSelfSignedCerts: 1
+  probes: true
+
+serviceAccount:
+  create: true
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::123456789012:role/outpost-role
+
+service:
+  enable: true
+  type: LoadBalancer
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: nlb
+
+resources:
+  limits:
+    cpu: 4000m
+    memory: 8192Mi
+  requests:
+    cpu: 1000m
+    memory: 2048Mi
+
+nodeSelector:
+  workload: cribl
+
+tolerations:
+  - key: "cribl-workload"
+    operator: "Equal"
+    value: "true"
+    effect: "NoSchedule"
+
+podSecurityContext:
+  runAsUser: 1000
+  runAsGroup: 3000
+  fsGroup: 2000
+  runAsNonRoot: true
+
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: false
+  capabilities:
+    drop:
+      - ALL
+
+extraLabels:
+  environment: production
+  team: platform
+
+labels:
+  version: "1.0.0"
+
+extraEnv:
+  ENVIRONMENT: production
+  LOG_LEVEL: info
+

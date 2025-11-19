@@ -226,6 +226,36 @@ extraVolumeMounts: {}
 #   readOnly: false
 #   existingClaim: test-volume-claim
 
+# For hostPath volumes
+# - name: host-volume
+#   mountPath: /var/tmp/host-volume
+#   readOnly: false
+#   hostPath: /host/path
+#   hostPathType: Directory
+
+# For emptyDir volumes (with custom configuration)
+# - name: empty-volume
+#   mountPath: /var/tmp/empty-volume
+#   readOnly: false
+#   emptyDir:
+#     sizeLimit: 1Gi
+#     medium: Memory
+
+# For ephemeral volumes (generic ephemeral volumes)
+# - name: ephemeral-volume
+#   mountPath: /var/tmp/ephemeral-volume
+#   readOnly: false
+#   ephemeral:
+#     volumeClaimTemplate:
+#       metadata:
+#         name: ephemeral-volume
+#       spec:
+#         accessModes: [ "ReadWriteOnce" ]
+#         storageClassName: fast-ssd
+#         resources:
+#           requests:
+#             storage: 1Gi
+
 # For statefulsets use `claimTemplate`
 # - name: test-volume
 #   mountPath: /var/tmp/test-volume

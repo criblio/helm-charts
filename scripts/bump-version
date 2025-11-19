@@ -15,10 +15,10 @@ fi
 echo Bumping helm-charts default Cribl version to $tag
 git stash
 
-perl -i -pe "s/^(?:appVersion|version): \K[\d\.]+/$tag/" helm-chart-sources/{logstream-{leader,workergroup},edge}/Chart.yaml
-perl -i -pe "s/^\s+tag: \K[\d\.]+/$tag/" helm-chart-sources/{logstream-{leader,workergroup},edge}/values.yaml
-perl -i -pe "s/Support for the \K[\d\.]+/$tag/" helm-chart-sources/{logstream-{leader,workergroup},edge}/README.md
-perl -i -pe "s/^\W image.tag\W+\K[\d\.]+/$tag/" helm-chart-sources/{logstream-{leader,workergroup},edge}/README.md
+perl -i -pe "s/^(?:appVersion|version): \K[\d\.]+/$tag/" helm-chart-sources/{logstream-{leader,workergroup},edge,outpost}/Chart.yaml
+perl -i -pe "s/^\s+tag: \K[\d\.]+/$tag/" helm-chart-sources/{logstream-{leader,workergroup},edge,outpost}/values.yaml
+perl -i -pe "s/Support for the \K[\d\.]+/$tag/" helm-chart-sources/{logstream-{leader,workergroup},edge,outpost}/README.md
+perl -i -pe "s/^\W image.tag\W+\K[\d\.]+/$tag/" helm-chart-sources/{logstream-{leader,workergroup},edge,outpost}/README.md
 
 git commit -am "Bump version to $tag"
 git tag -am "Released version $tag" v$tag

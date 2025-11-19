@@ -133,6 +133,16 @@ volumes:
     {{- else if .hostPath }}
     hostPath:
       path: {{ .hostPath }}
+      {{- if .hostPathType }}
+      type: {{ .hostPathType }}
+      {{- end }}
+    {{- else if .ephemeral }}
+    ephemeral:
+      volumeClaimTemplate:
+        {{- toYaml .ephemeral.volumeClaimTemplate | nindent 8 }}
+    {{- else if .emptyDir }}
+    emptyDir:
+      {{- toYaml .emptyDir | nindent 6 }}
     {{- else }}
     emptyDir: {}
     {{- end }}

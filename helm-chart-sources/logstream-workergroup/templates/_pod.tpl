@@ -138,10 +138,8 @@ volumes:
       {{- end }}
     {{- else if .ephemeral }}
     ephemeral:
-      {{- if .ephemeral.volumeClaimTemplate }}
       volumeClaimTemplate:
         {{- toYaml .ephemeral.volumeClaimTemplate | nindent 8 }}
-      {{- end }}
     {{- else if .emptyDir }}
     emptyDir:
       {{- toYaml .emptyDir | nindent 6 }}

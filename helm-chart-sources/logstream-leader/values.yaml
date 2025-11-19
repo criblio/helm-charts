@@ -9,7 +9,7 @@ criblImage:
   repository: cribl/cribl
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: 4.14.1
+  tag: 4.15.0
   wolfiImage: false
 
 imagePullSecrets: []

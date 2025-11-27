@@ -62,8 +62,8 @@ containers:
       # Self-Signed Certs
       - name: NODE_TLS_REJECT_UNAUTHORIZED
         value: "{{ .Values.config.rejectSelfSignedCerts }}"
-      {{ if .Values.envValueFrom }}
-      {{ toYaml .Values.envValueFrom | nindent 6  }}
+      {{- if .Values.envValueFrom }}
+      {{- toYaml .Values.envValueFrom | nindent 6  }}
       {{- end }}
       {{- range $key, $value := .Values.env }}
       - name: {{ $key }}

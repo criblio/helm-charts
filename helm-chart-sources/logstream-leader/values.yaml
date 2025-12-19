@@ -125,6 +125,7 @@ securityContext: {}
 ingress:
   enable: false
   annotations: {}
+  labels: {}
   tls: []
 #    - hosts:
 #        - cribl.example.com

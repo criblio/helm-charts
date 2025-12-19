@@ -100,8 +100,8 @@ containers:
       # Single Volume for persistence (CRIBL-3848)
       - name: CRIBL_VOLUME_DIR
         value: {{ .Values.config.criblHome }}/config-volume
-      {{ if .Values.envValueFrom }}
-      {{ toYaml .Values.envValueFrom | nindent 6  }}
+      {{- if .Values.envValueFrom }}
+      {{- toYaml .Values.envValueFrom | nindent 6  }}
       {{- end }}
       {{- range $key, $value := .Values.env }}
       - name: {{ $key }}

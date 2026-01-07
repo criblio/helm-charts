@@ -83,28 +83,15 @@ helm upgrade ls-wg-pci cribl/logstream-workergroup -n cribl-stream
 helm upgrade ls-wg-system-metrics cribl/logstream-workergroup -n cribl-stream
 ```
 
+# Contributing
+
+We welcome contributions! If you're interested in developing or contributing to these Helm charts, please see our [CONTRIBUTING.md](CONTRIBUTING.md) for detailed information on:
+
+- Repository structure and development workflow
+- Testing and validation procedures
+- Coding standards and best practices
+- Release process
+
 # Support
 
 Our community supports all items in the Cribl Helm repository – Please join our [Slack Community](https://cribl.io/community/)!
-
-# Running unit tests
-
-Unit tests are implemented using [helm-unittest](https://github.com/helm-unittest/helm-unittest/).
-
-Using their docker image is the simplest way to run the tests. The pattern is
-
-```shell
-docker run -ti --rm -v "$(pwd):/apps" helmunittest/helm-unittest PATH_TO_CHART
-```
-
-Testing logstream-leader
-
-```shell
-docker run -ti --rm -v "$(pwd):/apps" helmunittest/helm-unittest helm-chart-sources/logstream-leader
-```
-
-Testing logstream-workergroup
-
-```shell
-docker run -ti --rm -v "$(pwd):/apps" helmunittest/helm-unittest helm-chart-sources/logstream-workergroup
-```

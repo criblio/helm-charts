@@ -2110,6 +2110,28 @@ entries:
     version: 2.4.5
   outpost:
   - apiVersion: v2
+    appVersion: 4.15.1
+    created: "2025-12-17T10:35:56.456608491Z"
+    description: Deployment of Cribl Outpost on K8s
+    digest: 548fa6c3629b301783ba5586fd1d434d17ebc17bed860ddea1b47ef4df43bc45
+    icon: https://criblio.github.io/helm-charts/images/Cribl_Logo_Color_TM.png
+    name: outpost
+    type: application
+    urls:
+    - https://github.com/criblio/helm-charts/releases/download/v4.15.1/outpost-4.14.1.tgz
+    version: 4.15.1
+  - apiVersion: v2
+    appVersion: 4.15.0
+    created: "2025-11-19T10:08:48.539481952Z"
+    description: Deployment of Cribl Outpost on K8s
+    digest: 5aaf5e5e8e3c769b3b63694d5a3495836e2af2ddff1a04da2a4264c2ca12324d
+    icon: https://criblio.github.io/helm-charts/images/Cribl_Logo_Color_TM.png
+    name: outpost
+    type: application
+    urls:
+    - https://github.com/criblio/helm-charts/releases/download/v4.15.0/outpost-4.14.1.tgz
+    version: 4.15.0
+  - apiVersion: v2
     appVersion: 4.14.1
     created: "2025-12-17T10:35:56.458929777Z"
     description: Deployment of Cribl Outpost on K8s

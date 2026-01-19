@@ -8,7 +8,9 @@ metadata:
   labels:
     {{- include "logstream-workergroup.labels" $ | nindent 4 }}
     {{- $labels := merge (.labels | default dict) $.Values.ingress.labels }}
+    {{- if $labels }}
     {{- toYaml $labels  | nindent 4 }}
+    {{- end }}
   annotations:
     {{- $annotations := merge (.annotations | default dict) $.Values.ingress.annotations }}
     {{- toYaml $annotations | nindent 4 }}

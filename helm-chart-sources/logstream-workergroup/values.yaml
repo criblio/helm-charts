@@ -175,6 +175,8 @@ autoscaling:
 ingress:
   # -- Enable creation of ingress resources
   enable: false
+  # Labels applied to all ingresses
+  labels: {}
   # Annotations applied to all ingresses
   annotations: {}
   # `ingressClassName` applied to all ingresses
@@ -187,6 +189,8 @@ ingress:
 #      tls: []
 #      # Override the ingressClassName for this ingress
 #      ingressClassName:
+#      # Extra labels for this ingress
+#      labels: {}
 #      # Annotation overrides (merged with defaults)
 #      annotations: {}
 #      # Array of Ingress rules

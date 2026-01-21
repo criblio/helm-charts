@@ -51,6 +51,9 @@ This section covers the most likely values to override. To see the full scope of
 |service.loadBalancerSourceRanges|see `values.yaml`|Allows for third-party load balancers to restrict access the defined IP ranges. Consult the [Kubernetes documentation](https://kubernetes.io/docs/concepts/services-networking/service/#aws-nlb-support) for more information.|
 |ingress|see `values.yaml`|Ingress controller configuration|
 |ingress.enable|false|Enable creating Ingress resources|
+|ingress.annotations|{}|If `ingress.enable` is set to `true`, this is where you'll want to put annotations to configure the specific ingress controller. _*NOTE: Ingress is supported only on Kubernetes 1.19 and later clusters*_. |
+|ingress.labels|{}|Additional labels to add to the Ingress resource. Label values should be strings.|
+|ingress.ingressClassName|none|Override the default ingress class ([added in Kubernetes 1.18](https://kubernetes.io/docs/concepts/services-networking/ingress/#deprecated-annotation))|
 |criblImage.tag|"3.4.0"|The container image tag to pull from. By default, this will use the version equivalent to the chart's `appVersion` value. But you can override this with "latest" to get the latest release, or with a version number (e.g., "3.4.0") to pull a specific version of Cribl Stream. |
 |criblImage.wolfiImage|false|Cribl publishes 2 versions of the container, the default based on Ubuntu and the alternative version based on Wolfi.  This setting should only be enabled if you want to use Cribl's published Wolfi container image.|
 |autoscaling.minReplicas|2|The minimum number of Cribl Stream pods to run.|

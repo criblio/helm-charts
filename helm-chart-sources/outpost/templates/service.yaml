@@ -1,0 +1,29 @@
+{{- if .Values.service.enable }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "outpost.fullname" . }}
+  labels:
+    {{- include "outpost.labels" . | nindent 4 }}
+  annotations:
+    {{- toYaml .Values.service.annotations  | nindent 4 }}
+
+spec:
+  type: {{ .Values.service.type }}
+  {{- if and (eq .Values.service.type "LoadBalancer") (.Values.service.loadBalancerIP) }}
+  loadBalancerIP: {{ .Values.service.loadBalancerIP }}
+  {{- end }}
+  {{- if and (or (eq .Values.service.type "LoadBalancer") (eq .Values.service.type "NodePort")) (.Values.service.externalTrafficPolicy) }}
+  externalTrafficPolicy: {{ .Values.service.externalTrafficPolicy }}
+  {{- end }}
+  ports:
+      {{-  range .Values.service.ports }}
+      - port: {{ .port }}
+        targetPort: {{ .port }}
+        protocol: {{ .protocol }}
+        name: {{ .name }}
+      {{- end }}
+  selector:
+    {{- include "outpost.selectorLabels" . | nindent 4 }}
+{{- end }}
+

@@ -11,7 +11,7 @@ If you're migrating from the deprecated `logstream‑master` chart, please see t
 
 # New Capabilities
 
-* Support for the 4.11.0 version of Cribl Stream (default version)
+* Support for the 4.16.1 version of Cribl Stream (default version)
 
 # Deployment
 
@@ -54,6 +54,9 @@ This section covers the most likely values to override. To see the full scope of
 |config.probes|true|Perform health checks on the Leader pod. Recommended that this be enabled to automatically restart the Leader if the Pod is unhealthy.|
 |config.livenessProbe|see `values.yaml`|[livenessProbe](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-a-liveness-http-request) configuration|
 |config.readinessProbe|see `values.yaml`|[readinessProbe](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-readiness-probes) configuration|
+|serviceAccount.create|false|Create a ServiceAccount used by the Pods.|
+|serviceAccount.name|`undefined`|The ServiceAccount name. If `serviceAccount.create` is true, the ServiceAccount is named this value. If false, the ServiceAccount must already exist. If `serviceAccount.create` is true and this value is undefined, the ServiceAccount is named the same as the fullname. |
+| serviceAccount.annotations                                                     | `{}`              | Annotations to add to the service account                                           |
 |service.internalType|ClusterIP|The type to use for the `<release>-leader-internal` service. In 2.4.5 and beyond, this is set to ClusterIP by default. If you have any workergroups outside of the kubernetes cluster where the leader lives, you'll need to change this to NodePort or LoadBalancer to expose it outside of the cluster.|
 |service.internalLoadBalancerIP|none (IP Address)|The IP address to use for the load balancer service interface, if the internalType is set to LoadBalancer. Check with your Kubernetes setup to see if this is supported. |
 |service.externalType|LoadBalancer|The type to use for the user facing `<release>-leader` service. If ingress.enable is set, this will be force set to NodePort, to work with the ingress.| 
@@ -61,6 +64,7 @@ This section covers the most likely values to override. To see the full scope of
 |service.ports|[]|<pre>- name: api<br>  port: 9000<br>  protocol: TCP<br>  external: true<br>- name: leadercomm<br>  port: 4200<br>  protocol: TCP<br>  external: false</pre>|The ports to make available both in the Deployment and the Service. Each "map" in the list needs the following values set: <dl><dt>containerPort</dt><dd>the port to be made available</dd><dt>name</dt><dd>a descriptive name of what the port is being used for</dd><dt>protocol</dt><dd>the protocol in use for this port (UDP/TCP)</dd><dt>external</dt><dd>Set to true to be exposed on the external service, or false not to</dd></dl>|
 |service.annotations|{}|Annotations for the service component – this is where you'll want to put load-balancer-specific configuration directives.|
 |criblImage.tag|3.4.0|The container image tag to pull from. By default, this will use the same version as the chart release, but you can also use version tags (like "3.3.1") to pull specific versions of Cribl Stream. |
+|criblImage.wolfiImage|false|Cribl publishes 2 versions of the container, the default based on Ubuntu and the alternative version based on Wolfi.  This setting should only be enabled if you want to use Cribl's published Wolfi container image.|
 |consolidate_volumes|boolean|If this value exists, and the `helm` command is `upgrade`, this will use the split volumes that we created in charts before 2.4 and consolidate them down to one config volume. This is a ONE-TIME event.|
 |nodeSelector|{}|Add nodeSelector values to define which nodes the pods are scheduled on - see [k8s Documentation](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/) for details and allowed values. |
 |__Extra Configuration Options__|
@@ -76,6 +80,7 @@ This section covers the most likely values to override. To see the full scope of
 |[env](../../common_docs/EXTRA_EXAMPLES.md#env)|[]|Additional static environment variables.|
 |ingress.enable|false|Enable Ingress in front of the external service. Setting this to `true` changes the external service to type `NodePort`, and creates an ingress that connects to it.|
 |ingress.annotations|{}|If `ingress.enable` is set to `true`, this is where you'll want to put annotations to configure the specific ingress controller. _*NOTE: Ingress is supported only on Kubernetes 1.19 and later clusters*_. |
+|ingress.labels|{}|Additional labels to add to the Ingress resource (`metadata.labels`). Label values should be strings.|
 |ingress.tls|[]|[Ingress TLS configuration](https://kubernetes.io/docs/concepts/services-networking/ingress/#tls)|
 |ingress.ingressClassName|none|Override the default ingress class ([added in Kubernetes 1.18](https://kubernetes.io/docs/concepts/services-networking/ingress/#deprecated-annotation))|
 |ingress.path|`/*`|The Ingress path Prefix|

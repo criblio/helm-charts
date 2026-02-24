@@ -1,15 +1,14 @@
-{{- if (eq .Values.deployment "deployment") -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "logstream-workergroup.fullname" . }}
+  name: {{ include "outpost.fullname" . }}
   labels:
-    {{- include "logstream-workergroup.labels" . | nindent 4 }}
+    {{- include "outpost.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      {{- include "logstream-workergroup.selectorLabels" . | nindent 6 }}
+      {{- include "outpost.selectorLabels" . | nindent 6 }}
   {{- if (.Values.strategy) }}
   {{- if and (ne .Values.strategy.type "Recreate") (ne .Values.strategy.type "RollingUpdate") }}
       {{- fail (printf "Not a valid strategy type for Deployment (%s)" .Values.strategy.type) }}
@@ -19,16 +18,19 @@ spec:
   {{- end }}
   template:
     metadata:
-    {{- with .Values.podAnnotations }}
       annotations:
+    {{- with .Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
     {{- end }}
     {{- if .Values.includeSecretConfigAnnotation }}
-      checksum/secret: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
+        checksum/config: {{ include (print .Template.BasePath "/secret.yaml") . | sha256sum }}
     {{- end }}
       labels:
-        {{- include "logstream-workergroup.selectorLabels" . | nindent 8 }}
+        {{- include "outpost.selectorLabels" . | nindent 8 }}
+    {{- with .Values.labels }}
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
 
     spec:
-      {{- include "workergroup.pod" . | nindent 8 }}
-{{- end }}
+      {{- include "outpost.pod" . | nindent 8 }}
+

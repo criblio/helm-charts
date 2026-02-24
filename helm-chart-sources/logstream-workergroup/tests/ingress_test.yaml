@@ -108,3 +108,78 @@ tests:
             top: gun
             need: speed
             override: yes
+
+  - it: Should use "global" labels
+    set:
+      ingress:
+        enable: true
+        labels:
+          foo: bar
+          goat: "true"
+        ingress:
+          - name: goat
+            rules:
+              - paths:
+                  - path: /
+                    port: 8001
+
+    asserts:
+      - notFailedTemplate: {}
+      - equal:
+          path: metadata.labels.foo
+          value: bar
+      - equal:
+          path: metadata.labels.goat
+          value: "true"
+
+  - it: Should use "local" labels
+    set:
+      ingress:
+        enable: true
+        ingress:
+          - name: goat
+            labels:
+              foo: bar
+              goat: "true"
+            rules:
+              - paths:
+                  - path: /
+                    port: 8001
+
+    asserts:
+      - notFailedTemplate: {}
+      - equal:
+          path: metadata.labels.foo
+          value: bar
+      - equal:
+          path: metadata.labels.goat
+          value: "true"
+
+  - it: Should merge labels
+    set:
+      ingress:
+        enable: true
+        labels:
+          top: gun
+          override: me
+        ingress:
+          - name: goat
+            labels:
+              need: speed
+              override: yes
+            rules:
+              - paths:
+                  - path: /
+                    port: 8001
+
+    asserts:
+      - notFailedTemplate: { }
+      - equal:
+          path: metadata.labels.top
+          value: gun
+      - equal:
+          path: metadata.labels.need
+          value: speed
+      - equal:
+          path: metadata.labels.override
+          value: yes

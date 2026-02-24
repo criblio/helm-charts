@@ -1,6 +1,6 @@
 apiVersion: v2
-name: logstream-workergroup
-description: Deployment of Cribl Stream Worker Group on K8s
+name: outpost
+description: Deployment of Cribl Outpost on K8s
 icon: https://criblio.github.io/helm-charts/images/Cribl_Logo_Color_TM.png
 # A chart can be either an 'application' or a 'library' chart.
 #

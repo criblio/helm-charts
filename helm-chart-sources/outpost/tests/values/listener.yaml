@@ -1,0 +1,5 @@
+# Test values for listener configuration
+cribl:
+  leader: tcp://testtoken@logstream-leader-internal:4200/?group=outpost&tag=outpost
+  listener: tcp://outposttoken@0.0.0.0:4200
+

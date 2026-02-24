@@ -11,6 +11,10 @@ spec:
   selector:
     matchLabels:
       {{- include "logstream-workergroup.selectorLabels" . | nindent 6 }}
+  {{- with .Values.statefulset.persistentVolumeClaimRetentionPolicy}}
+  persistentVolumeClaimRetentionPolicy:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
   {{- if (.Values.strategy) }}
   {{- if and (ne .Values.strategy.type "OnDelete") (ne .Values.strategy.type "RollingUpdate") }}
       {{- fail (printf "Not a valid strategy type for StatefulSet (%s)" .Values.strategy.type) }}
@@ -39,3 +43,4 @@ spec:
     - {{ .claimTemplate | toYaml | indent 6 | trim }}
     {{- end }}
 {{- end }}
+

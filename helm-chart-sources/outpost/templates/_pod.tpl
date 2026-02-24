@@ -1,6 +1,6 @@
-{{- define "workergroup.pod" -}}
+{{- define "outpost.pod" -}}
 {{- if or .Values.serviceAccount.create (and (not .Values.serviceAccount.create) .Values.serviceAccount.name) }}
-serviceAccountName: {{ include "logstream-workergroup.serviceAccountName" . }}
+serviceAccountName: {{ include "outpost.serviceAccountName" . }}
 {{- end }}
 
 {{- with .Values.imagePullSecrets }}
@@ -11,18 +11,9 @@ imagePullSecrets:
 initContainers:
   {{- toYaml . | nindent 8 }}
 {{- end }}
-{{- if .Values.config.hostNetwork }}
-hostNetwork: true
-{{- end }}
 {{- if .Values.podSecurityContext }}
 securityContext:
-{{- range $key, $value := .Values.podSecurityContext }}
-{{- if or (eq $key "runAsUser") (eq $key "runAsGroup") (eq $key "fsGroup")}}
-  {{ $key }}: {{ $value | int }}
-{{- else }}
-  {{ $key }}: {{ $value }}
-{{- end }}
-{{- end }}
+  {{- toYaml .Values.podSecurityContext | nindent 2 }}
 {{- end }}
 containers:
   - name: {{ .Chart.Name }}
@@ -41,53 +32,95 @@ containers:
     {{- end }}
     {{- end }}
     {{- end }}
-    {{- if .Values.config.probes }}
-    {{- with .Values.config.livenessProbe }}
+    {{- if .Values.cribl.probes }}
+    {{- with .Values.cribl.livenessProbe }}
     livenessProbe:
       {{- toYaml . | nindent 6 }}
     {{- end }}
-    {{- with .Values.config.readinessProbe }}
+    {{- with .Values.cribl.readinessProbe }}
     readinessProbe:
       {{- toYaml . | nindent 6 }}
     {{- end }}
     {{- end }}
     env:
-      {{- if not .Values.config.useExistingSecret }}
-      - name: CRIBL_DIST_MASTER_URL
+      - name: CRIBL_DIST_LEADER_URL
         valueFrom:
           secretKeyRef:
-            name: logstream-config-{{ include "logstream-workergroup.fullname" . }}
-            key: url-master
+            {{- if ((.Values.cribl).existingSecretForLeader) }}
+            name: {{ .Values.cribl.existingSecretForLeader }}
+            {{- else }}
+            name: {{ include "outpost.fullname" . }}-cribl-settings
+            {{- end }}
+            key: CRIBL_DIST_LEADER_URL
+      - name: CRIBL_HOME
+        value: {{ .Values.cribl.home }}
+      - name: CRIBL_DIST_MODE
+        value: outpost
+      {{- if .Values.cribl.listener }}
+      - name: CRIBL_OUTPOST_LISTENER_URL
+        value: {{ .Values.cribl.listener | quote }}
+      {{- end }}
+      {{- if .Values.cribl.config }}
+      - name: CRIBL_BOOTSTRAP
+        valueFrom:
+          secretKeyRef:
+            {{- if ((.Values.cribl).existingSecretForConfig) }}
+            name: {{ .Values.cribl.existingSecretForConfig }}
+            {{- else }}
+            name: {{ include "outpost.fullname" . }}-cribl-settings
+            {{- end }}
+            key: CRIBL_BOOTSTRAP
       {{- end }}
       # Self-Signed Certs
       - name: NODE_TLS_REJECT_UNAUTHORIZED
-        value: "{{ .Values.config.rejectSelfSignedCerts }}"
+        value: "{{ .Values.cribl.rejectSelfSignedCerts }}"
+      {{- range $key, $value := .Values.extraEnv }}
+      - name: {{ tpl $key $ }}
+        value: "{{ tpl (print $value) $ }}"
+      {{- end }}
       {{ if .Values.envValueFrom }}
       {{ toYaml .Values.envValueFrom | nindent 6  }}
       {{- end }}
       {{- range $key, $value := .Values.env }}
-      - name: {{ $key }}
-        value: {{ $value | quote }}
+      - name: {{ tpl $key $ }}
+        value: "{{ tpl (print $value) $ }}"
       {{- end }}
+    {{- if .Values.extraEnvFrom }}
+    envFrom:
+      {{- toYaml .Values.extraEnvFrom | nindent 6 }}
+    {{- end }}
 
     volumeMounts:
+      {{- if ((.Values.cribl.listenerTLS).existingSecret) }}
+      - name: listener-tls-certs
+        mountPath: {{ .Values.cribl.listenerTLS.mountPath | default "/etc/cribl/certs" }}
+        readOnly: true
+      {{- end }}
       {{- range .Values.extraConfigmapMounts }}
       - name: {{ .name }}
         mountPath: {{ .mountPath }}
-        subPath: {{ .subPath | default "" }}
+        {{- if .subPath }}
+        subPath: {{ .subPath }}
+        {{- end }}
         readOnly: {{ .readOnly }}
       {{- end }}
       {{- range .Values.extraSecretMounts }}
       - name: {{ .name }}
         mountPath: {{ .mountPath }}
-        subPath: {{ .subPath | default "" }}
+        {{- if .subPath }}
+        subPath: {{ .subPath }}
+        {{- end }}
         readOnly: {{ .readOnly }}
       {{- end }}
       {{- range .Values.extraVolumeMounts }}
       - name: {{ .name }}
         mountPath: {{ .mountPath }}
-        subPath: {{ .subPath | default "" }}
-        subPathExpr: {{ .subPathExpr | default "" }}
+        {{- if .subPath }}
+        subPath: {{ .subPath }}
+        {{- end }}
+        {{- if .subPathExpr }}
+        subPathExpr: {{ .subPathExpr }}
+        {{- end }}
         readOnly: {{ .readOnly }}
       {{- end }}
 
@@ -124,7 +157,11 @@ tolerations:
 {{- end }}
 
 volumes: 
-  {{- if (ne .Values.deployment "statefulset") -}}
+  {{- if ((.Values.cribl.listenerTLS).existingSecret) }}
+  - name: listener-tls-certs
+    secret:
+      secretName: {{ .Values.cribl.listenerTLS.existingSecret }}
+  {{- end }}
   {{- range .Values.extraVolumeMounts }}
   - name: {{ .name }}
     {{- if .existingClaim }}
@@ -136,7 +173,6 @@ volumes:
     {{- else }}
     emptyDir: {}
     {{- end }}
-  {{- end }}
   {{- end }}
   {{- range .Values.extraConfigmapMounts }}
   - name: {{ .name }}
@@ -163,3 +199,4 @@ terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
 {{- end }}
 
 {{- end }}
+

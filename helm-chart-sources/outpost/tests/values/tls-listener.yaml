@@ -1,0 +1,8 @@
+# Test values for TLS listener configuration
+cribl:
+  leader: tcp://testtoken@logstream-leader-internal:4200/?group=outpost&tag=outpost
+  listener: tls://outposttoken@0.0.0.0:4200?tls.certPath=/etc/cribl/certs/tls.crt&tls.keyPath=/etc/cribl/certs/tls.key
+  listenerTLS:
+    existingSecret: outpost-tls-secret
+    mountPath: /etc/cribl/certs
+

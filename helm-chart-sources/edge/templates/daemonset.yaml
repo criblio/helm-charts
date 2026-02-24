@@ -79,7 +79,7 @@ spec:
       {{- end }}
       containers:
         - name: {{ .Chart.Name }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}{{ if .Values.image.wolfiImage }}-wolfi{{ end }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           {{- with .Values.cribl.readinessProbe }}
           readinessProbe:

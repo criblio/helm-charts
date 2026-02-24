@@ -1,0 +1,435 @@
+suite: Deployment
+templates:
+  - deployment.yaml
+tests:
+  - it: Should have health checks by default
+    set:
+      cribl.leader: tcp://token@leader:4200
+    asserts:
+      - exists:
+          path: spec.template.spec.containers[0].readinessProbe
+      - exists:
+          path: spec.template.spec.containers[0].livenessProbe
+
+  - it: Should disable health checks
+    set:
+      cribl:
+        leader: tcp://token@leader:4200
+        probes: false
+    asserts:
+      - notExists:
+          path: spec.template.spec.containers[0].readinessProbe
+      - notExists:
+          path: spec.template.spec.containers[0].livenessProbe
+
+  - it: Should customize health checks
+    set:
+      cribl:
+        leader: tcp://token@leader:4200
+        readinessProbe:
+          httpGet:
+            path: /isnt/a/real/endpoint
+            port: 420
+            scheme: HTTPS
+          initialDelaySeconds: 5
+          failureThreshold: 1
+        livenessProbe:
+          httpGet: null
+          initialDelaySeconds: null
+          failureThreshold: null
+          foo: bar
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].readinessProbe
+          value:
+            httpGet:
+              path: /isnt/a/real/endpoint
+              port: 420
+              scheme: HTTPS
+            initialDelaySeconds: 5
+            failureThreshold: 1
+      - equal:
+          path: spec.template.spec.containers[0].livenessProbe
+          value:
+            foo: bar
+
+  - it: Should define TCP as the default protocol for a port
+    set:
+      cribl.leader: tcp://token@leader:4200
+      service:
+        ports:
+          - name: foo
+            port: 420
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].ports
+          value:
+            - name: foo
+              containerPort: 420
+              protocol: TCP
+
+  - it: Should define UDP as the protocol for a port
+    set:
+      cribl.leader: tcp://token@leader:4200
+      service:
+        ports:
+          - name: foo
+            port: 420
+            protocol: UDP
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].ports
+          value:
+            - name: foo
+              containerPort: 420
+              protocol: UDP
+
+  - it: Should set envValueFrom
+    set:
+      cribl.leader: tcp://token@leader:4200
+      envValueFrom:
+        # works with "value"
+        - name: ENV1
+          value: test
+        # works with "valueFrom" too
+        - name: ENV2
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+    asserts:
+      - exists:
+          path: spec.template.spec.containers[0].env
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: ENV1
+            value: test
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: ENV2
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+
+  - it: Appends -wolfi suffix when wolfiImage is true
+    set:
+      cribl:
+        leader: tcp://token@leader:4200
+      criblImage:
+        repository: foo/bar
+        tag: 42.0.0
+        wolfiImage: true
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: foo/bar:42.0.0-wolfi
+
+  - it: Does not append -wolfi suffix when wolfiImage is false
+    set:
+      cribl:
+        leader: tcp://token@leader:4200
+      criblImage:
+        repository: foo/bar
+        tag: 42.0.0
+        wolfiImage: false
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: foo/bar:42.0.0
+
+  - it: Should set CRIBL_HOME environment variable
+    set:
+      cribl:
+        leader: tcp://token@leader:4200
+        home: /custom/path
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CRIBL_HOME
+            value: /custom/path
+
+  - it: Should set CRIBL_OUTPOST_LISTENER_URL when listener is configured
+    set:
+      cribl:
+        leader: tcp://token@leader:4200
+        listener: tcp://outposttoken@0.0.0.0:4200
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CRIBL_OUTPOST_LISTENER_URL
+            value: "tcp://outposttoken@0.0.0.0:4200"
+
+  - it: Should set default CRIBL_OUTPOST_LISTENER_URL
+    set:
+      cribl:
+        leader: tcp://token@leader:4200
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CRIBL_OUTPOST_LISTENER_URL
+            value: "tcp://0.0.0.0:4200"
+
+  - it: Should not set CRIBL_OUTPOST_LISTENER_URL when listener is empty string
+    set:
+      cribl:
+        leader: tcp://token@leader:4200
+        listener: ""
+    asserts:
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CRIBL_OUTPOST_LISTENER_URL
+
+  - it: Should set NODE_TLS_REJECT_UNAUTHORIZED
+    set:
+      cribl:
+        leader: tcp://token@leader:4200
+        rejectSelfSignedCerts: 1
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: NODE_TLS_REJECT_UNAUTHORIZED
+            value: "1"
+
+  - it: Should mount TLS certificates when listenerTLS.existingSecret is set
+    set:
+      cribl:
+        leader: tcp://token@leader:4200
+        listener: tls://outposttoken@0.0.0.0:4200?tls.certPath=/etc/cribl/certs/tls.crt&tls.keyPath=/etc/cribl/certs/tls.key
+        listenerTLS:
+          existingSecret: my-tls-secret
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            name: listener-tls-certs
+            mountPath: /etc/cribl/certs
+            readOnly: true
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: listener-tls-certs
+            secret:
+              secretName: my-tls-secret
+
+  - it: Should use custom mountPath for TLS certificates
+    set:
+      cribl:
+        leader: tcp://token@leader:4200
+        listenerTLS:
+          existingSecret: my-tls-secret
+          mountPath: /custom/tls/path
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            name: listener-tls-certs
+            mountPath: /custom/tls/path
+            readOnly: true
+
+  - it: Should set extraEnv variables
+    set:
+      cribl:
+        leader: tcp://token@leader:4200
+      extraEnv:
+        CUSTOM_VAR: "custom_value"
+        ANOTHER_VAR: "another_value"
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CUSTOM_VAR
+            value: "custom_value"
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: ANOTHER_VAR
+            value: "another_value"
+
+  - it: Should set replicaCount
+    set:
+      cribl.leader: tcp://token@leader:4200
+      replicaCount: 3
+    asserts:
+      - equal:
+          path: spec.replicas
+          value: 3
+
+  - it: Should set nodeSelector
+    set:
+      cribl.leader: tcp://token@leader:4200
+      nodeSelector:
+        disktype: ssd
+    asserts:
+      - equal:
+          path: spec.template.spec.nodeSelector.disktype
+          value: ssd
+
+  - it: Should set tolerations
+    set:
+      cribl.leader: tcp://token@leader:4200
+      tolerations:
+        - key: "key1"
+          operator: "Equal"
+          value: "value1"
+          effect: "NoSchedule"
+    asserts:
+      - contains:
+          path: spec.template.spec.tolerations
+          content:
+            key: "key1"
+            operator: "Equal"
+            value: "value1"
+            effect: "NoSchedule"
+
+  - it: Should set affinity
+    set:
+      cribl.leader: tcp://token@leader:4200
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/e2e-az-name
+                    operator: In
+                    values:
+                      - e2e-az1
+    asserts:
+      - exists:
+          path: spec.template.spec.affinity.nodeAffinity
+
+  - it: Should set resources
+    set:
+      cribl.leader: tcp://token@leader:4200
+      resources:
+        limits:
+          cpu: 3000m
+          memory: 8192Mi
+        requests:
+          cpu: 1000m
+          memory: 2048Mi
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].resources.limits.cpu
+          value: 3000m
+      - equal:
+          path: spec.template.spec.containers[0].resources.limits.memory
+          value: 8192Mi
+      - equal:
+          path: spec.template.spec.containers[0].resources.requests.cpu
+          value: 1000m
+      - equal:
+          path: spec.template.spec.containers[0].resources.requests.memory
+          value: 2048Mi
+
+  - it: Should set imagePullSecrets
+    set:
+      cribl.leader: tcp://token@leader:4200
+      imagePullSecrets:
+        - name: myregistrykey
+    asserts:
+      - contains:
+          path: spec.template.spec.imagePullSecrets
+          content:
+            name: myregistrykey
+
+  - it: Should set terminationGracePeriodSeconds
+    set:
+      cribl.leader: tcp://token@leader:4200
+      terminationGracePeriodSeconds: 120
+    asserts:
+      - equal:
+          path: spec.template.spec.terminationGracePeriodSeconds
+          value: 120
+
+  - it: Should add extra containers
+    set:
+      cribl.leader: tcp://token@leader:4200
+      extraContainers:
+        - name: sidecar
+          image: busybox:latest
+          command: ["sleep", "3600"]
+    asserts:
+      - contains:
+          path: spec.template.spec.containers
+          content:
+            name: sidecar
+            image: busybox:latest
+            command: ["sleep", "3600"]
+
+  - it: Should add extra init containers
+    set:
+      cribl.leader: tcp://token@leader:4200
+      extraInitContainers:
+        - name: init-myservice
+          image: busybox:latest
+          command: ['sh', '-c', 'echo initializing']
+    asserts:
+      - contains:
+          path: spec.template.spec.initContainers
+          content:
+            name: init-myservice
+            image: busybox:latest
+            command: ['sh', '-c', 'echo initializing']
+
+  - it: Should not include secret config annotation when disabled
+    set:
+      cribl.leader: tcp://token@leader:4200
+      includeSecretConfigAnnotation: false
+    asserts:
+      - notExists:
+          path: spec.template.metadata.annotations["checksum/config"]
+
+  - it: Should set podAnnotations
+    set:
+      cribl.leader: tcp://token@leader:4200
+      podAnnotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9000"
+    asserts:
+      - equal:
+          path: spec.template.metadata.annotations["prometheus.io/scrape"]
+          value: "true"
+      - equal:
+          path: spec.template.metadata.annotations["prometheus.io/port"]
+          value: "9000"
+
+  - it: Should set podSecurityContext
+    set:
+      cribl.leader: tcp://token@leader:4200
+      podSecurityContext:
+        runAsUser: 1000
+        runAsGroup: 3000
+        fsGroup: 2000
+    asserts:
+      - equal:
+          path: spec.template.spec.securityContext.runAsUser
+          value: 1000
+      - equal:
+          path: spec.template.spec.securityContext.runAsGroup
+          value: 3000
+      - equal:
+          path: spec.template.spec.securityContext.fsGroup
+          value: 2000
+
+  - it: Should set securityContext
+    set:
+      cribl.leader: tcp://token@leader:4200
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+            - ALL
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].securityContext.allowPrivilegeEscalation
+          value: false
+      - contains:
+          path: spec.template.spec.containers[0].securityContext.capabilities.drop
+          content: ALL
+

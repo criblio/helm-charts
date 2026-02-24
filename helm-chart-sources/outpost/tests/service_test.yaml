@@ -1,0 +1,164 @@
+suite: Service
+templates:
+  - service.yaml
+tests:
+  - it: Should create a Service by default
+    set:
+      cribl.leader: tcp://token@leader:4200
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.type
+          value: ClusterIP
+
+  - it: Should not create a Service when disabled
+    set:
+      cribl.leader: tcp://token@leader:4200
+      service.enable: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: Should use default ports
+    set:
+      cribl.leader: tcp://token@leader:4200
+      service.enable: true
+    asserts:
+      - contains:
+          path: spec.ports
+          content:
+            name: api
+            port: 9000
+            targetPort: 9000
+            protocol: TCP
+      - contains:
+          path: spec.ports
+          content:
+            name: distmgt
+            port: 4200
+            targetPort: 4200
+            protocol: TCP
+
+  - it: Should use custom service type
+    set:
+      cribl.leader: tcp://token@leader:4200
+      service:
+        enable: true
+        type: LoadBalancer
+    asserts:
+      - equal:
+          path: spec.type
+          value: LoadBalancer
+
+  - it: Should use custom ports
+    set:
+      cribl.leader: tcp://token@leader:4200
+      service:
+        enable: true
+        ports:
+          - name: custom-api
+            port: 9999
+            protocol: TCP
+          - name: custom-distmgt
+            port: 4201
+            protocol: TCP
+    asserts:
+      - contains:
+          path: spec.ports
+          content:
+            name: custom-api
+            port: 9999
+            targetPort: 9999
+            protocol: TCP
+      - contains:
+          path: spec.ports
+          content:
+            name: custom-distmgt
+            port: 4201
+            targetPort: 4201
+            protocol: TCP
+
+  - it: Should not set annotations by default
+    set:
+      cribl.leader: tcp://token@leader:4200
+    asserts:
+      - equal:
+          path: metadata.annotations
+          value: {}
+
+  - it: Should set custom annotations
+    set:
+      cribl.leader: tcp://token@leader:4200
+      service:
+        annotations:
+          service.beta.kubernetes.io/aws-load-balancer-type: nlb
+          foo: bar
+    asserts:
+      - equal:
+          path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-type"]
+          value: nlb
+      - equal:
+          path: metadata.annotations.foo
+          value: bar
+
+  - it: Should set loadBalancerIP for LoadBalancer type
+    set:
+      cribl.leader: tcp://token@leader:4200
+      service:
+        enable: true
+        type: LoadBalancer
+        loadBalancerIP: 1.2.3.4
+    asserts:
+      - equal:
+          path: spec.loadBalancerIP
+          value: 1.2.3.4
+
+  - it: Should not set loadBalancerIP for ClusterIP type
+    set:
+      cribl.leader: tcp://token@leader:4200
+      service:
+        enable: true
+        type: ClusterIP
+        loadBalancerIP: 1.2.3.4
+    asserts:
+      - notExists:
+          path: spec.loadBalancerIP
+
+  - it: Should set externalTrafficPolicy for LoadBalancer
+    set:
+      cribl.leader: tcp://token@leader:4200
+      service:
+        enable: true
+        type: LoadBalancer
+        externalTrafficPolicy: Local
+    asserts:
+      - equal:
+          path: spec.externalTrafficPolicy
+          value: Local
+
+  - it: Should set externalTrafficPolicy for NodePort
+    set:
+      cribl.leader: tcp://token@leader:4200
+      service:
+        enable: true
+        type: NodePort
+        externalTrafficPolicy: Local
+    asserts:
+      - equal:
+          path: spec.externalTrafficPolicy
+          value: Local
+
+  - it: Should have correct selector labels
+    set:
+      cribl.leader: tcp://token@leader:4200
+    release:
+      name: test-release
+    asserts:
+      - equal:
+          path: spec.selector["app.kubernetes.io/name"]
+          value: outpost
+      - equal:
+          path: spec.selector["app.kubernetes.io/instance"]
+          value: test-release
+

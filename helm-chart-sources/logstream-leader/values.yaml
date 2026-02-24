@@ -9,7 +9,8 @@ criblImage:
   repository: cribl/cribl
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: 4.11.0
+  tag: 4.16.1
+  wolfiImage: false
 
 imagePullSecrets: []
 nameOverride: "leader"
@@ -99,6 +100,16 @@ service:
       protocol: TCP
       external: false
 
+serviceAccount:
+  # By default the service account is not created
+  create: false
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If name is not set and create is true, a default name is generated using the fullname template
+  # If create is false, and name is set, the service account must already exist
+  # name:
+
 strategy:
   type: Recreate
   rollingUpdate:
@@ -114,6 +125,7 @@ securityContext: {}
 ingress:
   enable: false
   annotations: {}
+  labels: {}
   tls: []
 #    - hosts:
 #        - cribl.example.com

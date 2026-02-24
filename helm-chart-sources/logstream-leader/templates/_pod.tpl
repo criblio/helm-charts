@@ -1,4 +1,8 @@
 {{- define "leader.pod" -}}
+{{- if or .Values.serviceAccount.create (and (not .Values.serviceAccount.create) .Values.serviceAccount.name) }}
+serviceAccountName: {{ include "logstream-leader.serviceAccountName" . }}
+{{- end }}
+
 {{- with .Values.imagePullSecrets }}
 imagePullSecrets:
   {{- toYaml . | nindent 8 }}
@@ -15,7 +19,7 @@ securityContext:
 {{- end }}
 containers:
   - name: {{ .Chart.Name }}
-    image: "{{ .Values.criblImage.repository }}:{{ .Values.criblImage.tag | default .Chart.AppVersion }}"
+    image: "{{ .Values.criblImage.repository }}:{{ .Values.criblImage.tag | default .Chart.AppVersion }}{{ if .Values.criblImage.wolfiImage }}-wolfi{{ end }}"
     imagePullPolicy: {{ .Values.criblImage.pullPolicy }}
     {{- if .Values.securityContext }}
     securityContext:

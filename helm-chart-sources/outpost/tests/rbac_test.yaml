@@ -1,0 +1,118 @@
+suite: RBAC
+templates:
+  - rbac/role.yaml
+  - rbac/rolebinding.yaml
+tests:
+  - it: should create RBAC resources by default
+    template: rbac/role.yaml
+    asserts:
+      - isKind:
+          of: Role
+      - equal:
+          path: metadata.name
+          value: "RELEASE-NAME-outpost:outpost:NAMESPACE"
+      - isSubset:
+          path: rules[0]
+          content:
+            apiGroups: [""]
+            resources: ["pods"]
+            verbs: ["get"]
+      - isSubset:
+          path: rules[1]
+          content:
+            apiGroups: ["apps"]
+            resources: ["deployments"]
+            verbs: ["get"]
+
+  - it: should create RoleBinding by default
+    template: rbac/rolebinding.yaml
+    asserts:
+      - isKind:
+          of: RoleBinding
+      - equal:
+          path: metadata.name
+          value: "RELEASE-NAME-outpost:outpost:NAMESPACE"
+      - equal:
+          path: subjects[0].name
+          value: "RELEASE-NAME-outpost"
+      - equal:
+          path: roleRef.name
+          value: "RELEASE-NAME-outpost:outpost:NAMESPACE"
+
+  - it: should not create RBAC resources when disabled
+    set:
+      rbac.create: false
+    template: rbac/role.yaml
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should not create RoleBinding when disabled
+    set:
+      rbac.create: false
+    template: rbac/rolebinding.yaml
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should allow custom RBAC name
+    set:
+      rbac.name: "custom-rbac-name"
+    template: rbac/role.yaml
+    asserts:
+      - equal:
+          path: metadata.name
+          value: "custom-rbac-name"
+
+  - it: should include extra roleRules
+    set:
+      rbac.extraRoleRules:
+        - apiGroups: ["apps"]
+          resources: ["deployments"]
+          verbs: ["list", "watch"]
+    template: rbac/role.yaml
+    asserts:
+      - isSubset:
+          path: rules[2]
+          content:
+            apiGroups: ["apps"]
+            resources: ["deployments"]
+            verbs: ["list", "watch"]
+
+  - it: should support custom annotations
+    set:
+      rbac.annotations:
+        custom: "annotation"
+        another: "value"
+    template: rbac/role.yaml
+    asserts:
+      - equal:
+          path: metadata.annotations.custom
+          value: "annotation"
+      - equal:
+          path: metadata.annotations.another
+          value: "value"
+
+  - it: should use custom service account name in RoleBinding
+    set:
+      serviceAccount.name: "custom-sa"
+    template: rbac/rolebinding.yaml
+    asserts:
+      - equal:
+          path: subjects[0].name
+          value: "custom-sa"
+
+  - it: should apply extraLabels to Role
+    set:
+      extraLabels:
+        team: "platform"
+        env: "prod"
+    template: rbac/role.yaml
+    asserts:
+      - equal:
+          path: metadata.labels.team
+          value: "platform"
+      - equal:
+          path: metadata.labels.env
+          value: "prod"
+

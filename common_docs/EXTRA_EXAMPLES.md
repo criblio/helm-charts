@@ -277,3 +277,18 @@ This example provides access to `deployments`, allowing verbs `get`, `list`, `wa
   resources: ["deployments"]
   verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
 ```
+
+## Using statefulset.persistentVolumeClaimRetentionPolicy <a name="statefulset.persistentVolumeClaimRetentionPolicy"></a>
+_Availability: logstream-workergroup_
+
+Use `statefulset.persistentVolumeClaimRetentionPolicy` to specify how the cluster should handle volumes when a stateful set scales down or is deleted. `Retain` is the default option. The documentation for this feature is available on this [K8s Doc Page](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#persistentvolumeclaim-retention)
+
+### Example
+This example will delete PVCs when the StatefulSet is scaled or deleted.
+
+```
+statefulset:
+  persistentVolumeClaimRetentionPolicy:
+    whenDeleted: Delete 
+    whenScaled: Delete
+```

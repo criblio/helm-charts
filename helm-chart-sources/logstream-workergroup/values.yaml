@@ -24,13 +24,15 @@ criblImage:
   repository: cribl/cribl
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: 4.11.0
+  tag: 4.16.1
+  wolfiImage: false
 
 imagePullSecrets: []
 nameOverride: ""
 
 config: 
   host: logstream-leader-internal
+  port: 4200
   group: kubernetes
   token: criblleader
   useExistingSecret: false
@@ -56,10 +58,21 @@ config:
 
 deployment: deployment
 
+statefulset:
+  persistentVolumeClaimRetentionPolicy: {}
+    # whenDeleted: Delete 
+    # whenScaled: Delete
+
 podAnnotations: {}
+
+# Add an annotation to the deployment pods that will automatically restart the
+# pods anytime there is a change to the secret for the logstream configuration.
+includeSecretConfigAnnotation: false
 
 nodeSelector: {}
 # tolerations: []
+
+affinity: {}
 
 #extraPodConfigs:
 #  topologySpreadConstraints: []
@@ -162,6 +175,8 @@ autoscaling:
 ingress:
   # -- Enable creation of ingress resources
   enable: false
+  # Labels applied to all ingresses
+  labels: {}
   # Annotations applied to all ingresses
   annotations: {}
   # `ingressClassName` applied to all ingresses
@@ -174,6 +189,8 @@ ingress:
 #      tls: []
 #      # Override the ingressClassName for this ingress
 #      ingressClassName:
+#      # Extra labels for this ingress
+#      labels: {}
 #      # Annotation overrides (merged with defaults)
 #      annotations: {}
 #      # Array of Ingress rules

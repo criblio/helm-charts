@@ -1,0 +1,300 @@
+suite: Volumes and Mounts
+templates:
+  - deployment.yaml
+tests:
+  - it: Should mount TLS certificates when listenerTLS.existingSecret is set
+    set:
+      cribl:
+        leader: tcp://token@leader:4200
+        listener: tls://token@0.0.0.0:4200?tls.certPath=/etc/cribl/certs/tls.crt&tls.keyPath=/etc/cribl/certs/tls.key
+        listenerTLS:
+          existingSecret: my-tls-secret
+          mountPath: /etc/cribl/certs
+    asserts:
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: listener-tls-certs
+            secret:
+              secretName: my-tls-secret
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            name: listener-tls-certs
+            mountPath: /etc/cribl/certs
+            readOnly: true
+
+  - it: Should mount extra ConfigMaps
+    set:
+      cribl:
+        leader: tcp://token@leader:4200
+      extraConfigmapMounts:
+        - name: config-volume
+          configMap: my-config
+          mountPath: /etc/config
+          readOnly: true
+        - name: config-volume-2
+          configMap: my-config-2
+          mountPath: /etc/config2
+          subPath: myfile.conf
+          readOnly: false
+    asserts:
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: config-volume
+            configMap:
+              name: my-config
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: config-volume-2
+            configMap:
+              name: my-config-2
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            name: config-volume
+            mountPath: /etc/config
+            readOnly: true
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            name: config-volume-2
+            mountPath: /etc/config2
+            subPath: myfile.conf
+            readOnly: false
+
+  - it: Should mount extra Secrets with secretName
+    set:
+      cribl:
+        leader: tcp://token@leader:4200
+      extraSecretMounts:
+        - name: secret-volume
+          secretName: my-secret
+          mountPath: /etc/secrets
+          readOnly: true
+          defaultMode: 0400
+    asserts:
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: secret-volume
+            secret:
+              secretName: my-secret
+              defaultMode: 0400
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            name: secret-volume
+            mountPath: /etc/secrets
+            readOnly: true
+
+  - it: Should mount extra Secrets with projected volumes
+    set:
+      cribl:
+        leader: tcp://token@leader:4200
+      extraSecretMounts:
+        - name: projected-volume
+          mountPath: /etc/projected
+          readOnly: true
+          projected:
+            sources:
+              - secret:
+                  name: secret1
+                  items:
+                    - key: key1
+                      path: file1
+              - secret:
+                  name: secret2
+                  items:
+                    - key: key2
+                      path: file2
+    asserts:
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: projected-volume
+            projected:
+              sources:
+                - secret:
+                    name: secret1
+                    items:
+                      - key: key1
+                        path: file1
+                - secret:
+                    name: secret2
+                    items:
+                      - key: key2
+                        path: file2
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            name: projected-volume
+            mountPath: /etc/projected
+            readOnly: true
+
+  - it: Should mount extra Secrets with CSI volumes
+    set:
+      cribl:
+        leader: tcp://token@leader:4200
+      extraSecretMounts:
+        - name: csi-volume
+          mountPath: /mnt/csi
+          readOnly: true
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: my-provider
+    asserts:
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: csi-volume
+            csi:
+              driver: secrets-store.csi.k8s.io
+              readOnly: true
+              volumeAttributes:
+                secretProviderClass: my-provider
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            name: csi-volume
+            mountPath: /mnt/csi
+            readOnly: true
+
+  - it: Should mount extra volumes with emptyDir
+    set:
+      cribl:
+        leader: tcp://token@leader:4200
+      extraVolumeMounts:
+        - name: temp-volume
+          mountPath: /tmp/data
+          readOnly: false
+    asserts:
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: temp-volume
+            emptyDir: {}
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            name: temp-volume
+            mountPath: /tmp/data
+            readOnly: false
+
+  - it: Should mount extra volumes with hostPath
+    set:
+      cribl:
+        leader: tcp://token@leader:4200
+      extraVolumeMounts:
+        - name: host-volume
+          mountPath: /host/data
+          hostPath: /var/lib/data
+          readOnly: true
+    asserts:
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: host-volume
+            hostPath:
+              path: /var/lib/data
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            name: host-volume
+            mountPath: /host/data
+            readOnly: true
+
+  - it: Should mount extra volumes with existingClaim
+    set:
+      cribl:
+        leader: tcp://token@leader:4200
+      extraVolumeMounts:
+        - name: pvc-volume
+          mountPath: /data
+          existingClaim: my-pvc
+          readOnly: false
+    asserts:
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: pvc-volume
+            persistentVolumeClaim:
+              claimName: my-pvc
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            name: pvc-volume
+            mountPath: /data
+            readOnly: false
+
+  - it: Should handle multiple volume types simultaneously
+    set:
+      cribl:
+        leader: tcp://token@leader:4200
+        listenerTLS:
+          existingSecret: tls-secret
+      extraConfigmapMounts:
+        - name: config-vol
+          configMap: my-config
+          mountPath: /etc/config
+          readOnly: true
+      extraSecretMounts:
+        - name: secret-vol
+          secretName: my-secret
+          mountPath: /etc/secrets
+          readOnly: true
+          defaultMode: 0400
+      extraVolumeMounts:
+        - name: data-vol
+          mountPath: /data
+          existingClaim: data-pvc
+          readOnly: false
+    asserts:
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: listener-tls-certs
+            secret:
+              secretName: tls-secret
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: config-vol
+            configMap:
+              name: my-config
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: secret-vol
+            secret:
+              secretName: my-secret
+              defaultMode: 0400
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: data-vol
+            persistentVolumeClaim:
+              claimName: data-pvc
+
+  - it: Should support subPathExpr in volume mounts
+    set:
+      cribl:
+        leader: tcp://token@leader:4200
+      extraVolumeMounts:
+        - name: logs-volume
+          mountPath: /logs
+          subPathExpr: $(CRIBL_K8S_POD)
+          readOnly: false
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            name: logs-volume
+            mountPath: /logs
+            subPathExpr: $(CRIBL_K8S_POD)
+            readOnly: false
+

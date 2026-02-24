@@ -1,0 +1,157 @@
+suite: Extras
+templates:
+  - extras.yaml
+tests:
+  - it: Should not create anything by default
+    set:
+      cribl.leader: tcp://token@leader:4200
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: Should create extra object from string
+    set:
+      cribl.leader: tcp://token@leader:4200
+      extraObjects:
+        - |
+          kind: ConfigMap
+          apiVersion: v1
+          metadata:
+            name: my-extra-config
+          data:
+            key: value
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: kind
+          value: ConfigMap
+      - isAPIVersion:
+          of: v1
+      - equal:
+          path: metadata.name
+          value: my-extra-config
+      - equal:
+          path: data.key
+          value: value
+
+  - it: Should create extra object from map
+    set:
+      cribl.leader: tcp://token@leader:4200
+      extraObjects:
+        - apiVersion: v1
+          kind: Secret
+          metadata:
+            name: my-extra-secret
+          type: Opaque
+          stringData:
+            password: supersecret
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: kind
+          value: Secret
+      - isAPIVersion:
+          of: v1
+      - equal:
+          path: metadata.name
+          value: my-extra-secret
+      - equal:
+          path: type
+          value: Opaque
+      - equal:
+          path: stringData.password
+          value: supersecret
+
+  - it: Should create multiple extra objects
+    set:
+      cribl.leader: tcp://token@leader:4200
+      extraObjects:
+        - apiVersion: v1
+          kind: ConfigMap
+          metadata:
+            name: config-1
+        - apiVersion: v1
+          kind: ConfigMap
+          metadata:
+            name: config-2
+        - |
+          apiVersion: v1
+          kind: Secret
+          metadata:
+            name: secret-1
+    asserts:
+      - hasDocuments:
+          count: 3
+      - containsDocument:
+          apiVersion: v1
+          kind: ConfigMap
+          metadata:
+            name: config-1
+          any: true
+      - containsDocument:
+          apiVersion: v1
+          kind: ConfigMap
+          metadata:
+            name: config-2
+          any: true
+      - containsDocument:
+          apiVersion: v1
+          kind: Secret
+          metadata:
+            name: secret-1
+          any: true
+
+  - it: Should create NetworkPolicy as extra object
+    set:
+      cribl.leader: tcp://token@leader:4200
+      extraObjects:
+        - apiVersion: networking.k8s.io/v1
+          kind: NetworkPolicy
+          metadata:
+            name: outpost-network-policy
+          spec:
+            podSelector:
+              matchLabels:
+                app: outpost
+            policyTypes:
+              - Ingress
+            ingress:
+              - from:
+                  - podSelector:
+                      matchLabels:
+                        app: edge
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: kind
+          value: NetworkPolicy
+      - equal:
+          path: metadata.name
+          value: outpost-network-policy
+
+  - it: Should create PodDisruptionBudget as extra object
+    set:
+      cribl.leader: tcp://token@leader:4200
+      extraObjects:
+        - apiVersion: policy/v1
+          kind: PodDisruptionBudget
+          metadata:
+            name: outpost-pdb
+          spec:
+            minAvailable: 1
+            selector:
+              matchLabels:
+                app: outpost
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: kind
+          value: PodDisruptionBudget
+      - equal:
+          path: spec.minAvailable
+          value: 1
+

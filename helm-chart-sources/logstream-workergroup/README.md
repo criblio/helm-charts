@@ -8,7 +8,7 @@ This chart deploys a Cribl Stream worker group.
 Versions starting with 3.4.0 include a change to the syntax for RBAC values. Before you upgrade the chart from pre-3.4.0 versions, please see the [table below](#values) for current options for the `rbac.apiGroups`, `rbac.verbs`, and `rbac.resources` values.
 
 # New Capabilities
-* Support for the 4.11.0 version of Cribl Stream (default version)
+* Support for the 4.16.1 version of Cribl Stream (default version)
 
 # Deployment
 
@@ -34,6 +34,7 @@ This section covers the most likely values to override. To see the full scope of
 |config.tag|deprecated|This option is deprecated, but still supported for backward compatibility. |
 |config.token|"criblleader"|The authentication token for your Cribl Stream leader. |
 |config.host|"logstream-leader"|The resolvable hostname of your Cribl Stream leader. |
+|config.port|4200|The TCP port where your Cribl Stream leader listens. |
 |config.useExistingSecret|`false`|Setting this value to `true` disables the creation of a `CRIBL_DIST_MASTER_URL` string. You are responsible for attaching it using the `envValueFrom` config. See below for an example.|
 |config.rejectSelfSignedCerts|0| One of: `0` – allow self-signed certs; or `1` – deny self-signed certs. |
 |config.tlsLeader.enable|false|Enable TLS connectivity from the workergroup to its leader node |
@@ -50,7 +51,11 @@ This section covers the most likely values to override. To see the full scope of
 |service.loadBalancerSourceRanges|see `values.yaml`|Allows for third-party load balancers to restrict access the defined IP ranges. Consult the [Kubernetes documentation](https://kubernetes.io/docs/concepts/services-networking/service/#aws-nlb-support) for more information.|
 |ingress|see `values.yaml`|Ingress controller configuration|
 |ingress.enable|false|Enable creating Ingress resources|
+|ingress.annotations|{}|If `ingress.enable` is set to `true`, this is where you'll want to put annotations to configure the specific ingress controller. _*NOTE: Ingress is supported only on Kubernetes 1.19 and later clusters*_. |
+|ingress.labels|{}|Additional labels to add to the Ingress resource. Label values should be strings.|
+|ingress.ingressClassName|none|Override the default ingress class ([added in Kubernetes 1.18](https://kubernetes.io/docs/concepts/services-networking/ingress/#deprecated-annotation))|
 |criblImage.tag|"3.4.0"|The container image tag to pull from. By default, this will use the version equivalent to the chart's `appVersion` value. But you can override this with "latest" to get the latest release, or with a version number (e.g., "3.4.0") to pull a specific version of Cribl Stream. |
+|criblImage.wolfiImage|false|Cribl publishes 2 versions of the container, the default based on Ubuntu and the alternative version based on Wolfi.  This setting should only be enabled if you want to use Cribl's published Wolfi container image.|
 |autoscaling.minReplicas|2|The minimum number of Cribl Stream pods to run.|
 |autoscaling.maxReplicas|10|The maximum number of Cribl Stream pods to scale to run.|
 |autoscaling.targetCPUUtilizationPercentage|50|The CPU utilization percentage that triggers scaling. |
@@ -63,6 +68,8 @@ This section covers the most likely values to override. To see the full scope of
 |serviceAccount.create|true|Create a ServiceAccount used by the Pods.|
 |serviceAccount.name|`undefined`|The ServiceAccount name. If `serviceAccount.create` is true, the ServiceAccount is named this value. If false, the ServiceAccount must already exist.|
 |nodeSelector|{}|Add nodeSelector values to define which nodes the pods are scheduled on - see [k8s Documentation](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/) for details and allowed values. |
+|affinity|{}|Add affinity values to define constraints which nodes the pods are scheduled on - see [k8s Documentation](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity) for details and allowed values. |
+|__Extra Configuration Options__|
 |strategy|see `values.yaml`|Add strategy values to define how Pods are upgraded - see k8s Documentation [Deployment](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy) and [DaemonSet](https://kubernetes.io/docs/tasks/manage-daemon/update-daemon-set/) for details and allowed values.|
 |__Extra Configuration Options__|
 |[extraVolumeMounts](../../common_docs/EXTRA_EXAMPLES.md#extraVolumeMounts)|{}|Additional Volumes to mount in the container.|
@@ -75,7 +82,42 @@ This section covers the most likely values to override. To see the full scope of
 |[envValueFrom](../../common_docs/EXTRA_EXAMPLES.md#extraEnvFrom)|See `values.yaml`|Environment variables to be exposed from the Downward API.|
 |[env](../../common_docs/EXTRA_EXAMPLES.md#env)|[]|Additional Static Environment Variables.|
 |deployment|deployment|One of: "deployment" to deploy as a Deployment Set; or "daemonset" to deploy as a DaemonSet.|
+|podAnnotations|{}|Additional annotations for the pods|
+|includeSecretConfigAnnotation|false|Add an annotation to the deployment pods that will automatically restart the pods anytime there is a change to the secret for the logstream configuration.|
 |[rbac.extraRules](../../common_docs/EXTRA_EXAMPLES.md#rbac.extraRules)|{}|Additional RBAC rules to put in place.|
+
+## TLS connectivity to Leader
+
+When connecting worker groups to a TLS-enabled Leader, set `config.tlsLeader.enable: true` and optionally provide additional TLS options. The chart constructs the worker URL using the following values under `config.tlsLeader`:
+
+- `privKeyPath` → adds `tls.privKeyPath` to the URL
+- `passphrase` → adds `tls.passphrase`
+- `capath` → adds `tls.caPath`
+- `certpath` → adds `tls.certPath`
+- `rejectUnauthorized` → adds `tls.rejectUnauthorized`
+- `requestCert` → adds `tls.requestCert`
+- `commonNameRegex` → adds `tls.commonNameRegex`
+
+Example values:
+
+```yaml
+config:
+  host: logstream-leader-internal
+  port: 4200
+  group: kubernetes
+  token: criblleader
+  tlsLeader:
+    enable: true
+    capath: /etc/ssl/ca.pem
+    certpath: /etc/ssl/cert.pem
+    # privKeyPath: /etc/ssl/private/key.pem
+    # passphrase: "s3cr3t"
+    # rejectUnauthorized: 1   # 1 to reject self-signed certs; 0 to allow
+    # requestCert: 1
+    # commonNameRegex: ".*your-cn.*"
+```
+
+Note: The URL parameters that the Leader expects are camelCase (`tls.caPath`, `tls.certPath`, etc.). This chart maps the lower-case value keys (`capath`, `certpath`) to the correct camelCase parameters when building the URL.
 
 ### A Note About Versioning
 

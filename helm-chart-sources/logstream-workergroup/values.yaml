@@ -243,25 +243,21 @@ extraVolumeMounts: {}
 #         requests:
 #           storage: 1Gi
 
-# An alternative to EFS (shared-storage-volume) for Persistent Queueing (PQ) stable 
-# only through pod restarts (not scale down) is to use a PVC with a statefulset deployment.
-# use below to map all cribl-data as a PVC with a statefulset
-# also set deployment to statefulset with whenDeleted: Retain and whenScaled: Retain for PVC retention.
-#   - name: cribl-data
-#     mountPath: /opt/cribl/data
-#     readOnly: false
-#     claimTemplate:
-#       metadata:
-#         name: cribl-data
-#       spec:
-#         accessModes: [ "ReadWriteOnce" ]
-#         resources:
-#           requests:
-#             storage: 2Gi
-
-# Map the above PVC to an environment variable for Cribl Stream
-# env:
-#   CRIBL_VOLUME_DIR: /opt/cribl/data
+# An alternative to EFS (shared-storage-volume) for Persistent Queueing (PQ) is to use a PVC with a statefulset deployment.
+# This is stable through pod restarts but it does not handle scale down. It maps PQ files to cribl-pq PVCs.
+# also set deployment to statefulset with whenDeleted: Delete and whenScaled: Retain for PVC retention
+# when configuring a PQ on the UI, make sure to leave the default $CRIBL_HOME/state/queues as the path.
+# - name: cribl-pq
+#   mountPath: /opt/cribl/state/queues
+#   readOnly: false
+#   claimTemplate:
+#     metadata:
+#       name: cribl-pq
+#     spec:
+#       accessModes: [ "ReadWriteOnce" ]
+#       resources:
+#         requests:
+#           storage: 2Gi
 
 # Downward API values
 envValueFrom:

@@ -79,5 +79,6 @@ This section covers the most likely values to override. To see the full scope of
 | resources.limits                                                               | see `values.yaml` | Limits for the Edge Pod                                                             |
 | resources.requests                                                             | see `values.yaml` | Reserved resources for the Edge Pod                                                 |
 | nodeSelector                                                                   | `{}`              | Node selection for Pod deployment                                                   |
+| affinity                                                                       | `{}`              | Pod affinity/anti-affinity rules for scheduling                                     |
 | tolerations                                                                    | see `values.yaml` | Node tolerations/taints allowed for deploying the Edge Pods                         |
 | extraObjects                                                                   | `{}`              | Ability to add custom Kubernetes objects into this deployment as part of this chart |

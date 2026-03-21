@@ -24,7 +24,7 @@ criblImage:
   repository: cribl/cribl
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: 4.15.0
+  tag: 4.17.0
   wolfiImage: false
 
 imagePullSecrets: []
@@ -175,6 +175,8 @@ autoscaling:
 ingress:
   # -- Enable creation of ingress resources
   enable: false
+  # Labels applied to all ingresses
+  labels: {}
   # Annotations applied to all ingresses
   annotations: {}
   # `ingressClassName` applied to all ingresses
@@ -187,6 +189,8 @@ ingress:
 #      tls: []
 #      # Override the ingressClassName for this ingress
 #      ingressClassName:
+#      # Extra labels for this ingress
+#      labels: {}
 #      # Annotation overrides (merged with defaults)
 #      annotations: {}
 #      # Array of Ingress rules
@@ -238,6 +242,22 @@ extraVolumeMounts: {}
 #       resources:
 #         requests:
 #           storage: 1Gi
+
+# An alternative to EFS (shared-storage-volume) for Persistent Queueing (PQ) is to use a PVC with a statefulset deployment.
+# This is stable through pod restarts but it does not handle scale down. It maps PQ files to cribl-pq PVCs.
+# also set deployment to statefulset with whenDeleted: Delete and whenScaled: Retain for PVC retention
+# when configuring a PQ on the UI, make sure to leave the default $CRIBL_HOME/state/queues as the path.
+# - name: cribl-pq
+#   mountPath: /opt/cribl/state/queues
+#   readOnly: false
+#   claimTemplate:
+#     metadata:
+#       name: cribl-pq
+#     spec:
+#       accessModes: [ "ReadWriteOnce" ]
+#       resources:
+#         requests:
+#           storage: 2Gi
 
 # Downward API values
 envValueFrom:

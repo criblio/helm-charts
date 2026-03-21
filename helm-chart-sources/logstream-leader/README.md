@@ -11,7 +11,7 @@ If you're migrating from the deprecated `logstream‑master` chart, please see t
 
 # New Capabilities
 
-* Support for the 4.15.0 version of Cribl Stream (default version)
+* Support for the 4.17.0 version of Cribl Stream (default version)
 
 # Deployment
 
@@ -80,6 +80,7 @@ This section covers the most likely values to override. To see the full scope of
 |[env](../../common_docs/EXTRA_EXAMPLES.md#env)|[]|Additional static environment variables.|
 |ingress.enable|false|Enable Ingress in front of the external service. Setting this to `true` changes the external service to type `NodePort`, and creates an ingress that connects to it.|
 |ingress.annotations|{}|If `ingress.enable` is set to `true`, this is where you'll want to put annotations to configure the specific ingress controller. _*NOTE: Ingress is supported only on Kubernetes 1.19 and later clusters*_. |
+|ingress.labels|{}|Additional labels to add to the Ingress resource (`metadata.labels`). Label values should be strings.|
 |ingress.tls|[]|[Ingress TLS configuration](https://kubernetes.io/docs/concepts/services-networking/ingress/#tls)|
 |ingress.ingressClassName|none|Override the default ingress class ([added in Kubernetes 1.18](https://kubernetes.io/docs/concepts/services-networking/ingress/#deprecated-annotation))|
 |ingress.path|`/*`|The Ingress path Prefix|

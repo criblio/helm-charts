@@ -200,3 +200,34 @@ tests:
             - key: "goat"
               operator: "Exists"
               effect: "NoSchedule"
+
+  - it: Should correctly set the affinity
+    set:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: eks.amazonaws.com/compute-type
+                    operator: NotIn
+                    values:
+                      - fargate
+    asserts:
+      - exists:
+          path: spec.template.spec.affinity
+      - equal:
+          path: spec.template.spec.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms[0].matchExpressions[0].key
+          value: eks.amazonaws.com/compute-type
+      - equal:
+          path: spec.template.spec.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms[0].matchExpressions[0].operator
+          value: NotIn
+      - equal:
+          path: spec.template.spec.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms[0].matchExpressions[0].values[0]
+          value: fargate
+
+  - it: Should not set affinity when empty
+    set:
+      affinity: {}
+    asserts:
+      - notExists:
+          path: spec.template.spec.affinity

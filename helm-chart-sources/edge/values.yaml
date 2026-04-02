@@ -281,6 +281,8 @@ resources:
 
 nodeSelector: {}
 
+affinity: {}
+
 # By default, allow scheduling DaemonSet on any Node in the Cluster
 tolerations:
   - operator: Exists

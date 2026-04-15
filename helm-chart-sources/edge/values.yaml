@@ -120,6 +120,7 @@ rbac:
     - apiGroups:
         - ""
       resources:
+        - endpoints
         - namespaces
         - nodes
         - nodes/log
@@ -129,17 +130,16 @@ rbac:
         - nodes/stats
         - pods
         - pods/log
+        - services
       verbs: ['get', 'list', 'watch']
     - apiGroups:
         - ""
       resources:
         - configmaps
-        - endpoints
         - limitranges
         - persistentvolumeclaims
         - replicationcontrollers
         - secrets
-        - services
         - strategicMergePatches
       verbs: ['list', 'watch']
     - apiGroups:
@@ -200,6 +200,11 @@ rbac:
         - namespaces
         - resourcequotas
       verbs: ['get', 'list']
+    - apiGroups:
+        - "monitoring.coreos.com"
+      resources:
+        - servicemonitors
+      verbs: ['get', 'list', 'watch']
   extraRules: []
   # - apiGroups: []
   #   resources: []

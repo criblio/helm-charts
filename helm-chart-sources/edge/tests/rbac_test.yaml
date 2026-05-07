@@ -83,6 +83,19 @@ tests:
       - isAPIVersion:
           of: rbac.authorization.k8s.io/v1
 
+  - it: Defines ClusterRole Rules for ServiceMonitors
+    template: rbac/clusterrole.yaml
+    asserts:
+      - contains:
+          path: rules
+          any: true
+          content:
+            apiGroups:
+              - "monitoring.coreos.com"
+            resources:
+              - servicemonitors
+            verbs: ['get', 'list', 'watch']
+
   - it: Correctly includes extraRules
     template: rbac/clusterrole.yaml
     set:

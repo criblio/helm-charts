@@ -196,13 +196,14 @@ helm upgrade logstream-wg cribl/logstream-workergroup -f values.yaml
 
 Remember, if you installed in a namespace, you need to include the `-n <namespace>` option to any `helm` command. You'll still have to create the source in your Cribl Stream leader, and commit and deploy it to your worker group.
 
-# Using Persistent Storage for Persistent Queueing
+# Persistent Queueing for Worker Groups
 
-With the addition of the `extraVolumeMounts` capability, it is now feasible to use persistent volumes for Cribl Stream persistent queueing. However there is variability in persistent-storage implementations, and this variability can lead to problems in scaling workergroups, and we recommend only implementing this if you have confidence in your persistent storage implementations. If you choose to implement persistent volumes for queueing, please consider these suggestions:
+[Persistent Queues](https://docs.cribl.io/stream/persistent-queues) require local disk space and can work with external S3 or other shared storage. In addition, the `extraVolumeMounts` capability makes it feasible to use persistent volumes for Cribl Stream persistent queueing. However there is variability in persistent-storage implementations, and this variability can lead to problems in scaling workergroups, and we recommend only implementing this if you have confidence in your persistent storage implementations. If you choose to implement persistent volumes for queueing, please consider these suggestions:
 
-1. Use a shared-storage-volume mechanism. We've worked with the EFS CSI driver for AWS, and it works fairly well (though it can be a little tedious to configure).
-2. Understand your Kubernetes networking topology, and how it interacts with your persistent storage driver. (For example, if you're in AWS, ensure that your volumes are available in all Availability Zones that your nodes might run in.) 
-3. Monitor the workergroup pods for volume issues. The faster you can see such issues and react, the more likely that you'll be able to resolve them.
+1. Use S3 or S3-like shared storage.
+2. Use a shared-storage-volume mechanism. We've worked with the EFS CSI driver for AWS, and it works fairly well (though it can be a little tedious to configure).
+3. Understand your Kubernetes networking topology, and how it interacts with your persistent storage driver or S3 api. (For example, if you're in AWS, ensure that your volumes are available in all Availability Zones that your nodes might run in.) 
+4. Monitor the workergroup pods for volume and networking issues. The faster you can see such issues and react, the more likely that you'll be able to resolve them.
 
 # Using an Existing Secret
 

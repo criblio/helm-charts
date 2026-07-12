@@ -231,3 +231,13 @@ tests:
     asserts:
       - notExists:
           path: spec.template.spec.affinity
+
+  - it: host-root extra volume mount should be mounted read-only
+    templates:
+      - daemonset.yaml
+    values:
+      - ./values/leader.yaml
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].volumeMounts[?(@.name=="host-root")].readOnly
+          value: true

@@ -8,6 +8,12 @@ tests:
           path: spec.template.spec.containers[0].readinessProbe
       - exists:
           path: spec.template.spec.containers[0].livenessProbe
+      - equal:
+          path: spec.template.spec.containers[0].readinessProbe.httpGet.path
+          value: /api/v1/readiness
+      - equal:
+          path: spec.template.spec.containers[0].livenessProbe.httpGet.path
+          value: /api/v1/health
 
   - it: Should disable health checks
     set:

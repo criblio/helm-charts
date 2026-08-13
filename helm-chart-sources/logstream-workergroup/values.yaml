@@ -47,7 +47,7 @@ config:
     failureThreshold: 3
   readinessProbe:
     httpGet:
-      path: /api/v1/health
+      path: /api/v1/readiness
       port: 9000
       scheme: HTTP
     initialDelaySeconds: 20

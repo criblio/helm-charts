@@ -40,7 +40,7 @@ extraVolumeMounts:
   - name: host-root
     mountPath: /hostfs
     hostPath: /
-    readonly: true
+    readOnly: true
 # Extra containers
 extraContainers: []
 # Extra init containers

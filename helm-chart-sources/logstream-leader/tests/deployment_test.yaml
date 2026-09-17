@@ -77,7 +77,27 @@ tests:
               containerPort: 420
               protocol: UDP
 
-  - it: Should set envValueFrom
+  - it: Should render default envValueFrom correctly
+    asserts:
+      - exists:
+          path: spec.template.spec.containers[0].env
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CRIBL_K8S_POD
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CRIBL_K8S_CPU_LIMIT
+            valueFrom:
+              resourceFieldRef:
+                resource: limits.cpu
+                divisor: 1m
+
+  - it: Should set custom envValueFrom
     set:
       envValueFrom:
         # works with "value"

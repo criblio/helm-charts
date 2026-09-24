@@ -1,0 +1,430 @@
+suite: Volumes and Mounts
+templates:
+  - deployment.yaml
+tests:
+  - it: Should mount extra volumes with default emptyDir
+    set:
+      extraVolumeMounts:
+        - name: temp-volume
+          mountPath: /tmp/data
+          readOnly: false
+    asserts:
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: temp-volume
+            emptyDir: {}
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            name: temp-volume
+            mountPath: /tmp/data
+            subPath: null
+            subPathExpr: null
+            readOnly: false
+
+  - it: Should mount extra volumes with custom emptyDir
+    set:
+      extraVolumeMounts:
+        - name: memory-volume
+          mountPath: /tmp/memory
+          readOnly: false
+          emptyDir:
+            medium: Memory
+            sizeLimit: 1Gi
+    asserts:
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: memory-volume
+            emptyDir:
+              medium: Memory
+              sizeLimit: 1Gi
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            name: memory-volume
+            mountPath: /tmp/memory
+            subPath: null
+            subPathExpr: null
+            readOnly: false
+
+  - it: Should mount extra volumes with hostPath
+    set:
+      extraVolumeMounts:
+        - name: host-volume
+          mountPath: /host/data
+          hostPath: /var/lib/data
+          readOnly: true
+    asserts:
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: host-volume
+            hostPath:
+              path: /var/lib/data
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            name: host-volume
+            mountPath: /host/data
+            subPath: null
+            subPathExpr: null
+            readOnly: true
+
+  - it: Should mount extra volumes with hostPath and type
+    set:
+      extraVolumeMounts:
+        - name: host-volume-typed
+          mountPath: /host/data
+          hostPath: /var/lib/data
+          hostPathType: Directory
+          readOnly: true
+    asserts:
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: host-volume-typed
+            hostPath:
+              path: /var/lib/data
+              type: Directory
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            name: host-volume-typed
+            mountPath: /host/data
+            subPath: null
+            subPathExpr: null
+            readOnly: true
+
+  - it: Should mount extra volumes with existingClaim
+    set:
+      extraVolumeMounts:
+        - name: pvc-volume
+          mountPath: /data
+          existingClaim: my-pvc
+          readOnly: false
+    asserts:
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: pvc-volume
+            persistentVolumeClaim:
+              claimName: my-pvc
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            name: pvc-volume
+            mountPath: /data
+            subPath: null
+            subPathExpr: null
+            readOnly: false
+
+  - it: Should mount extra volumes with ephemeral volume
+    set:
+      extraVolumeMounts:
+        - name: ephemeral-volume
+          mountPath: /data/ephemeral
+          readOnly: false
+          ephemeral:
+            volumeClaimTemplate:
+              metadata:
+                name: ephemeral-volume
+              spec:
+                accessModes: [ "ReadWriteOnce" ]
+                storageClassName: fast-ssd
+                resources:
+                  requests:
+                    storage: 2Gi
+    asserts:
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: ephemeral-volume
+            ephemeral:
+              volumeClaimTemplate:
+                metadata:
+                  name: ephemeral-volume
+                spec:
+                  accessModes: [ "ReadWriteOnce" ]
+                  storageClassName: fast-ssd
+                  resources:
+                    requests:
+                      storage: 2Gi
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            name: ephemeral-volume
+            mountPath: /data/ephemeral
+            subPath: null
+            subPathExpr: null
+            readOnly: false
+
+  - it: Should mount extra ConfigMaps
+    set:
+      extraConfigmapMounts:
+        - name: config-volume
+          configMap: my-config
+          mountPath: /etc/config
+          readOnly: true
+        - name: config-volume-2
+          configMap: my-config-2
+          mountPath: /etc/config2
+          subPath: myfile.conf
+          readOnly: false
+    asserts:
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: config-volume
+            configMap:
+              name: my-config
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: config-volume-2
+            configMap:
+              name: my-config-2
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            name: config-volume
+            mountPath: /etc/config
+            subPath: null
+            readOnly: true
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            name: config-volume-2
+            mountPath: /etc/config2
+            subPath: myfile.conf
+            readOnly: false
+
+  - it: Should mount extra Secrets with secretName
+    set:
+      extraSecretMounts:
+        - name: secret-volume
+          secretName: my-secret
+          mountPath: /etc/secrets
+          readOnly: true
+          defaultMode: 0400
+    asserts:
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: secret-volume
+            secret:
+              secretName: my-secret
+              defaultMode: 0400
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            name: secret-volume
+            mountPath: /etc/secrets
+            subPath: null
+            readOnly: true
+
+  - it: Should mount extra Secrets with projected volumes
+    set:
+      extraSecretMounts:
+        - name: projected-volume
+          mountPath: /etc/projected
+          readOnly: true
+          projected:
+            sources:
+              - secret:
+                  name: secret1
+                  items:
+                    - key: key1
+                      path: file1
+              - secret:
+                  name: secret2
+                  items:
+                    - key: key2
+                      path: file2
+    asserts:
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: projected-volume
+            projected:
+              sources:
+                - secret:
+                    name: secret1
+                    items:
+                      - key: key1
+                        path: file1
+                - secret:
+                    name: secret2
+                    items:
+                      - key: key2
+                        path: file2
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            name: projected-volume
+            mountPath: /etc/projected
+            subPath: null
+            readOnly: true
+
+  - it: Should mount extra Secrets with CSI volumes
+    set:
+      extraSecretMounts:
+        - name: csi-volume
+          mountPath: /mnt/csi
+          readOnly: true
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: my-provider
+    asserts:
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: csi-volume
+            csi:
+              driver: secrets-store.csi.k8s.io
+              readOnly: true
+              volumeAttributes:
+                secretProviderClass: my-provider
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            name: csi-volume
+            mountPath: /mnt/csi
+            subPath: null
+            readOnly: true
+
+  - it: Should support subPath in volume mounts
+    set:
+      extraVolumeMounts:
+        - name: subpath-volume
+          mountPath: /data/subpath
+          subPath: my-subpath
+          readOnly: false
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            name: subpath-volume
+            mountPath: /data/subpath
+            subPath: my-subpath
+            subPathExpr: null
+            readOnly: false
+
+  - it: Should support subPathExpr in volume mounts
+    set:
+      extraVolumeMounts:
+        - name: logs-volume
+          mountPath: /logs
+          subPathExpr: $(CRIBL_K8S_POD)
+          readOnly: false
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            name: logs-volume
+            mountPath: /logs
+            subPath: null
+            subPathExpr: $(CRIBL_K8S_POD)
+            readOnly: false
+
+  - it: Should handle multiple volume types simultaneously
+    set:
+      extraConfigmapMounts:
+        - name: config-vol
+          configMap: my-config
+          mountPath: /etc/config
+          readOnly: true
+      extraSecretMounts:
+        - name: secret-vol
+          secretName: my-secret
+          mountPath: /etc/secrets
+          readOnly: true
+          defaultMode: 0400
+      extraVolumeMounts:
+        - name: pvc-vol
+          mountPath: /data/pvc
+          existingClaim: data-pvc
+          readOnly: false
+        - name: host-vol
+          mountPath: /host/data
+          hostPath: /var/log
+          hostPathType: Directory
+          readOnly: true
+        - name: ephemeral-vol
+          mountPath: /data/ephemeral
+          readOnly: false
+          ephemeral:
+            volumeClaimTemplate:
+              metadata:
+                name: ephemeral-vol
+              spec:
+                accessModes: [ "ReadWriteOnce" ]
+                resources:
+                  requests:
+                    storage: 1Gi
+        - name: memory-vol
+          mountPath: /tmp/memory
+          readOnly: false
+          emptyDir:
+            medium: Memory
+            sizeLimit: 512Mi
+    asserts:
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: config-vol
+            configMap:
+              name: my-config
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: secret-vol
+            secret:
+              secretName: my-secret
+              defaultMode: 0400
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: pvc-vol
+            persistentVolumeClaim:
+              claimName: data-pvc
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: host-vol
+            hostPath:
+              path: /var/log
+              type: Directory
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: ephemeral-vol
+            ephemeral:
+              volumeClaimTemplate:
+                metadata:
+                  name: ephemeral-vol
+                spec:
+                  accessModes: [ "ReadWriteOnce" ]
+                  resources:
+                    requests:
+                      storage: 1Gi
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: memory-vol
+            emptyDir:
+              medium: Memory
+              sizeLimit: 512Mi
+
+  - it: Should not create volumes for statefulset deployment
+    set:
+      deployment: statefulset
+      extraVolumeMounts:
+        - name: temp-volume
+          mountPath: /tmp/data
+          readOnly: false
+    asserts:
+      - hasDocuments:

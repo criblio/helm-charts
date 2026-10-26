@@ -62,8 +62,8 @@ containers:
       # Self-Signed Certs
       - name: NODE_TLS_REJECT_UNAUTHORIZED
         value: "{{ .Values.config.rejectSelfSignedCerts }}"
-      {{ if .Values.envValueFrom }}
-      {{ toYaml .Values.envValueFrom | nindent 6  }}
+      {{- if .Values.envValueFrom }}
+      {{- toYaml .Values.envValueFrom | nindent 6  }}
       {{- end }}
       {{- range $key, $value := .Values.env }}
       - name: {{ $key }}
@@ -133,6 +133,16 @@ volumes:
     {{- else if .hostPath }}
     hostPath:
       path: {{ .hostPath }}
+      {{- if .hostPathType }}
+      type: {{ .hostPathType }}
+      {{- end }}
+    {{- else if .ephemeral }}
+    ephemeral:
+      volumeClaimTemplate:
+        {{- toYaml .ephemeral.volumeClaimTemplate | nindent 8 }}
+    {{- else if .emptyDir }}
+    emptyDir:
+      {{- toYaml .emptyDir | nindent 6 }}
     {{- else }}
     emptyDir: {}
     {{- end }}

@@ -36,6 +36,20 @@ rbac:
   #   resourceNames: []
   #   verbs: []
 
+  # ClusterRole Rules
+  rules:
+    - apiGroups:
+        - ""
+      resources:
+        - nodes
+      verbs: ['get']
+  # Extra ClusterRole resources
+  extraRules: []
+  # - apiGroups: []
+  #   resources: []
+  #   resourceNames: []
+  #   verbs: []
+
 criblImage:
   repository: cribl/cribl
   pullPolicy: IfNotPresent

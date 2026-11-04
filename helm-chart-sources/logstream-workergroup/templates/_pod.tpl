@@ -14,32 +14,17 @@ initContainers:
 {{- if .Values.config.hostNetwork }}
 hostNetwork: true
 {{- end }}
-{{- if .Values.podSecurityContext }}
+{{- with (include "logstream-workergroup.podSecurityContext" .) }}
 securityContext:
-{{- range $key, $value := .Values.podSecurityContext }}
-{{- if or (eq $key "runAsUser") (eq $key "runAsGroup") (eq $key "fsGroup")}}
-  {{ $key }}: {{ $value | int }}
-{{- else }}
-  {{ $key }}: {{ $value }}
-{{- end }}
-{{- end }}
+  {{- . | nindent 2 }}
 {{- end }}
 containers:
   - name: {{ .Chart.Name }}
     image: "{{ .Values.criblImage.repository }}:{{ .Values.criblImage.tag | default .Chart.AppVersion }}{{ if .Values.criblImage.wolfiImage }}-wolfi{{ end }}"
     imagePullPolicy: {{ .Values.criblImage.pullPolicy }}
-    {{- if .Values.securityContext }}
+    {{- with (include "logstream-workergroup.containerSecurityContext" .) }}
     securityContext:
-    {{- range $key, $value := .Values.securityContext }}
-    {{- if or (eq $key "runAsUser") (eq $key "runAsGroup") (eq $key "fsGroup")}}
-      {{ $key }}: {{ $value | int }}
-    {{- else if kindIs "map" $value }}
-      {{ $key }}:
-        {{- toYaml $value | nindent 8 }}
-    {{- else }}
-      {{ $key }}: {{ $value }}
-    {{- end }}
-    {{- end }}
+      {{- . | nindent 6 }}
     {{- end }}
     {{- if .Values.config.probes }}
     {{- with .Values.config.livenessProbe }}
@@ -69,8 +54,17 @@ containers:
       - name: {{ $key }}
         value: {{ $value | quote }}
       {{- end }}
+      {{- if include "logstream-workergroup.nonRootVolumeDir" . }}
+      # The image refuses to start as non-root without a writable CRIBL_VOLUME_DIR.
+      - name: CRIBL_VOLUME_DIR
+        value: {{ include "logstream-workergroup.nonRootVolumeDir" . }}
+      {{- end }}
 
     volumeMounts:
+      {{- with (include "logstream-workergroup.nonRootVolumeDir" .) }}
+      - name: cribl-volume-dir
+        mountPath: {{ . }}
+      {{- end }}
       {{- range .Values.extraConfigmapMounts }}
       - name: {{ .name }}
         mountPath: {{ .mountPath }}
@@ -124,6 +118,10 @@ tolerations:
 {{- end }}
 
 volumes: 
+  {{- if include "logstream-workergroup.nonRootVolumeDir" . }}
+  - name: cribl-volume-dir
+    emptyDir: {}
+  {{- end }}
   {{- if (ne .Values.deployment "statefulset") -}}
   {{- range .Values.extraVolumeMounts }}
   - name: {{ .name }}

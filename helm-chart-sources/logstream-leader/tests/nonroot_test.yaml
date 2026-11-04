@@ -1,0 +1,244 @@
+suite: Non-root mode
+templates:
+  - deployment.yaml
+  - configmap.yaml
+tests:
+  - it: is off by default
+    template: deployment.yaml
+    asserts:
+      - notExists:
+          path: spec.template.spec.securityContext
+      - notExists:
+          path: spec.template.spec.containers[0].securityContext
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: GIT_CONFIG_GLOBAL
+            value: /.gitconfig
+
+  - it: does not render the gitconfig ConfigMap by default
+    template: configmap.yaml
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: sets a restricted pod securityContext
+    template: deployment.yaml
+    set:
+      nonRoot.enabled: true
+    asserts:
+      - equal:
+          path: spec.template.spec.securityContext
+          value:
+            runAsNonRoot: true
+            runAsUser: 65534
+            runAsGroup: 65534
+            fsGroup: 65534
+            fsGroupChangePolicy: OnRootMismatch
+            seccompProfile:
+              type: RuntimeDefault
+
+  - it: sets a restricted container securityContext
+    template: deployment.yaml
+    set:
+      nonRoot.enabled: true
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].securityContext
+          value:
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+
+  - it: mounts the gitconfig and points git at it
+    template: deployment.yaml
+    set:
+      nonRoot.enabled: true
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            name: gitconfig
+            mountPath: /.gitconfig
+            subPath: .gitconfig
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: gitconfig
+            configMap:
+              name: RELEASE-NAME-leader-gitconfig
+              items:
+                - key: .gitconfig
+                  path: .gitconfig
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: GIT_CONFIG_GLOBAL
+            value: /.gitconfig
+
+  - it: renders the gitconfig ConfigMap
+    template: configmap.yaml
+    set:
+      nonRoot.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata.name
+          value: RELEASE-NAME-leader-gitconfig
+
+  - it: keeps a user supplied GIT_CONFIG_GLOBAL
+    template: deployment.yaml
+    set:
+      nonRoot.enabled: true
+      env:
+        GIT_CONFIG_GLOBAL: /etc/cribl/gitconfig
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: GIT_CONFIG_GLOBAL
+            value: /etc/cribl/gitconfig
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: GIT_CONFIG_GLOBAL
+            value: /.gitconfig
+
+  - it: leaves UID, GID and fsGroup to the platform when they are null (OpenShift)
+    template: deployment.yaml
+    set:
+      nonRoot:
+        enabled: true
+        runAsUser: null
+        runAsGroup: null
+        fsGroup: null
+    asserts:
+      - equal:
+          path: spec.template.spec.securityContext
+          value:
+            runAsNonRoot: true
+            seccompProfile:
+              type: RuntimeDefault
+
+  - it: uses the configured IDs, including large OpenShift-range ones
+    template: deployment.yaml
+    set:
+      nonRoot:
+        enabled: true
+        runAsUser: 1000620000
+        runAsGroup: 1000620000
+        fsGroup: 1000620000
+    asserts:
+      - equal:
+          path: spec.template.spec.securityContext.runAsUser
+          value: 1000620000
+      - equal:
+          path: spec.template.spec.securityContext.fsGroup
+          value: 1000620000
+
+  - it: lets podSecurityContext override the defaults
+    template: deployment.yaml
+    set:
+      nonRoot.enabled: true
+      podSecurityContext:
+        runAsUser: 1001
+        fsGroupChangePolicy: Always
+    asserts:
+      - equal:
+          path: spec.template.spec.securityContext.runAsUser
+          value: 1001
+      - equal:
+          path: spec.template.spec.securityContext.fsGroupChangePolicy
+          value: Always
+      - equal:
+          path: spec.template.spec.securityContext.seccompProfile.type
+          value: RuntimeDefault
+
+  - it: merges user capabilities with the dropped defaults
+    template: deployment.yaml
+    set:
+      nonRoot.enabled: true
+      securityContext:
+        capabilities:
+          add:
+            - NET_BIND_SERVICE
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].securityContext.capabilities
+          value:
+            add:
+              - NET_BIND_SERVICE
+            drop:
+              - ALL
+
+  - it: fails when nonRoot is combined with UID 0 on the pod
+    template: deployment.yaml
+    set:
+      nonRoot.enabled: true
+      podSecurityContext:
+        runAsUser: 0
+    asserts:
+      - failedTemplate:
+          errorMessage: nonRoot.enabled is true but podSecurityContext.runAsUser is 0
+
+  - it: fails when nonRoot is combined with UID 0 on the container
+    template: deployment.yaml
+    set:
+      nonRoot.enabled: true
+      securityContext:
+        runAsUser: 0
+    asserts:
+      - failedTemplate:
+          errorMessage: nonRoot.enabled is true but securityContext.runAsUser is 0
+
+  - it: renders map values in podSecurityContext as YAML
+    template: deployment.yaml
+    set:
+      podSecurityContext:
+        seccompProfile:
+          type: RuntimeDefault
+        supplementalGroups:
+          - 1000620001
+    asserts:
+      - equal:
+          path: spec.template.spec.securityContext
+          value:
+            seccompProfile:
+              type: RuntimeDefault
+            supplementalGroups:
+              - 1000620001
+
+  - it: still renders string IDs as integers
+    template: deployment.yaml
+    set:
+      podSecurityContext:
+        runAsUser: "1000"
+        fsGroup: "2000"
+      securityContext:
+        runAsUser: "1000"
+        runAsGroup: "1000"
+    asserts:
+      - equal:
+          path: spec.template.spec.securityContext
+          value:
+            runAsUser: 1000
+            fsGroup: 2000
+      - equal:
+          path: spec.template.spec.containers[0].securityContext
+          value:
+            runAsUser: 1000
+            runAsGroup: 1000
+
+  - it: renders string IDs as integers in nonRoot mode too
+    template: deployment.yaml
+    set:
+      nonRoot:
+        enabled: true
+        runAsUser: "1001"
+    asserts:
+      - equal:
+          path: spec.template.spec.securityContext.runAsUser
+          value: 1001

@@ -192,6 +192,39 @@ securityContext:
   runAsGroup: 30
 ```
 
+## Running as non-root <a name="nonRoot"></a>
+_Availability: logstream-workergroup and logstream-leader_
+
+Set `nonRoot.enabled: true` to run Cribl as a non-root user with a security context that passes the Kubernetes [Pod Security Standards](https://kubernetes.io/docs/concepts/security/pod-security-standards/) `restricted` profile and OpenShift's `restricted-v2` SCC. The chart then sets:
+
+* Pod: `runAsNonRoot: true`, `seccompProfile.type: RuntimeDefault`, and `runAsUser`, `runAsGroup` and `fsGroup` from `nonRoot` (with `fsGroupChangePolicy: OnRootMismatch`), so mounted volumes are writable by that group.
+* Container: `runAsNonRoot: true`, `allowPrivilegeEscalation: false` and `capabilities.drop: ["ALL"]`.
+* logstream-workergroup: a writable `emptyDir` mounted at `/opt/cribl/config-volume`, with `CRIBL_VOLUME_DIR` pointing at it. The container image refuses to start as non-root without `CRIBL_VOLUME_DIR`. If you set `CRIBL_VOLUME_DIR` yourself through `env` or `envValueFrom`, the chart leaves it alone.
+* logstream-leader: the git configuration that the Leader already uses for `securityContext`, plus `GIT_CONFIG_GLOBAL=/.gitconfig` so git finds it for any UID. `CRIBL_VOLUME_DIR` already points at the persistent volume (or the `emptyDir` when `persistence.enabled` is `false`).
+
+Anything you set in `podSecurityContext` or `securityContext` overrides these defaults. Rendering fails if `nonRoot.enabled` is combined with `runAsUser: 0`.
+
+### Example: plain Kubernetes
+The defaults run as UID/GID `65534` (`nobody`), which already exists in the `cribl/cribl` image.
+
+```
+nonRoot:
+  enabled: true
+```
+
+### Example: OpenShift
+OpenShift assigns the UID, GID and fsGroup from the namespace's range, so leave them unset:
+
+```
+nonRoot:
+  enabled: true
+  runAsUser: null
+  runAsGroup: null
+  fsGroup: null
+```
+
+Cribl Edge (the `edge` chart) reads host files through `hostPath` volumes, which the `restricted` profile does not allow, so it is not covered by this option.
+
 ## env <a name="env"></a>
 _Availability: logstream-workergroup and logstream-leader_
 

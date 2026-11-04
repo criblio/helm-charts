@@ -76,6 +76,10 @@ This section covers the most likely values to override. To see the full scope of
 |[extraContainers](../../common_docs/EXTRA_EXAMPLES.md#extraContainers)|{}|Additional containers to run as sidecars of the primary container in the pod.|
 |[securityContext.runAsUser](../../common_docs/EXTRA_EXAMPLES.md#securityContext)|"0"|User ID to run the container processes under. Must be a string.|
 |[securityContext.runAsGroup](../../common_docs/EXTRA_EXAMPLES.md#securityContext)|"0"|Group ID to run the container processes under. Must be a string.|
+|[nonRoot.enabled](../../common_docs/EXTRA_EXAMPLES.md#nonRoot)|false|Run as a non-root user with a security context that passes the Pod Security Standards `restricted` profile and OpenShift `restricted-v2`.|
+|[nonRoot.runAsUser](../../common_docs/EXTRA_EXAMPLES.md#nonRoot)|65534|UID used when `nonRoot.enabled` is true. Set to `null` on OpenShift.|
+|[nonRoot.runAsGroup](../../common_docs/EXTRA_EXAMPLES.md#nonRoot)|65534|GID used when `nonRoot.enabled` is true. Set to `null` on OpenShift.|
+|[nonRoot.fsGroup](../../common_docs/EXTRA_EXAMPLES.md#nonRoot)|65534|fsGroup used when `nonRoot.enabled` is true, so volumes are writable. Set to `null` on OpenShift.|
 |[envValueFrom](../../common_docs/EXTRA_EXAMPLES.md#extraEnvFrom)|See `values.yaml`|Environment variables to be exposed from the Downward API.|
 |[env](../../common_docs/EXTRA_EXAMPLES.md#env)|[]|Additional static environment variables.|
 |ingress.enable|false|Enable Ingress in front of the external service. Setting this to `true` changes the external service to type `NodePort`, and creates an ingress that connects to it.|

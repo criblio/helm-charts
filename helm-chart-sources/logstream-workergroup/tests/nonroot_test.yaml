@@ -1,0 +1,236 @@
+suite: Non-root mode
+templates:
+  - deployment.yaml
+  - daemonset.yaml
+  - statefulset.yaml
+tests:
+  - it: is off by default
+    template: deployment.yaml
+    asserts:
+      - notExists:
+          path: spec.template.spec.securityContext
+      - notExists:
+          path: spec.template.spec.containers[0].securityContext
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CRIBL_VOLUME_DIR
+            value: /opt/cribl/config-volume
+      - isEmpty:
+          path: spec.template.spec.volumes
+
+  - it: sets restricted pod and container securityContexts
+    template: deployment.yaml
+    set:
+      nonRoot.enabled: true
+    asserts:
+      - equal:
+          path: spec.template.spec.securityContext
+          value:
+            runAsNonRoot: true
+            runAsUser: 65534
+            runAsGroup: 65534
+            fsGroup: 65534
+            fsGroupChangePolicy: OnRootMismatch
+            seccompProfile:
+              type: RuntimeDefault
+      - equal:
+          path: spec.template.spec.containers[0].securityContext
+          value:
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+
+  - it: gives the container a writable CRIBL_VOLUME_DIR
+    template: deployment.yaml
+    set:
+      nonRoot.enabled: true
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CRIBL_VOLUME_DIR
+            value: /opt/cribl/config-volume
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            name: cribl-volume-dir
+            mountPath: /opt/cribl/config-volume
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: cribl-volume-dir
+            emptyDir: {}
+
+  - it: works for the DaemonSet
+    template: daemonset.yaml
+    set:
+      deployment: daemonset
+      nonRoot.enabled: true
+    asserts:
+      - equal:
+          path: spec.template.spec.securityContext.runAsNonRoot
+          value: true
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: cribl-volume-dir
+            emptyDir: {}
+
+  - it: works for the StatefulSet
+    template: statefulset.yaml
+    set:
+      deployment: statefulset
+      nonRoot.enabled: true
+    asserts:
+      - equal:
+          path: spec.template.spec.securityContext.runAsNonRoot
+          value: true
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            name: cribl-volume-dir
+            mountPath: /opt/cribl/config-volume
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: cribl-volume-dir
+            emptyDir: {}
+
+  - it: respects a CRIBL_VOLUME_DIR set through env
+    template: deployment.yaml
+    set:
+      nonRoot.enabled: true
+      env:
+        CRIBL_VOLUME_DIR: /var/lib/cribl
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CRIBL_VOLUME_DIR
+            value: /var/lib/cribl
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CRIBL_VOLUME_DIR
+            value: /opt/cribl/config-volume
+      - isEmpty:
+          path: spec.template.spec.volumes
+
+  - it: respects a CRIBL_VOLUME_DIR set through envValueFrom
+    template: deployment.yaml
+    set:
+      nonRoot.enabled: true
+      envValueFrom:
+        - name: CRIBL_VOLUME_DIR
+          valueFrom:
+            configMapKeyRef:
+              name: cribl-paths
+              key: volumeDir
+    asserts:
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CRIBL_VOLUME_DIR
+            value: /opt/cribl/config-volume
+      - isEmpty:
+          path: spec.template.spec.containers[0].volumeMounts
+      - isEmpty:
+          path: spec.template.spec.volumes
+
+  - it: leaves UID, GID and fsGroup to the platform when they are null (OpenShift)
+    template: deployment.yaml
+    set:
+      nonRoot:
+        enabled: true
+        runAsUser: null
+        runAsGroup: null
+        fsGroup: null
+    asserts:
+      - equal:
+          path: spec.template.spec.securityContext
+          value:
+            runAsNonRoot: true
+            seccompProfile:
+              type: RuntimeDefault
+
+  - it: lets podSecurityContext and securityContext override the defaults
+    template: deployment.yaml
+    set:
+      nonRoot.enabled: true
+      podSecurityContext:
+        runAsUser: 1001
+      securityContext:
+        capabilities:
+          add:
+            - NET_BIND_SERVICE
+    asserts:
+      - equal:
+          path: spec.template.spec.securityContext.runAsUser
+          value: 1001
+      - equal:
+          path: spec.template.spec.containers[0].securityContext.capabilities
+          value:
+            add:
+              - NET_BIND_SERVICE
+            drop:
+              - ALL
+
+  - it: fails when nonRoot is combined with UID 0
+    template: deployment.yaml
+    set:
+      nonRoot.enabled: true
+      podSecurityContext:
+        runAsUser: 0
+    asserts:
+      - failedTemplate:
+          errorMessage: nonRoot.enabled is true but podSecurityContext.runAsUser is 0
+
+  - it: renders map values in podSecurityContext as YAML
+    template: deployment.yaml
+    set:
+      podSecurityContext:
+        runAsUser: 1000620000
+        seccompProfile:
+          type: RuntimeDefault
+    asserts:
+      - equal:
+          path: spec.template.spec.securityContext
+          value:
+            runAsUser: 1000620000
+            seccompProfile:
+              type: RuntimeDefault
+
+  - it: still renders string IDs as integers
+    template: deployment.yaml
+    set:
+      podSecurityContext:
+        runAsUser: "1000"
+        fsGroup: "2000"
+      securityContext:
+        runAsUser: "1000"
+        runAsGroup: "1000"
+    asserts:
+      - equal:
+          path: spec.template.spec.securityContext
+          value:
+            runAsUser: 1000
+            fsGroup: 2000
+      - equal:
+          path: spec.template.spec.containers[0].securityContext
+          value:
+            runAsUser: 1000
+            runAsGroup: 1000
+
+  - it: renders string IDs as integers in nonRoot mode too
+    template: deployment.yaml
+    set:
+      nonRoot:
+        enabled: true
+        runAsUser: "1001"
+    asserts:
+      - equal:
+          path: spec.template.spec.securityContext.runAsUser
+          value: 1001

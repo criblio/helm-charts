@@ -1,4 +1,4 @@
-{{- if or .Values.podSecurityContext .Values.securityContext }}
+{{- if or .Values.podSecurityContext .Values.securityContext (.Values.nonRoot).enabled }}
 ---
 apiVersion: v1
 kind: ConfigMap

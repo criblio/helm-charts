@@ -7,32 +7,17 @@ serviceAccountName: {{ include "logstream-leader.serviceAccountName" . }}
 imagePullSecrets:
   {{- toYaml . | nindent 8 }}
 {{- end }}
-{{- if .Values.podSecurityContext }}
+{{- with (include "logstream-leader.podSecurityContext" .) }}
 securityContext:
-{{- range $key, $value := .Values.podSecurityContext }}
-{{- if or (eq $key "runAsUser") (eq $key "runAsGroup") (eq $key "fsGroup")}}
-  {{ $key }}: {{ $value | int }}
-{{- else }}
-  {{ $key }}: {{ $value }}
-{{- end }}
-{{- end }}
+  {{- . | nindent 2 }}
 {{- end }}
 containers:
   - name: {{ .Chart.Name }}
     image: "{{ .Values.criblImage.repository }}:{{ .Values.criblImage.tag | default .Chart.AppVersion }}{{ if .Values.criblImage.wolfiImage }}-wolfi{{ end }}"
     imagePullPolicy: {{ .Values.criblImage.pullPolicy }}
-    {{- if .Values.securityContext }}
+    {{- with (include "logstream-leader.containerSecurityContext" .) }}
     securityContext:
-    {{- range $key, $value := .Values.securityContext }}
-    {{- if or (eq $key "runAsUser") (eq $key "runAsGroup") (eq $key "fsGroup")}}
-      {{ $key }}: {{ $value | int }}
-    {{- else if kindIs "map" $value }}
-      {{ $key }}:
-        {{- toYaml $value | nindent 8 }}
-    {{- else }}
-      {{ $key }}: {{ $value }}
-    {{- end }}
-    {{- end }}
+      {{- . | nindent 6 }}
     {{- end }}
     volumeMounts:
     - name: config-storage
@@ -41,7 +26,7 @@ containers:
     - name: initial-config
       mountPath: /var/tmp/config_bits
     {{- end }}
-    {{- if or .Values.securityContext .Values.podSecurityContext }}
+    {{- if or .Values.securityContext .Values.podSecurityContext (.Values.nonRoot).enabled }}
     - name: gitconfig
       mountPath: /.gitconfig
       subPath: .gitconfig
@@ -100,6 +85,12 @@ containers:
       # Single Volume for persistence (CRIBL-3848)
       - name: CRIBL_VOLUME_DIR
         value: {{ .Values.config.criblHome }}/config-volume
+      {{- if and (.Values.nonRoot).enabled (not (hasKey (.Values.env | default dict) "GIT_CONFIG_GLOBAL")) }}
+      # A non-root UID such as 65534 (nobody) has a HOME that does not contain
+      # the mounted /.gitconfig, so point git at it directly.
+      - name: GIT_CONFIG_GLOBAL
+        value: /.gitconfig
+      {{- end }}
       {{ if .Values.envValueFrom }}
       {{ toYaml .Values.envValueFrom | nindent 6  }}
       {{- end }}
@@ -194,7 +185,7 @@ volumes:
     persistentVolumeClaim:
       claimName: groups-claim
 {{- end }}
-{{- if or .Values.securityContext .Values.podSecurityContext }}
+{{- if or .Values.securityContext .Values.podSecurityContext (.Values.nonRoot).enabled }}
   - name: gitconfig
     configMap:
       name: {{ include "logstream-leader.fullname" . }}-gitconfig

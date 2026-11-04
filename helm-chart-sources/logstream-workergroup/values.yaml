@@ -243,6 +243,19 @@ extraVolumeMounts: {}
 #         requests:
 #           storage: 1Gi
 
+# Run Cribl as a non-root user with a security context that passes the
+# Kubernetes Pod Security Standards "restricted" profile (and OpenShift's
+# restricted-v2 SCC). podSecurityContext and securityContext still override
+# any of these defaults. See "Running as non-root" in common_docs/EXTRA_EXAMPLES.md.
+nonRoot:
+  enabled: false
+  # 65534 is the "nobody" user that already exists in the cribl/cribl image.
+  # On OpenShift, set all three to null so the SCC assigns IDs from the
+  # namespace's range.
+  runAsUser: 65534
+  runAsGroup: 65534
+  fsGroup: 65534
+
 # Downward API values
 envValueFrom:
   - name: CRIBL_K8S_POD

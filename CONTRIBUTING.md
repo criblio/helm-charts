@@ -26,7 +26,6 @@ helm-charts/
 │   ├── EKS_SPECIFICS.md
 │   └── EXTRA_EXAMPLES.md
 ├── helm-chart-sources/        # Source code for all Helm charts
-│   ├── appscope/              # AppScope chart
 │   ├── common/                # Shared templates and helpers
 │   ├── edge/                  # Cribl Edge chart
 │   ├── logstream-leader/      # Cribl Leader chart

@@ -1,4 +1,0 @@
-appscope:
-  destinations:
-    metrics: "file:///tmp/test_metrics.log"
-    events: "udp://cribl-test:9999"
